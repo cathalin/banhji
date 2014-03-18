@@ -1,0 +1,635 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"connec",
+				"connection_no"
+			],
+			[
+				"con",
+				"connection_no"
+			],
+			[
+				"license",
+				"licenseeModel"
+			],
+			[
+				"add",
+				"addNewReseller"
+			],
+			[
+				"lin",
+				"licenseeModel"
+			],
+			[
+				"lice",
+				"licenseeModel"
+			],
+			[
+				"licens",
+				"licenseeModel"
+			],
+			[
+				"lic",
+				"licenseDialog"
+			],
+			[
+				"licen",
+				"license_no"
+			],
+			[
+				"li",
+				"license_no"
+			],
+			[
+				"re",
+				"resellerCreate"
+			],
+			[
+				"cre",
+				"credentials"
+			],
+			[
+				"sc",
+				"schema"
+			],
+			[
+				"op",
+				"opatation"
+			],
+			[
+				"res",
+				"response"
+			],
+			[
+				"account",
+				"accountReceive"
+			],
+			[
+				"accont",
+				"accountPayables"
+			],
+			[
+				"accou",
+				"accountPayables"
+			],
+			[
+				"cogs",
+				"cogs_accounts"
+			],
+			[
+				"acc",
+				"accountReceive"
+			],
+			[
+				"fi",
+				"fiscalYear"
+			],
+			[
+				"fis",
+				"fiscal_year"
+			],
+			[
+				"base",
+				"baseCurrency"
+			],
+			[
+				"bas",
+				"baseCurrency"
+			],
+			[
+				"gen",
+				"generationFacility"
+			],
+			[
+				"tranfo",
+				"transformerNumber"
+			],
+			[
+				"page",
+				"pageSize"
+			],
+			[
+				"use",
+				"use_lv"
+			],
+			[
+				"class",
+				"classDropDownEditor"
+			],
+			[
+				"tr",
+				"tranformer"
+			],
+			[
+				"g",
+				"generationFacility"
+			],
+			[
+				"disti",
+				"distributionAreas"
+			],
+			[
+				"distribution",
+				"distributionAreas"
+			],
+			[
+				"en",
+				"engergyPurchased"
+			],
+			[
+				"amount",
+				"amount_due"
+			],
+			[
+				"amu",
+				"amount_paid"
+			],
+			[
+				"current",
+				"currentTarget"
+			],
+			[
+				"vend",
+				"vendorModel"
+			],
+			[
+				"trans",
+				"transformerRecordDS"
+			],
+			[
+				"ven",
+				"vendorModel"
+			],
+			[
+				"tran",
+				"transformer"
+			],
+			[
+				"tra",
+				"transformerNumber"
+			],
+			[
+				"edit",
+				"editTransformerHistTmpl"
+			],
+			[
+				"invoice",
+				"invoice_number"
+			],
+			[
+				"អំ",
+				"អំនានចាស់"
+			],
+			[
+				"អំនា",
+				"អំនានថ្មី"
+			],
+			[
+				"transformerRe",
+				"transformerRecordDS"
+			],
+			[
+				"searc",
+				"searchField"
+			],
+			[
+				"search",
+				"searchOptions"
+			],
+			[
+				"list",
+				"listTmpl"
+			],
+			[
+				"kendo",
+				"kendoListView"
+			],
+			[
+				"lib",
+				"liability"
+			],
+			[
+				"expense",
+				"expenseTotal"
+			],
+			[
+				"strto",
+				"strtotime"
+			],
+			[
+				"exp",
+				"expense"
+			],
+			[
+				"expenseT",
+				"expenseTmpl"
+			],
+			[
+				"_get_a",
+				"_get_account_nature"
+			],
+			[
+				"ex",
+				"expenses"
+			],
+			[
+				"account_ty",
+				"account_type_id"
+			],
+			[
+				"num",
+				"num_rows"
+			],
+			[
+				"Date",
+				"Datesend"
+			],
+			[
+				"aging_",
+				"aging_summary_report"
+			],
+			[
+				"_g",
+				"_get_dependencies"
+			],
+			[
+				"depend",
+				"dependent"
+			],
+			[
+				"_get_s",
+				"_get_subordinates"
+			],
+			[
+				"nation",
+				"nationality_id"
+			],
+			[
+				"_",
+				"_get_supervisor"
+			],
+			[
+				"depen",
+				"dependency"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/Users/pcg2/Downloads/production/application/controllers/api/accounting_api.php",
+			"settings":
+			{
+				"buffer_size": 31842,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"pa",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"snippet:ci_re",
+				"Snippet: ci_rest"
+			],
+			[
+				"snippet: ci_re",
+				"Snippet: ci_rest"
+			],
+			[
+				"snippet: ",
+				"Snippet: CI - Base Migration"
+			],
+			[
+				"snippet: c",
+				"Snippet: CI - Base Controller"
+			],
+			[
+				"projec",
+				"Project: Save As"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"snippet",
+				"Snippet: #!/usr/bin/env"
+			],
+			[
+				"package control:",
+				"Package Control: Install Package"
+			],
+			[
+				"emmet:togg",
+				"Emmet: Toggle Comment"
+			],
+			[
+				"emmet:toggl",
+				"Emmet: Toggle Comment"
+			],
+			[
+				"emmet",
+				"Toggle Block Comment"
+			],
+			[
+				"pyth",
+				"Set Syntax: Python"
+			]
+		],
+		"width": 512.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/credentials.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/vendor/dashboard_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/accounting/ac_chart_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/inventory_api.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/inventory/inventory_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/electricity/home_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/reseller_connection_m.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/customer_api.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/electricities.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/reports.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/admin/dashboard_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/settings/company_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/settings/index_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/distribution_m.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/electricity/transformer_2_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/settings.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/staff/index.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/employees.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/staff/user_role_m.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/template/nav.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/report.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/config/autoload.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/frontpage/index.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/template/skeleton.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/auth.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/config/config.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/config/mimes.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/config/doctypes.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/accounting.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/auth.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/generator_record_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/frontpage_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/admin.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/frontpage/login.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/staff/viewStaff_view.php",
+		"/Users/pcg2/Desktop/ngo.js",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/admin/config_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/template/main.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/template/customed.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/transformer_attribute_m.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/bill_payment_m.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/bill_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/vendors.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/electricity/transfered_line_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/language/khmer/interface_lang.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/customer/customer_centre_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/people/people_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/accounting_api.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/resources/common/bootstrap/js/bootstrap.js",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/accounting/payment_term_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/customer.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/invoices.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/tariff.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/inventory/item_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/invoice_items.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/meter_records.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/meters.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/files.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/accounting/journal_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/report/index.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/report/balance_sheet_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/project.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/models/accounting/account_model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/report/pl_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/electricity_boxs.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/electricity_poles.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/breakers.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/resources/css/global.css",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/resources/css/kendo.custom.css",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/people_api.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/accounting/sale_receipt_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/resources/css/kendo.common.min.css",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/report/vendor_aging_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/core/MY_Model.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/vendor/vendor_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/controllers/api/untitled",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/application/views/customer/home_view.php",
+		"/Applications/XAMPP/xamppfiles/htdocs/production/resources/js/app/customers.js",
+		"/G/xampp/htdocs/production/application/views/auth/login.php",
+		"/G/xampp/htdocs/production/production.sublime-project",
+		"/G/xampp/htdocs/api/application/controllers/example.php",
+		"/G/xampp/htdocs/api/application/controllers/welcome.php",
+		"/G/xampp/htdocs/api/application/config/database.php",
+		"/G/xampp/htdocs/api/application/config/config.php",
+		"/G/xampp/htdocs/api/application/config/rest.php",
+		"/G/xampp/htdocs/api/application/controllers/key.php",
+		"/C/Program Files (x86)/Honeywell/Optimus Software/Sample Optimizer Applications/Batch Examples/OptimusS/OptimusS Default Example.opt",
+		"/G/xampp/htdocs/api/.htaccess",
+		"/F/archived/codeigniter_/api/application/config/datamapper.php",
+		"/F/archived/codeigniter_/api/application/config/autoload.php",
+		"/G/xampp/htdocs/production/application/views/project/home_view.php",
+		"/G/xampp/htdocs/production/application/views/hr/addEmployee_view.php",
+		"/G/xampp/htdocs/production/application/views/hr/toolbar.php",
+		"/G/xampp/htdocs/production/application/language/english/interface_lang.php",
+		"/G/xampp/htdocs/production/application/views/human_resources/dashboard_view.php",
+		"/G/xampp/htdocs/production/application/controllers/api/employees.php",
+		"/G/xampp/htdocs/production/application/core/MY_Model.php",
+		"/G/xampp/htdocs/production/application/models/dependency_m.php",
+		"/G/xampp/htdocs/production/application/controllers/api/departments.php",
+		"/G/xampp/htdocs/production/application/controllers/api/nationalities.php",
+		"/G/xampp/htdocs/production/application/controllers/api/positions.php",
+		"/G/xampp/htdocs/production/application/views/human_resources/payroll/dashboard_view.php",
+		"/G/xampp/htdocs/production/application/views/human_resources/employee/dashboard_view.php",
+		"/G/xampp/htdocs/production/application/views/activity/home_view.php",
+		"/C/Program Files/Sublime Text 2/Data/Packages/User/ci_rest.sublime-snippet",
+		"/C/Program Files/Sublime Text 2/Pristine Packages/User.sublime-package",
+		"/G/xampp/htdocs/codeIgniter/application/controllers/api/example.php",
+		"/G/xampp/htdocs/codeIgniter/application/controllers/api/test.php",
+		"/G/xampp/htdocs/codeIgniter/application/core/My_Rest.php",
+		"/G/xampp/htdocs/production/application/views/contact/toolbar_view.php",
+		"/G/xampp/htdocs/production/application/controllers/contact.php",
+		"/G/xampp/htdocs/production/application/views/contact/home_view.php",
+		"/G/xampp/htdocs/production/application/views/template/skeleton.php",
+		"/G/xampp/htdocs/codeIgniter/.htaccess",
+		"/G/xampp/htdocs/production/application/controllers/timesheet.php",
+		"/G/xampp/htdocs/production/application/views/timesheet/index_view.php",
+		"/G/xampp/htdocs/production/application/controllers/project.php",
+		"/G/xampp/htdocs/production/application/views/staff/sidenav.php",
+		"/G/xampp/htdocs/production/application/controllers/activity.php",
+		"/G/xampp/htdocs/production/application/controllers/home.php",
+		"/G/xampp/htdocs/production/application/views/staff/timesheet/home_view.php",
+		"/G/xampp/htdocs/production/application/views/staff/home_view.php",
+		"/G/xampp/htdocs/production/application/controllers/api/workhistories.php",
+		"/G/xampp/htdocs/project/application/controllers/api/example.php",
+		"/G/xampp/htdocs/project/application/controllers/api/key.php",
+		"/G/xampp/htdocs/project/application/controllers/api/index.html",
+		"/G/xampp/htdocs/project/api.sublime-project",
+		"/C/Program Files/Sublime Text 2/Data/Packages/User/Preferences.sublime-settings"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"index",
+			"invoice",
+			"receipt",
+			"k-listview",
+			"count",
+			"i",
+			"count"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/Users/pcg2/Downloads/production/application/controllers/api/accounting_api.php",
+					"settings":
+					{
+						"buffer_size": 31842,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16418,
+								16424
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2871.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": false,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"views/template/skeleton.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/G/xampp/htdocs/project/api.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 222.0,
+	"status_bar_visible": true
+}
