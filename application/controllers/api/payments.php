@@ -63,7 +63,7 @@ class Payments extends REST_Controller {
 					'payment_date' 		=> $this->post('payment_date'),
 					'payment_method_id'	=> $this->post('payment_method_id'),
 					'check_no' 			=> $this->post('check_no'),
-					'deposit_to' 		=> $this->post('deposit_to'),
+					'cash_account_id' 	=> $this->post('cash_account_id'),
 					'payment_note' 		=> $this->post('payment_note'),
 					'cashier' 			=> $this->post('cashier'),
 					'customer_id' 		=> $this->post('customer_id')					 

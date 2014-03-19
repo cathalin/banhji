@@ -155,19 +155,13 @@ class People_api extends REST_Controller {
 	}
 
 	function vendors_get() {
-		$filter= $this->get('filter');
-		// if(!empty($filter) && isset($filter)){			
-		// 	$criteria = array();				
-		// 	for ($i = 0; $i < count($filter['filters']); ++$i) {				
-		// 		$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		// 	}
-		// 	$query = $this->people->vendor()->get_many_by($criteria);
-		// } else {
-			$query = $this->people->vendor()->get_all();
-		// }
+		$filter = $this->get('filter');
+		$data ="";
+
+		$data = $this->people->vendor($filter['filters'][0]['field'], $filter['filters'][0]['value'])->get_all();
 		
-		if(count($query) > 0) {
-			foreach( $query as $r) {
+		if(count($data) > 0) {
+			foreach( $data as $r) {
 				$vendors['vendors'][] = array(
 					"ampere_id"			=> $r->ampere_id,
 					"transformer_id"	=> $r->transformer_id,
@@ -299,6 +293,7 @@ class People_api extends REST_Controller {
 			'job'	 			=> $this->post('job'),
 			'company'	 		=> $this->post('company'),
 			'bank_account'		=> $this->post('bank_account'),
+			'credit_limit'	 	=> $this->put("credit_limit"),
 
 			'zip_code' 			=> $this->post('zip_code'),			
 			'address'			=> $this->post('address'),
@@ -359,6 +354,9 @@ class People_api extends REST_Controller {
 			'job'	 			=> $this->put('job'),
 			'company'	 		=> $this->put('company'),
 			'bank_account'		=> $this->put('bank_account'),
+			'balance'			=> $this->put('balance'),
+			'deposit_amount' 	=> $this->put("deposit_amount"),
+			'credit_limit'	 	=> $this->put("credit_limit"),
 
 			'zip_code' 			=> $this->put('zip_code'),			
 			'address'			=> $this->put('address'),
@@ -512,14 +510,11 @@ class People_api extends REST_Controller {
 	 	$arr = $this->people->get_many_by($cusPara);		 	
 		if(count($arr) >0){
 			foreach($arr as $row) {
-				$fullname = $row->surname .' '. $row->name;
-				$fullIdName = $row->number .' '. $row->surname .' '. $row->name;
-				
+								
 			   	//Add extra fields
-				$extra = array( 'fullname' 		=> $fullname,
-								'fullIdName' 	=> $fullIdName,								
+				$extra = array( 'currencies'	=> $this->currency->get_by("code", $row->currency_code),							
 								'people_types'	=> $this->people_type->get($row->people_type_id),
-							   	'amperes' 		=> $this->ampere->get($row->ampere_id), 
+							   	//'amperes' 		=> $this->ampere->get($row->ampere_id), 
 							   	// 'phases' 		=> $this->phase->get($row->phase_id),
 							   	// 'voltages'		=> $this->voltage->get($row->voltage_id),
 							   	// 'tariff_plans' 	=> $this->tariff_plan->get($row->tariff_plan_id), 
