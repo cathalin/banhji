@@ -2499,7 +2499,7 @@
 							</div>
 						</form>
 					</div>
-					<span class="results"></span>
+					
 					<div class="table table-condensed" id="itemsSidebar" style="height: 605px;"></div>
 				</div>
 				<div class="span9 detailsWrapper">
@@ -2510,6 +2510,8 @@
 			</div>	
 		</div>
 	</div>
+</script>
+<script type="text/x-kendo-template" id="itemsDetailView">
 </script>
 <script type="text/x-kendo-template" id="itemsNewView">
 </script>
@@ -16622,6 +16624,9 @@
 		var vendorBill = new kendo.Layout("#paybill", {model: banhji.bill.viewModel});
 		var accounting = new kendo.Layout("#accounting", {model: banhji.account});
 		var items = new kendo.Layout("#itemsView");
+		var itemsDetail = new kendo.View("#itemsDetailView");
+		var itemsNew = new kendo.View("#itemsNewView");
+		var itemsReport = new kendo.View("#itemsReportView");
 		var blank = new kendo.View("#blank");
 		var accDetail = new kendo.View("#account-detail", {model: banhji.account});
 		var acinfo 	= new kendo.Layout("#acInfo", {model:banhji.account});
@@ -16697,6 +16702,9 @@
 			vendorSingle: vendorS,
 			vendorNew: vendorNew,
 			items: items,
+			itemDetail: itemsDetail,
+			itemReport: itemsReport,
+			itemNew: itemsNew,
 			vendorHistory: vendorHistory,
 			vendorPayable: vendorPayable,
 			vendorInfo: vendorInfo,
@@ -19451,17 +19459,17 @@
 			$("#header").html(template(menu));
 		$("#home-menu").text("Banhji សន្និធិ");
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
-
+		$("#itemDetail").html("<p style='height: 200px;line-height:200px;text-align:center;'>សូវរើសសន្និធិពីបញ្ជីខាងឆ្វេង!</p>");
 		var $search = $("#searchField");
 		var type = $("#searchOptions").kendoDropDownList({
 			dataSource: [
-				{value:"1", text:"Inventory Parts"}, 
-				{value:"2", text:"Non-inventory Parts"}, 
-				{value:"3", text:"Fixed Assets"}, 
-				{value:"4", text:"Services"},
-				{value:"5", text:"Deposit"},
-				{value:"6", text:"VAT"},
-				{value:"7", text:"Other Changes"}
+				{value:"1", text:"សន្និធិ"}, 
+				{value:"2", text:"មិនមែនសន្និធិ"}, 
+				{value:"3", text:"ទ្រព្យសកម្មរយៈពេលវែង"}, 
+				{value:"4", text:"សេវាកម្ម"},
+				{value:"5", text:"ប្រាក់កក់"},
+				{value:"6", text:"អាករលើតំលៃបន្ថែម"},
+				{value:"7", text:"ផ្សេងៗ"}
 			],
 			dataTextField: "text",
 			dataValueField: "value",
@@ -19495,6 +19503,7 @@
 			],
 			selectable: true,
 			change: function(e) {
+				$("#itemDetail").html("");
 				var tr = this.select();
 				var selected = this.dataItem(tr);
 				console.log(selected.id);
