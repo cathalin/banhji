@@ -47,7 +47,6 @@ class Invoices extends REST_Controller {
 					$extra = array(	'total_paid' 		=> $totalPaid,   
 								   	'total' 			=> $total,
 								   	'pay_amount'		=> $total,
-								   	'vendor'			=> $this->people->get($row->vendor_id),
 								   	'invoice_items'     => $this->invoice_item->get_many_by('invoice_id', $row->id)
 							  );
 
@@ -73,7 +72,8 @@ class Invoices extends REST_Controller {
 				   	'rate'				=> $this->post('rate'),
 				   	'vat'				=> $this->post('vat'),
 				   	'vat_id'			=> $this->post('vat_id'),				   	
-				   	'status' 			=> $this->post('status'),				   	
+				   	'status' 			=> $this->post('status'),
+				   	'sub_code' 			=> $this->post('sub_code'),				   	
 				   	'issued_date' 		=> $this->post('issued_date'),
 				   	'payment_date' 		=> $this->post('payment_date'),
 				   	'due_date' 			=> $this->post('due_date'),
@@ -313,19 +313,15 @@ class Invoices extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}			
-			$arr = $this->invoice->get_many_by($para);
 			$arr = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))->get_many_by($para);							
 			if(count($arr) >0){
 				foreach($arr as $row) {
-					$totalAmount = $this->invoice_item->get_total_amount($row->id);										   
+					$totalAmount = $row->amount;										   
 				   	$totalPaid	 = $this->payment->get_total_payment($row->id);
 				   	$total  	 = $totalAmount - $totalPaid;
 
-					$extra = array('total_amount'		=> $totalAmount,
-								   	'total_paid' 		=> $totalPaid,   
-								   	'total' 			=> $total,
-								   	'pay_amount'		=> $total,
-								   	'isPay'				=> true								   	
+					$extra = array(	'total_paid' 		=> $totalPaid,   
+								   	'total' 			=> $total								   								   	
 							  	);
 
 					//Cast object to array
@@ -336,8 +332,7 @@ class Invoices extends REST_Controller {
 				}
 				$this->response($data, 200);		
 			}else{
-				$empty_data = Array();
-		  		$this->response($empty_data, 200);
+		  		$this->response(Array(), 200);
 			}
 		}else{
 			$data = $this->invoice->get_all();
@@ -346,61 +341,88 @@ class Invoices extends REST_Controller {
 	}
 
 	/* --- STATEMENT --- */	
-	function statement_get(){		
-		$customer_id = $this->get('customer_id');
-		$start_date = $this->get('start_date');
-		$end_date = $this->get('end_date');
-				
-		//Get balance forward
-		$bDate = new DateTime($start_date);
-		date_sub($bDate, date_interval_create_from_date_string('1 days'));
-		$balanceForwardDate = date_format($bDate, 'Y-m-d');
+	function statement_get(){
+		$filter = $this->get("filter");
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}				
+		$customer_id = $para["customer_id"];
+		$start_date = $para["start_date"];
+		$end_date = $para["end_date"];				
 		
-		$total_amount = $this->invoice_item->get_total_amount_by($customer_id, $balanceForwardDate);
-		$total_payment = $this->payment->get_total_payment_by($customer_id, $balanceForwardDate);
-		$balance_forward = ($total_amount - $total_payment);
+		$statement = array();
+		$typeList = array("Invoice", "eInvoice", "Notice");
+		
+		//Balance forward
+		$bfList = $this->invoice->where_in("type", $typeList)
+								->where_in("status", array(0,2))
+								->get_many_by(array("customer_id"=>$customer_id,
+													"issued_date <="=>$start_date));
+		if(count($bfList)>0){
+			$bfInv = 0;
+			$bfInvIds = array();									
+			foreach ($bfList as $row) {
+				$bfInv += $row->amount;
+				
+				if(intval($row->status)===2){
+					array_push($bfInvIds, $row->id);
+				}				
+			}
+			
+			$bfPaid = 0;
+			if(count($bfInvIds)>0){
+				$bfPaidList = $this->payment->where_in("invoice_id", $bfInvIds)->get_all();							
+				foreach ($bfPaidList as $row) {
+					$bfPaid += $row->amount_paid;
+				}				
+			}						
 
-		if($balance_forward>0){
+			$balanceForward = $bfInv - $bfPaid;
+			
 			$statement[] = array(
-			   	'issued_date'	=> $balanceForwardDate,
+				'id' 			=> 0,
+			   	'issued_date'	=> $start_date,
 			   	'description' 	=> 'សមតុល្យពីមុន',						   
-			   	'amount' 		=> 0,
-			   	'balance'     	=> $balance_forward	 				  
-		  	);
-		}		
+			   	'amount' 		=> $balanceForward,			   	
+			   	'balance'     	=> $balanceForward	 				  
+		  	);			
+		}				
 						
 	  	//Add invoice list to statement[]		
-	  	$invList = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
-	  					->get_many_by(array('customer_id'=>$customer_id,
-	  										'status <'=>2,		  										
-	  										'issued_date >='=>$start_date, 
-	  										'issued_date <='=>$end_date));		  		  
+	  	$invList = $this->invoice->where_in("type", $typeList)	  							
+			  					->get_many_by(array("customer_id"=>$customer_id,
+			  										"status <"=>3,			  												  										
+			  										"issued_date >="=>$start_date, 
+			  										"issued_date <="=>$end_date));		  		  
 												   
-	  	if(count($invList)>0){		
-			foreach($invList as $i) {  				
+	  	if(count($invList)>0){
+	  		$invIds = array();	  			
+			foreach($invList as $row) {
+				array_push($invIds, $row->id);
+
 				$statement[] = array(
-				   	'issued_date'	=> $i->issued_date,
-				   	'description' 	=> $i->number,						   
-				   	'amount' 		=> $this->invoice_item->get_total_amount($i->id),
+					'id' 			=> $row->id,
+				   	'issued_date'	=> $row->issued_date,
+				   	'description' 	=> $row->number,						   
+				   	'amount' 		=> $row->amount,
 				   	'balance'		=> 0	 				  
 				);			  
-			} 
-	  	}
-	  
-	  	//Add payment list to statement[]
-	  	$paymentList = $this->payment->get_many_by(array('customer_id'=>$customer_id,		  												   
-													   'payment_date >='=>$start_date,
-													   'payment_date <='=>$end_date));
-	  	if(count($paymentList)>0){
-		  	foreach($paymentList as $j) {				  						
-			  	$statement[] = array(
-				   	'issued_date'	=> $j->payment_date,
-				   	'description' 	=> 'PMT',						   
-				   	'amount' 		=> $j->amount_paid * -1,
-				   	'balance'     	=> 0	 				  
-			  	);	
-		  	} 			
-	  	}
+			}
+
+			$paidList = $this->payment->where_in("invoice_id", $invIds)->get_all();
+			if(count($paidList)>0){
+				foreach($paidList as $row) {
+					$statement[] = array(
+						'id' 			=> 0,
+					   	'issued_date'	=> $row->payment_date,
+					   	'description' 	=> "បង់ប្រាក់",						   
+					   	'amount' 		=> $row->amount_paid*-1,
+					   	'balance'		=> 0	 				  
+					);
+				}
+			}
+	  	}	
 	  	
 	  	if(count($statement)>0){
 	  		//Sort array by date
@@ -409,162 +431,158 @@ class Invoices extends REST_Controller {
 			}
 			usort($statement, "sortFunction");
 
-			$balance = $balance_forward;
-			for ($k=0; $k< count($statement); $k++) {
-				$balance += $statement[$k]['amount'];
-				$statement[$k]['balance'] = $balance;
-			}	  		
+			//Calculate balance
+			$balance = 0;					
+			foreach ($statement as $key => $value) {
+				$balance += $statement[$key]["amount"];				
+				$statement[$key]["balance"] = $balance; 
+			}				
 	  	}	  				  
 	  		  
 		$this->response($statement, 200);
 	}	
 	
 	/* --- STATEMENT COLLECTION --- */	
-	function statement_collection_get(){			
-		$filter = $this->get("filter");			
+	function statement_collection_get(){
+		$filter = $this->get("filter");
+		$limit 	= $this->get('pageSize');
+		$offset = $this->get('skip');
+				
+		$customer_id = 0;
+		$start_date = "";
+		$end_date = "";				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {
+			if($filter['filters'][$i]['field']==="customer_id"){
+				$customer_id = $filter['filters'][$i]['value'];
+			}
+			if($filter['filters'][$i]['field']==="start_date"){
+				$start_date = $filter['filters'][$i]['value'];
+			}
+			if($filter['filters'][$i]['field']==="end_date"){
+				$end_date = $filter['filters'][$i]['value'];
+			}
+		}
+						
+		$statement = array();
 		$balance = 0;
-		
-		if(!empty($filter) && isset($filter)){	
-			$statement = array();
 
-		  	//Add invoice list to statement[]		  			  		
-		  	$invList = $this->invoice->get_many_by(array($filter['filters'][0]['field'] => $filter['filters'][0]['value'], 'status <'=>2));													   
-		  	if(count($invList)>0){		
-				foreach($invList as $i) {
-					$typeName = '';
-					$status = '';
+		if(!empty($limit) && isset($limit)){
+	 		$this->invoice->limit($limit, $offset);
+	 	}
 
-					switch ($i->type){
-					case 'eInvoice':
-					  	$typeName = 'វិក្កយបត្រអគ្គីសនី';					  	
-					  	if($i->status==1){
-					  		$status = "ទូទាត់រួច";
-					  	}else if($i->status==2){
-					  		$status = "ទូទាត់បានខ្លះ";
-					  	}else{
-					  		$status = "មិនទាន់ទូទាត់";
-					  	}
-					  	break;									
-					case 'Receipt':
-					  	$typeName = 'បង្កាន់ដៃលក់ជាសាច់ប្រាក់';					  	
-					  	break;
-					case 'Estimate':
-					  	$typeName = 'សម្រង់តម្លៃ';
-					  	if($i->status==1){
-					  		$status = "ប្រើហើយ";
-					  	}else if($i->status==2){
-					  		$status = "ប្រើបានខ្លះ";
-					  	}else{
-					  		$status = "មិនទាន់ប្រើ";
-					  	}
-					  	break;
-					case 'GDN':
-					  	$typeName = 'លិខិតដឹកជញ្ជូន';
-					  	if($i->status==1){
-					  		$status = "ប្រើហើយ";
-					  	}else if($i->status==2){
-					  		$status = "ប្រើបានខ្លះ";
-					  	}else{
-					  		$status = "មិនទាន់ប្រើ";
-					  	}
-					  	break;
-					case 'SO':
-					  	$typeName = 'បញ្ជាលក់';
-					  	if($i->status==1){
-					  		$status = "ប្រើហើយ";
-					  	}else if($i->status==2){
-					  		$status = "ប្រើបានខ្លះ";
-					  	}else{
-					  		$status = "មិនទាន់ប្រើ";
-					  	}
-					  	break;		
-					case 'Notice':
-					  	$typeName = 'លិខិតរំលឹក';
-					  	if($i->status==1){
-					  		$status = "ទូទាត់";
-					  	}else if($i->status==2){
-					  		$status = "ទូទាត់បានខ្លះ";
-					  	}else{
-					  		$status = "មិនទាន់ទូទាត់";
-					  	}
-					  	break;
-					default:
-					  	$typeName = 'វិក្កយបត្រ';
-					  	if($i->status==1){
-					  		$status = "ទូទាត់រួច";
-					  	}else if($i->status==2){
-					  		$status = "ទូទាត់បានខ្លះ";
-					  	}else{
-					  		$status = "មិនទាន់ទូទាត់";
-					  	}
-					}
-
-					$statement[] = array(
-						'id'			=> $i->id,
-						'type'			=> $i->type,
-					    'typeName'		=> $typeName,
-						'number' 		=> $i->number,						   
-						'issued_date' 	=> $i->issued_date,
-						'amount'     	=> $i->amount,
-						'status'		=> $status
-					);			  
-				} 
-		  	}
-		  
-		  	//Add payment list to statement[]		  	
-		  	$paymentList = $this->payment->get_many_by($filter['filters'][0]['field'], $filter['filters'][0]['value']);
-		  	if(count($paymentList)>0){
-			  	foreach($paymentList as $j) {				  								
-				  	$statement[] = array(
-				  	   'id'				=> $j->id,
-				  	   'type'			=> "Payment",
-					   'typeName'		=> "បង់ប្រាក់",
-					   'number' 		=> $j->check_no,						   
-					   'issued_date' 	=> $j->payment_date,
-					   'amount'     	=> $j->amount_paid,
-					   'status' 		=> ""	 				  
-				  	);	
-			  	} 			
-		  	}		  
-		  				  
-		  	//Sort array
-		  	if(count($statement)>0){				
-				function sortFunction($a, $b){			
-					return strtotime($a["issued_date"]) - strtotime($b["issued_date"]);
+	  	//Add invoice list to statement[]
+	  	if($start_date!=="" && $end_date!==""){
+	  		$invList = $this->invoice->get_many_by(array("customer_id"=>$customer_id, 
+	  												"status <"=>4,
+	  												"issued_date >="=>$start_date, 
+			  										"issued_date <="=>$end_date));
+		}else{
+			$invList = $this->invoice->get_many_by(array("customer_id"=>$customer_id, 
+	  													"status <"=>4));
+		}		  			  		
+	  														   
+	  	if(count($invList)>0){		
+			foreach($invList as $row) {
+				$typeName = '';
+				
+				switch ($row->type){
+				case 'eInvoice':
+				  	$typeName = 'វិក្កយបត្រអគ្គីសនី';				  	
+				  	break;									
+				case 'Receipt':
+				  	$typeName = 'បង្កាន់ដៃលក់ជាសាច់ប្រាក់';					  	
+				  	break;
+				case 'Estimate':
+				  	$typeName = 'សម្រង់តម្លៃ';				  	
+				  	break;
+				case 'GDN':
+				  	$typeName = 'លិខិតដឹកជញ្ជូន';				  	
+				  	break;
+				case 'SO':
+				  	$typeName = 'បញ្ជាលក់';				  	
+				  	break;		
+				case 'Notice':
+				  	$typeName = 'លិខិតរំលឹក';				  	
+				  	break;
+				default:
+				  	$typeName = 'វិក្កយបត្រ';				  	
 				}
-				usort($statement, "sortFunction");			
-		  	}
-		  
-		  	if(count($statement)){
-		  		$this->response($statement, 200);
-		  	}else{
-		  		$empty_data = Array();
-		  		$this->response($empty_data, 200);
-		  	}
-  	  				  
-		} /*End if*/
+
+				$statement[] = array(
+					'id'			=> $row->id,
+					'type'			=> $row->type,
+				    'typeName'		=> $typeName,
+					'number' 		=> $row->number,						   
+					'issued_date' 	=> $row->issued_date,
+					'due_date' 		=> $row->due_date,
+					'amount'     	=> $row->amount,
+					'rate' 			=> $row->rate,
+					'sub_code'		=> $row->sub_code,
+					'status'		=> $row->status
+				);			  
+			} 
+	  	}
+	  
+	  	//Add payment list to statement[]		  	
+	  	$paymentList = $this->payment->get_many_by(array("customer_id"=>$customer_id,	  												
+	  												"payment_date >="=>$start_date, 
+			  										"payment_date <="=>$end_date));
+	  	if(count($paymentList)>0){
+		  	foreach($paymentList as $row) {				  								
+			  	$statement[] = array(
+			  	   'id'				=> $row->id,
+			  	   'type'			=> "Payment",
+				   'typeName'		=> "បង់ប្រាក់",
+				   'number' 		=> $row->check_no,						   
+				   'issued_date' 	=> $row->payment_date,
+				   'due_date' 		=> "",
+				   'amount'     	=> $row->amount_paid,
+				   'status' 		=> -1	 				  
+			  	);	
+		  	} 			
+	  	}		  
+	  				  
+	  	//Sort array
+	  	if(count($statement)>0){				
+			function sortFunction($a, $b){			
+				return strtotime($a["issued_date"]) - strtotime($b["issued_date"]);
+			}
+			usort($statement, "sortFunction");			
+	  	}
+	  
+	  	if(count($statement)){
+	  		$this->response($statement, 200);
+	  	}else{	  		
+	  		$this->response(Array(), 200);
+	  	}		
 	}
 	
 	/* --- AGING --- */	
 	function aging_get(){
-		$customer_id = $this->get('customer_id');
-		$start_date = $this->get('start_date');
-		$end_date = $this->get('end_date');	
+		$filter = $this->get("filter");	
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}				
+		$customer_id = $para["customer_id"];
+		$start_date = $para["start_date"];
+		$end_date = $para["end_date"];	
 		
-	  	$age[] = array(
+	  	$aging[] = array(
 	  		'current'	=> 0,
 			'within30' 	=> 0,
 			'within60' 	=> 0,
 			'within90' 	=> 0,
 			'over90'   	=> 0
 		);
-	  		
-		//$over_date = $start_date + 30;		  			
-		$invList = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
-								->get_many_by(array('customer_id'=>$customer_id,
-													'status'=>0, 
-													'issued_date >='=>$start_date,
-													'issued_date <='=>$end_date));												 
+
+		$typeList = array("Invoice", "eInvoice", "Notice");
+	  				  			
+		$invList = $this->invoice->where_in("type", $typeList)
+								->where_in("status", array(0,2))
+								->get_many_by(array("customer_id"=>$customer_id,													
+													"issued_date >="=>$start_date,
+													"issued_date <="=>$end_date));												 
 		if(count($invList)>0){			  		
 		  	//Current date		  			  	
 		  	$today = new DateTime();
@@ -574,32 +592,33 @@ class Invoices extends REST_Controller {
 				$due_date = new DateTime($row->due_date);
 				$day = 0;					
 				if($due_date < $today){		  
-				  	$dDiff = $due_date->diff($today);
-				  	//$dDiff = $interval->format('%R%a');
+				  	$dDiff = $due_date->diff($today);				  	
 				  	$day = $dDiff->days;
 				}
 				
-				//Calculate total amount	
-				$amt = $row->amount;
-			  	$pay = $this->payment->get_total_payment($row->id);
-			  	$total = ($amt - $pay);									
+				//Calculate total amount
+				$pay = 0;	
+				if(intval($row->status)===2){
+					$pay = $this->payment->get_total_payment($row->id);
+				}			  	
+			  	$total = floatval($row->amount) - $pay;									
 						
-				//Add total to age[]
+				//Add total to aging[]
 				if($day < 1){						
-					$age[0]['current'] += $total;
+					$aging[0]['current'] += $total;
 				}else if(($day > 0) && ($day <= 30)){						
-					$age[0]['within30'] += $total;
+					$aging[0]['within30'] += $total;
 				}else if(($day > 30) && ($day <= 60)){						
-					$age[0]['within60'] += $total;
+					$aging[0]['within60'] += $total;
 				}else if(($day > 60) && ($day <= 90)){						
-					$age[0]['within90'] += $total;
+					$aging[0]['within90'] += $total;
 				}else{						
-					$age[0]['over90'] += $total;
+					$aging[0]['over90'] += $total;
 				}
 			}		  			  			  
 		}		  	  
 			
-		$this->response($age, 200);				
+		$this->response($aging, 200);				
 	}
 
 	/* --- AGING BATCH --- */	
@@ -872,24 +891,28 @@ class Invoices extends REST_Controller {
 		$para = array();				
 		for ($i = 0; $i < count($filter['filters']); ++$i) {				
 			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		}
+		}		
+		$typeList = array("Receipt", "Invoice", "eInvoice", "Notice");
 
-		$company_id = $para["company_id"];
-		$arr = $this->invoice_item->monthly_sale()->get_many_by('people.company_id', $company_id);
-		$data = array();
-		if(count($arr)>0){
-			foreach ($arr as $row) {
-				$strDate = date("m-y", strtotime($row->issued_date));
-				$data[] = array(
-					'amt' 	=> $row->amt,
-					'strDate' => $strDate
-				);
-			}
-			$this->response($data, 200);
-		} else {
-			$this->response(array(), 200);
-		}			
+		$data = $this->invoice->where_in("type", $typeList)->order_by("issued_date", "asc")->get_many_by($para);		
 		
+		$this->response($data, 200);		
+	}
+
+	//OUTSTANDING INVOICE
+	function outstanding_invoice_get(){
+		$filter = $this->get("filter");			
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}		
+		$typeList = array("Invoice", "eInvoice", "Notice", "Estimate", "SO");
+
+		$data = $this->invoice->where_in("type", $typeList)
+							->where_in("status", array(0,2))
+							->get_many_by($para);		
+		
+		$this->response($data, 200);		
 	}
 
 	//CUSTOMER DASHBOARD
@@ -1001,9 +1024,17 @@ class Invoices extends REST_Controller {
 		$this->response($data, 200);				
 	}
 
+	//LAST ID NUMBER
+	function last_idNumber_get(){
+		$type = $this->get("type");	
+		$id = $this->invoice->get_next_id();
+		$no = $this->invoice->last_number($type);
+		$this->response(array("next_id"=>$id, "last_no"=>$no), 200);
+	}
+
 	//LAST NUMBER
-	function last_number_get(){
-		$type = $this->get("type");
+	function last_number_get(){		
+		$type = $this->get("type");		
 		$no = $this->invoice->last_number($type);
 		$this->response($no, 200);
 	}

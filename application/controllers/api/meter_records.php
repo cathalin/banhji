@@ -472,5 +472,159 @@ class Meter_records extends REST_Controller {
 		}				
 	}
 
+	//READING	
+	function reading_get() {
+		$filter = $this->get("filter");		
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}
+		$arr = $this->meter->order_by("customer_id", "asc")->get_many_by($para);
+
+		$data = array();
+		if(count($arr)>0){
+			$meterIds = array();
+			foreach ($arr as $row) {
+				array_push($meterIds, $row->id);
+			}
+			$meterRecord = $this->meter_record->where_in("meter_id", $meterIds)->distinct("meter_id")->order_by("month_of", "desc")->get_all();			
+			
+			$customer_id = 0;
+			$people = null;
+			foreach ($arr as $row) {
+				$month_of = "";
+				$prev_reading = "";
+				$reactive_prev_reading = "";
+				if(count($meterRecord)>0){
+					foreach ($meterRecord as $mr) {
+						if($mr->meter_id===$row->id){
+							$month_of = $mr->month_of;
+							$prev_reading = $mr->new_reading;
+							$reactive_prev_reading = $mr->reactive_new_reading;
+							break;
+						}
+					}					
+				}
+
+				if($row->customer_id!==$customer_id){
+					$people = $this->people->get($row->customer_id);
+					$customer_id = $row->customer_id;
+				}
+
+			   	//Add extra fields
+				$extra = array('people'				=> $people,						    
+						    'electricity_boxes'		=> $this->electricity_box->get($row->electricity_box_id),						    
+						    'month_of' 				=> $month_of,
+						    'rcheckNewRound'		=> false,
+						    'reactive_prev_reading'	=> $reactive_prev_reading,				  		
+					  		'reactive_new_reading' 	=> "",
+					  		'checkNewRound'			=> false,
+					  		'prev_reading'			=> $prev_reading,					  		
+					  		'new_reading'			=> ""						   	
+						  );
+
+				//Cast object to array
+				$original = (array) $row;
+
+				//Merge arrays
+				$data[] = array_merge($original, $extra);	
+			}
+		}
+		$this->response($data, 200);			
+	}
+
+	//READING	
+	function unread_get() {
+		$filter = $this->get("filter");		
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}
+		$transformer_id = $para["transformer_id"];
+		$month_of = $para["month_of"];
+		
+		$arr = $this->meter->order_by("customer_id", "asc")
+							->get_many_by(array(
+								"transformer_id"=>$transformer_id,
+								"status"=>1
+							));
+
+		$data = array();
+		if(count($arr)>0){
+			$meterIds = array();
+			foreach ($arr as $row) {
+				array_push($meterIds, $row->id);
+			}
+			$readingRecorded = $this->meter_record->where_in("meter_id", $meterIds)
+											->distinct("meter_id")											
+											->get_many_by("month_of",$month_of);
+			//Unread meter ids
+			$unreadMeterIds = array();
+			if(count($readingRecorded)>0){
+				$readIds = array();												
+				foreach ($readingRecorded as $row) {
+					array_push($readIds, $row->meter_id);					
+				}
+
+				$arrDiff = array_diff($meterIds, $readIds);
+				foreach ($arrDiff as $row) {
+					array_push($unreadMeterIds, $row);
+				}				
+			}else{
+			 	$unreadMeterIds = $meterIds;
+			}
+			
+			$meterList = $this->meter->where_in("id", $unreadMeterIds)
+							->order_by("customer_id", "asc")
+							->get_all();
+			$meterRecord = $this->meter_record->where_in("meter_id", $unreadMeterIds)
+											->distinct("meter_id")
+											->order_by("month_of", "desc")
+											->get_all();	
+			
+			$customer_id = 0;
+			$people = null;
+			foreach ($meterList as $row) {
+				$month_of = "";
+				$prev_reading = "";
+				$reactive_prev_reading = "";
+				if(count($meterRecord)>0){
+					foreach ($meterRecord as $mr) {
+						if($mr->meter_id===$row->id){
+							$month_of = $mr->month_of;
+							$prev_reading = $mr->new_reading;
+							$reactive_prev_reading = $mr->reactive_new_reading;
+							break;
+						}
+					}					
+				}
+
+				if($row->customer_id!==$customer_id){
+					$people = $this->people->get($row->customer_id);
+					$customer_id = $row->customer_id;
+				}
+
+			   	//Add extra fields
+				$extra = array('people'				=> $people,						    
+						    'electricity_boxes'		=> $this->electricity_box->get($row->electricity_box_id),						    
+						    'month_of' 				=> $month_of,
+						    'rcheckNewRound'		=> false,
+						    'reactive_prev_reading'	=> $reactive_prev_reading,				  		
+					  		'reactive_new_reading' 	=> "",
+					  		'checkNewRound'			=> false,
+					  		'prev_reading'			=> $prev_reading,					  		
+					  		'new_reading'			=> ""						   	
+						  );
+
+				//Cast object to array
+				$original = (array) $row;
+
+				//Merge arrays
+				$data[] = array_merge($original, $extra);	
+			}
+		}
+		$this->response($data, 200);			
+	}
+
 
 }//End Of Class
