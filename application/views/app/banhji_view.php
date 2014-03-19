@@ -2512,8 +2512,144 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsDetailView">
+	<div data-role="tabstrip">
+		<ul>
+			<li class="k-state-active">ព័តមានលំអិត</li>
+			<li>ប្រត្តិប័ត្រការណ៍</li>
+			<li>របាយការណ៍</li>
+			<li>Graph</li>
+		</ul>
+		<div>
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td>ឈ្មោះៈ</td>
+						<td><input type="text" data-bind="value: current.name"></td>
+						<td>SKU</td>
+						<td><input type="text" data-bind="value: current.sku"></td>
+					</tr>
+					<tr>
+						<td>តំលៃទិញចូលៈ</td>
+						<td><input type="text" data-bind="value: current.cost"></td>
+						<td>តំលៃលក់ចេញៈ</td>
+						<td><input type="text" data-bind="value: current.price"></td>
+					</tr>
+					<tr>
+						<td>ពិពណ៌នាទិញចូលៈ</td>
+						<td><textarea type="text" data-bind="value: current.purchase_description"></textarea></td>
+						<td>ពិពណ៌នាលក់ចេញៈ</td>
+						<td><textarea type="text" data-bind="value: current.sale_description"></textarea></td>
+					</tr>
+					<tr>
+						<td>សល់ៈ</td>
+						<td><input type="text" data-bind="value: current.quantity"></td>
+						<td>ចំនួនទាបត្រូវទិញចូលៈ</td>
+						<td><input type="text" data-bind="value: current.order_point"></td>
+					</tr>
+					<tr>
+						<td>ប្រភេទៈ</td>
+						<td><input type="text" data-role="dropdownlist" data-bind="source: typesStore, value: current.type.id"
+											   data-text-field="name"
+											   data-value-field="id"></td>
+						<td>រង្វាស់ៈ</td>
+						<td><input type="text" data-role="dropdownlist" data-bind="source: unitMeasure, value: current.measurement"
+											   data-text-field="type"
+											   data-value-field="id"></td>
+					</tr>
+					<tr>
+						<td>គណនីៈ</td>
+						<td><input type="text" data-role="dropdownlist" data-bind="source: accountStore, value: current.general_account.id"
+											   data-text-field="name"
+											   data-value-field="id"></td>
+						<td>គណនីចំណូលៈ</td>
+						<td><input type="text" data-role="dropdownlist" data-bind="source: accountStore, value: current.income_account.id"
+											   data-text-field="name"
+											   data-value-field="id"></td>
+					</tr>
+					<tr>
+						<td>គណនីថ្លៃដើមៈ</td>
+						<td><input type="text" data-role="dropdownlist" data-bind="source: accountStore, value: current.cogs_account.id"
+											   data-text-field="name"
+											   data-value-field="id"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+			<button class="btn" data-bind="visible: shown, click: cancelChange">Cancel</button>
+			<button class="btn" data-bind="visible: shown, click: record">Record</button>
+		</div>
+		<div>
+			transaction
+		</div>
+		<div>
+			report
+		</div>
+		<div>Graph</div>
+	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsNewView">
+	<div class="span8 offset2">
+		<button class="btn pull-right" data-bind="click: closeX">X</button>
+		<table class="table table-bordered">
+			<tbody>
+				<tr>
+					<td>ឈ្មោះៈ</td>
+					<td><input type="text" data-bind="value: current.name"></td>
+					<td>SKU</td>
+					<td><input type="text" data-bind="value: current.sku"></td>
+				</tr>
+				<tr>
+					<td>តំលៃទិញចូលៈ</td>
+					<td><input type="text" data-bind="value: current.cost"></td>
+					<td>តំលៃលក់ចេញៈ</td>
+					<td><input type="text" data-bind="value: current.price"></td>
+				</tr>
+				<tr>
+					<td>ពិពណ៌នាទិញចូលៈ</td>
+					<td><textarea type="text" data-bind="value: current.purchase_description"></textarea></td>
+					<td>ពិពណ៌នាលក់ចេញៈ</td>
+					<td><textarea type="text" data-bind="value: current.sale_description"></textarea></td>
+				</tr>
+				<tr>
+					<td>សល់ៈ</td>
+					<td><input type="text" data-bind="value: current.quantity"></td>
+					<td>ចំនួនទាបត្រូវទិញចូលៈ</td>
+					<td><input type="text" data-bind="value: current.order_point"></td>
+				</tr>
+				<tr>
+					<td>ប្រភេទៈ</td>
+					<td><input type="text" data-role="dropdownlist" data-bind="source: typesStore, value: current.type.id"
+										   data-text-field="name"
+										   data-value-field="id"></td>
+					<td>រង្វាស់ៈ</td>
+					<td><input type="text" data-role="dropdownlist" data-bind="source: unitMeasure, value: current.measurement"
+										   data-text-field="type"
+										   data-value-field="id"></td>
+				</tr>
+				<tr>
+					<td>គណនីៈ</td>
+					<td><input type="text" data-role="dropdownlist" data-bind="source: accountStore, value: current.general_account.id"
+										   data-text-field="name"
+										   data-value-field="id"></td>
+					<td>គណនីចំណូលៈ</td>
+					<td><input type="text" data-role="dropdownlist" data-bind="source: accountStore, value: current.income_account.id"
+										   data-text-field="name"
+										   data-value-field="id"></td>
+				</tr>
+				<tr>
+					<td>គណនីថ្លៃដើមៈ</td>
+					<td><input type="text" data-role="dropdownlist" data-bind="source: accountStore, value: current.cogs_account.id"
+										   data-text-field="name"
+										   data-value-field="id"></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<button class="btn" data-bind="visible: shown, click: cancelChange">Cancel</button>
+		<button class="btn" data-bind="visible: shown, click: record">Record</button>
+	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsReportView">
 </script>
@@ -9249,7 +9385,7 @@
 	}());
 
 	//By Visal ----------------------------------
-	banhji.item = (function($, kendo){
+	banhji.items = (function(){
 		// datastore
 		var itemsStore = new kendo.data.DataSource({
 	        transport: {
@@ -9336,6 +9472,60 @@
             serverFiltering: true,
             serverSorting: true
         });
+		var types = new kendo.data.DataSource({
+			schema: {
+				id: "id"
+			},
+			transport: {
+				read: {
+					url: banhji.baseUrl +"api/inventory_api/item_type",
+					dataType: "json",
+					type: "GET"
+				},
+				parameterMap: function(data, operation) {
+					if(operation!=="read"||data.models) {
+						return { models: data.models };
+					}
+					return data;
+				}
+			}
+		});
+		var um = new kendo.data.DataSource({
+			schema: {
+				id: "id"
+			},
+			transport: {
+				read: {
+					url: banhji.baseUrl +"api/inventory_api/unit_measure",
+					dataType: "json",
+					type: "GET"
+				},
+				parameterMap: function(data, operation) {
+					if(operation!=="read"||data.models) {
+						return { models: data.models };
+					}
+					return data;
+				}
+			}
+		});
+		var accountDS = new kendo.data.DataSource({
+		    transport: {
+			    read: {
+			    	url:banhji.baseUrl + "api/accounting_api/account",
+				    type: "GET",
+				    dataType: "json"
+				}
+		    },
+		    serverFiltering: true,
+		    filter: [
+	        	{ field: "company_id", value: banhji.config.userData.company}
+	        ],
+	        schema: {
+	        	model: {
+	        		id: "id"
+	        	}
+	        }
+	    });
 
 		// viewModel
 		var recordModel = kendo.observable({
@@ -9402,8 +9592,35 @@
 			remove 		 		: function(id) {}			
 		});
 		var itemModel = kendo.observable({
-			items 				: [],
-			dataSource 			: [],
+			items 				: [{
+				sku 	: null,
+				name 	: null,
+				cost 	: null,
+				price 	: null,
+				purchase_description: null,
+				sale_description: null,
+				quantity: null,
+				order_point: null,
+				type 	: {id: 1},
+				general_account: {id: 0},
+				income_account: {id: 0},
+				cogs_account: {id: 0}
+			}],
+			dataStore 			: itemsStore,
+			itemRecords 		: recordModel,
+			typesStore 			: types,
+			unitMeasure 		: um,
+			accountStore 		: accountDS,
+			shown 				: false,
+			closeX 	: function () {
+				kendo.fx($("#purchase-form")).slideIn("up").play();
+				window.history.go(-1);
+				this.cancelChange();
+			},
+			setCurrent 			: function(item){
+				this.set("current", item);
+				this.set("shown", true);
+			},
 			addToItem 			: function() {
 				this.cart.push({
 					item_sku			: null,
@@ -9437,7 +9654,7 @@
 			removeItems 			: function() {
 				this.items.splice(0, this.items.length);
 			},
-			get 				: function(id) {
+			getBy 				: function(id) {
 				var dfd = $.Deferred();
 				itemsStore.filter({field: "id", value: id});
 				itemsStore.bind('requestEnd', function(e){
@@ -9522,15 +9739,23 @@
 					function(data){},
 					function(error){}
 				);
+			},
+			addNew 				: function() {
+				this.get("dataStore").insert(0, this.items);
+				this.setCurrent(this.get("dataStore").at(0));
+			},
+			cancelChange 		: function() {
+				this.get("dataStore").cancelChanges();
+			},
+			record 				: function() {
+				if(this.get("dataStore").hasChanges() && this.get("current").dirty) {
+					this.get("dataStore").sync();
+				}
 			}			
 		});
 		
-		return  {
-					items: itemModel,
-					itemRecords: recordModel,
-					itemsStore: itemsStore
-				};
-	}(jQuery, kendo));
+		return  itemModel;
+	}());
 
 	banhji.inventory = (function(){
 	
@@ -9668,7 +9893,7 @@
 				},
 				transport: {
 					read: {
-						url: measureBaseUri,
+						url: banhji.baseUrl +"api/inventory_api/unit_measure",
 						dataType: "json",
 						type: "GET"
 					},
@@ -16623,10 +16848,14 @@
 		var vendor = new kendo.Layout("#vendor", {model: banhji.vendor});
 		var vendorBill = new kendo.Layout("#paybill", {model: banhji.bill.viewModel});
 		var accounting = new kendo.Layout("#accounting", {model: banhji.account});
+		
+		// items start
 		var items = new kendo.Layout("#itemsView");
-		var itemsDetail = new kendo.View("#itemsDetailView");
-		var itemsNew = new kendo.View("#itemsNewView");
-		var itemsReport = new kendo.View("#itemsReportView");
+		var itemsDetail = new kendo.View("#itemsDetailView", {model: banhji.items});
+		var itemsNew = new kendo.View("#itemsNewView", {model: banhji.items});
+		var itemsReport = new kendo.View("#itemsReportView", {model: banhji.items});
+		// items ends
+		
 		var blank = new kendo.View("#blank");
 		var accDetail = new kendo.View("#account-detail", {model: banhji.account});
 		var acinfo 	= new kendo.Layout("#acInfo", {model:banhji.account});
@@ -16740,7 +16969,7 @@
 			itemNewView: itemNewView,
 			itemEditView: itemEditView,
 			itemDeleteView: itemDeleteView,
-			itemReport: itemReport,
+			// itemReport: itemReport,
 			layMain: layMain,
 			homeIn: homeIn,
 			inventoryItem: inventoryItem,
@@ -19458,8 +19687,7 @@
 			}
 			$("#header").html(template(menu));
 		$("#home-menu").text("Banhji សន្និធិ");
-		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
-		$("#itemDetail").html("<p style='height: 200px;line-height:200px;text-align:center;'>សូវរើសសន្និធិពីបញ្ជីខាងឆ្វេង!</p>");
+		$("#secondary-menu").html("<li><a href='\#items/new'>សន្និធិថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		var $search = $("#searchField");
 		var type = $("#searchOptions").kendoDropDownList({
 			dataSource: [
@@ -19475,7 +19703,7 @@
 			dataValueField: "value",
 			index: 1,
 			change: function(e) {
-				banhji.item.itemsStore.filter([
+				banhji.items.dataStore.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
 					{field: "item_type_id", value: this.value()}
 				]);
@@ -19483,13 +19711,13 @@
 		}).data('kendoDropDownList');
 		$("#search").on('click', function(){
 			if($search.val() !== "") {
-				banhji.item.itemsStore.filter([
+				banhji.items.dataStore.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
 					{field: "name LIKE", value: $search.val()+'%'},
 					{field: "item_type_id", value: type.value()}
 				]);
 				} else {
-				banhji.item.itemsStore.filter([
+				banhji.items.dataStore.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
 					{field: "item_type_id", value: type.value()}
 				]);
@@ -19497,18 +19725,25 @@
 		});
 
 		$("#itemsSidebar").kendoGrid({
-			dataSource: banhji.item.itemsStore,
+			dataSource: banhji.items.dataStore,
 			columns: [
 				{ title: "&nbsp;", field: "name"}
 			],
 			selectable: true,
 			change: function(e) {
-				$("#itemDetail").html("");
 				var tr = this.select();
 				var selected = this.dataItem(tr);
-				console.log(selected.id);
+				banhji.items.setCurrent(selected);
+				banhji.view.items.showIn("#itemDetail", banhji.view.itemDetail);
+				
 			}
 		});
+	});
+
+	banhji.router.route("items/new", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.index);
+		banhji.view.index.showIn("#content", banhji.view.itemNew);
+		banhji.items.addNew();
 	});
 
 	//By Visal -----------------------------------
