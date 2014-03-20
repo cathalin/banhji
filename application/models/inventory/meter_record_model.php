@@ -55,6 +55,30 @@ class Meter_record_model extends MY_Model {
 		return $query->row()->id>0 ? $query->row()->id : 0;
 	}
 
+	//Where in	
+	function where_in($field, $value) {
+		$this->db->where_in($field, $value);		
+		return $this;
+	}
+
+	//Where not in	
+	function where_not_in($field, $value) {
+		$this->db->where_not_in($field, $value);		
+		return $this;
+	}
+
+	//Group by	
+	function group_by($field) {
+		$this->db->group_by($field);		
+		return $this;
+	}
+
+	//Distinct	
+	function distinct($field) {
+		$this->db->distinct($field); 		
+		return $this;
+	}
+
 	//Join select with meter
 	function join_select_meter(){
 		$this->db->select('meter_records.id AS meter_record_id, meter_records.*, meters.*');

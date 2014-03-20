@@ -11,6 +11,12 @@ class Meter_model extends MY_Model {
 		return $this;
 	}
 
+	//Where in	
+	function where_in($field, $value) {
+		$this->db->where_in($field, $value);		
+		return $this;
+	}
+
 	//Join transformer
     function join_transformer(){
     	$this->db->join('transformers', 'transformers.id = meters.transformer_id');

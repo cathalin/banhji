@@ -181,12 +181,12 @@ class Accounting_api extends REST_Controller {
 	
 	//POST
 	function account_post() {		
-		$arr = array('code' 			=> $this->post('code'),
-					 'name' 			=> $this->post('name'),
-					 'account_type_id' 	=> $this->post('account_type_id')['id'],
-					 'description' 		=> $this->post('description'),
-					 'parent_id'		=> $this->post('parent_id')['id']
-		);			
+		// $arr = array('code' 			=> $this->post('code'),
+		// 			 'name' 			=> $this->post('name'),
+		// 			 'account_type_id' 	=> $this->post('account_type_id')['id'],
+		// 			 'description' 		=> $this->post('description'),
+		// 			 'parent_id'		=> $this->post('parent_id')['id']
+		// );			
 		// $id = $this->account->insert($arr);
 		// $data = $this->account->get($id);
 		
