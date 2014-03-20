@@ -2512,8 +2512,7 @@
 		</div>
 	</div>
 </script>
-<<<<<<< HEAD
-=======
+
 <script type="text/x-kendo-template" id="itemsDetailView">
 	<div data-role="tabstrip">
 		<ul>
@@ -2591,7 +2590,6 @@
 		<div>Graph</div>
 	</div>
 </script>
->>>>>>> fb53a309281e90287f06dd84b8ffcd165827bd03
 <script type="text/x-kendo-template" id="itemsNewView">
 	<div class="span8 offset2">
 		<button class="btn pull-right" data-bind="click: closeX">X</button>
@@ -20419,11 +20417,18 @@
 		var index = new kendo.Layout("#index");
 		var missing = new kendo.View("#404", {model: missingModel});
 
-		//By Dararith		
+		//By Dararith
 		var vendor = new kendo.Layout("#vendor", {model: banhji.vendor});
 		var vendorBill = new kendo.Layout("#paybill", {model: banhji.bill.viewModel});
 		var accounting = new kendo.Layout("#accounting", {model: banhji.account});
+		
+		// items start
 		var items = new kendo.Layout("#itemsView");
+		var itemsDetail = new kendo.View("#itemsDetailView", {model: banhji.items});
+		var itemsNew = new kendo.View("#itemsNewView", {model: banhji.items});
+		var itemsReport = new kendo.View("#itemsReportView", {model: banhji.items});
+		// items ends
+		
 		var blank = new kendo.View("#blank");
 		var accDetail = new kendo.View("#account-detail", {model: banhji.account});
 		var acinfo 	= new kendo.Layout("#acInfo", {model:banhji.account});
@@ -20441,6 +20446,7 @@
 		var purchase = new kendo.View("#purchase", {model: banhji.purchase.viewModel});
 		var expense = new kendo.View("#expense", {model: banhji.expense.viewModel});
 		var pmt 	= new kendo.View("#paymentReview", {model: banhji.payment});		
+		var missing = new kendo.View("#404", {model: missingModel});
 		var welcome = new kendo.View("#welcome");
 		var balanceSheet = new kendo.View("#balanceSheet", {model: banhji.balanceSheet});
 		var plReport = new kendo.View("#plReport");
@@ -20468,7 +20474,6 @@
 		var itemNewView = new kendo.View("#itemNewView", { model: banhji.inventory.viewModel });
 		var itemEditView= new kendo.View("#itemEditView", { model: banhji.inventory.viewModel });
 		var itemDeleteView= new kendo.View("#itemDeleteView", { model: banhji.inventory.viewModel });
-		var itemReport = new kendo.View("#itemReport", { model: banhji.inventory.viewModel });
 
 		//BY DAWINE -------------------------------
 		var customer = new kendo.Layout("#customer", {model: banhji.customer.viewModel});
@@ -20506,6 +20511,9 @@
 			vendorSingle: vendorS,
 			vendorNew: vendorNew,
 			items: items,
+			itemsDetail: itemsDetail,
+			itemsNew: itemsNew,
+			itemsReport: itemsReport,
 			vendorHistory: vendorHistory,
 			vendorPayable: vendorPayable,
 			vendorInfo: vendorInfo,
@@ -20540,7 +20548,7 @@
 			itemNewView: itemNewView,
 			itemEditView: itemEditView,
 			itemDeleteView: itemDeleteView,
-			itemReport: itemReport,
+			// itemReport: itemReport,
 			layMain: layMain,
 			homeIn: homeIn,
 			inventoryItem: inventoryItem,
@@ -20813,8 +20821,6 @@
             	}else{
             		banhji.estimate.viewModel.add();
             	}            	
-
-<<<<<<< HEAD
 	            status.text("កត់ត្រាបានសំរេច")
 		            .removeClass("alert alert-error")
 		            .addClass("alert alert-success");
@@ -20825,60 +20831,7 @@
 	        }
 		});		
 	});
-=======
-	
-	/* Banhji Application Views */
-	banhji.view = (function(){
-		var missingModel = kendo.observable({
-			back: function(e) {
-				e.preventDefault();
-				window.history.go(-1);
-			}
-		});
-		//By Dararith
-		var layout = new kendo.Layout("#layout");
-		var index = new kendo.Layout("#index");
-		var vendor = new kendo.Layout("#vendor", {model: banhji.vendor});
-		var vendorBill = new kendo.Layout("#paybill", {model: banhji.bill.viewModel});
-		var accounting = new kendo.Layout("#accounting", {model: banhji.account});
-		
-		// items start
-		var items = new kendo.Layout("#itemsView");
-		var itemsDetail = new kendo.View("#itemsDetailView", {model: banhji.items});
-		var itemsNew = new kendo.View("#itemsNewView", {model: banhji.items});
-		var itemsReport = new kendo.View("#itemsReportView", {model: banhji.items});
-		// items ends
-		
-		var blank = new kendo.View("#blank");
-		var accDetail = new kendo.View("#account-detail", {model: banhji.account});
-		var acinfo 	= new kendo.Layout("#acInfo", {model:banhji.account});
-		var accreate 	= new kendo.View("#createNew", {model:banhji.account});
-		var acedit 	= new kendo.View("#editTmpl", {model:banhji.account});
-		var accountingJournal = new kendo.Layout("accountingJournal");
-		var accountingItems = new kendo.Layout("accountingItems");
-		var vendorS= new kendo.Layout("#vendorSingle", {model: banhji.vendor});
-		var vendorNew= new kendo.View("#vendorNew", {model: banhji.vendor});
-		var vendorHistory= new kendo.View("#vendorHistory", {model: banhji.vendor});
-		var vendorPayable= new kendo.View("#vendorPayable");
-		var vendorInfo = new kendo.Layout("#vendorInfo", {model: banhji.vendor});
-		var vendorInformation = new kendo.View("#supplierInformation", {model: banhji.vendor});
-		var eBill = new kendo.View("#eBill", {model: banhji.eBill.viewModel});
-		var purchase = new kendo.View("#purchase", {model: banhji.purchase.viewModel});
-		var expense = new kendo.View("#expense", {model: banhji.expense.viewModel});
-		var pmt 	= new kendo.View("#paymentReview", {model: banhji.payment});		
-		var missing = new kendo.View("#404", {model: missingModel});
-		var welcome = new kendo.View("#welcome");
-		var balanceSheet = new kendo.View("#balanceSheet", {model: banhji.balanceSheet});
-		var plReport = new kendo.View("#plReport");
-		var journal = new kendo.View("#journalReport", {model: banhji.journal.viewModel});
-		var glReport = new kendo.View("#glReport");
-		var poTracker = new kendo.View("#poTracking");
-		var company = new kendo.View("#companyList");
-		var users = new kendo.View("#userList");
-		var reports = new kendo.View("#reports", {model: banhji.report});
-		var electricity = new kendo.Layout("#transformer");
-		var electricityReport = new kendo.Layout("#electricityReport");
->>>>>>> fb53a309281e90287f06dd84b8ffcd165827bd03
+
 
 	banhji.router.route("gdn(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.gdn);				
@@ -20954,26 +20907,8 @@
 				});
 			} 
 	    });
-
-<<<<<<< HEAD
 		var validator = $("#example").kendoValidator().data("kendoValidator"),
 			status = $("#status");
-=======
-			//Visal
-			inventory: inventory,
-			layoutView: layoutView,
-			itemView: itemView,
-			itemNewView: itemNewView,
-			itemEditView: itemEditView,
-			itemDeleteView: itemDeleteView,
-			// itemReport: itemReport,
-			layMain: layMain,
-			homeIn: homeIn,
-			inventoryItem: inventoryItem,
-			unitMeasure: unitMeasure,
-			loadAdjustment: loadAdjustment,
-			grnView: grnView,
->>>>>>> fb53a309281e90287f06dd84b8ffcd165827bd03
 
 		$("#save").click(function(e){
 			e.preventDefault();
@@ -23454,15 +23389,15 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 
 		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
+		var menu = [];
+		for(var i=0;i<banhji.km.length; i++) {
+			var current = banhji.km[i];
+			if(banhji.config.userData.allowedModules[i]) {
+				menu.push(current);
 			}
-			$("#header").html(template(menu));
-<<<<<<< HEAD
+		}
+		$("#header").html(template(menu));
+
 		$("#secondary-menu").html("<li><a href='\#accounting/items'>Items</a></li><li><a href='\#accounting/journal'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.accountingItems);
 		var itemBaseUri = ARNY.baseUrl +"api/inventory_api/item";
@@ -23472,86 +23407,36 @@
 		var measureBaseUri = ARNY.baseUrl +"api/inventory_api/unit_measure";
 		//datasource
 		var itemsDS = new kendo.data.DataSource({
-				transport: {
-					read: {
-						url : ARNY.baseUrl + "api/inventory_api/item",
-						type: "GET",
-						dataType: "json",
-					},
-					create: {
-						url : ARNY.baseUrl + "api/inventory_api/item",
-						type: "POST",
-						dataType: "json"
-					},
-					update: {
-						url : ARNY.baseUrl + "api/inventory_api/item",
-						type: "PUT",
-						dataType: "json"
-					},	
-					destroy: {
-						url : ARNY.baseUrl + "api/inventory_api/item",
-						type: "DELETE",
-						dataType: "json"
-					},
-					
-				 		
-					parameterMap: function(data, operation) {
-			            if (operation !== "read" && data.models) {
-			                return {models: kendo.stringify(data.models)};
-			            }
-						
-						return data;
-=======
-		$("#home-menu").text("Banhji សន្និធិ");
-		$("#secondary-menu").html("<li><a href='\#items/new'>សន្និធិថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
-		var $search = $("#searchField");
-		var type = $("#searchOptions").kendoDropDownList({
-			dataSource: [
-				{value:"1", text:"សន្និធិ"}, 
-				{value:"2", text:"មិនមែនសន្និធិ"}, 
-				{value:"3", text:"ទ្រព្យសកម្មរយៈពេលវែង"}, 
-				{value:"4", text:"សេវាកម្ម"},
-				{value:"5", text:"ប្រាក់កក់"},
-				{value:"6", text:"អាករលើតំលៃបន្ថែម"},
-				{value:"7", text:"ផ្សេងៗ"}
-			],
-			dataTextField: "text",
-			dataValueField: "value",
-			index: 1,
-			change: function(e) {
-				banhji.items.dataStore.filter([
-					{field: "company_id", value: banhji.config.userData['company']},
-					{field: "item_type_id", value: this.value()}
-				]);
-			}
-		}).data('kendoDropDownList');
-		$("#search").on('click', function(){
-			if($search.val() !== "") {
-				banhji.items.dataStore.filter([
-					{field: "company_id", value: banhji.config.userData['company']},
-					{field: "name LIKE", value: $search.val()+'%'},
-					{field: "item_type_id", value: type.value()}
-				]);
-				} else {
-				banhji.items.dataStore.filter([
-					{field: "company_id", value: banhji.config.userData['company']},
-					{field: "item_type_id", value: type.value()}
-				]);
-			}
-		});
-
-		$("#itemsSidebar").kendoGrid({
-			dataSource: banhji.items.dataStore,
-			columns: [
-				{ title: "&nbsp;", field: "name"}
-			],
-			selectable: true,
-			change: function(e) {
-				var tr = this.select();
-				var selected = this.dataItem(tr);
-				banhji.items.setCurrent(selected);
-				banhji.view.items.showIn("#itemDetail", banhji.view.itemDetail);
+			transport: {
+				read: {
+					url : ARNY.baseUrl + "api/inventory_api/item",
+					type: "GET",
+					dataType: "json",
+				},
+				create: {
+					url : ARNY.baseUrl + "api/inventory_api/item",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url : ARNY.baseUrl + "api/inventory_api/item",
+					type: "PUT",
+					dataType: "json"
+				},	
+				destroy: {
+					url : ARNY.baseUrl + "api/inventory_api/item",
+					type: "DELETE",
+					dataType: "json"
+				},
 				
+			 		
+				parameterMap: function(data, operation) {
+		            if (operation !== "read" && data.models) {
+		                return {models: kendo.stringify(data.models)};
+		            }
+					
+					return data;
+				}
 			}
 		});
 	});
@@ -23604,214 +23489,6 @@
 		}
 		$("#header").html(template(menu));
 		banhji.inventory.viewModel.setCurrent(id);
-
-	});
->>>>>>> fb53a309281e90287f06dd84b8ffcd165827bd03
-
-			        }
-				},
-				batch: false,
-				pageSize: 20,
-				schema: {
-						model: {
-						id : "id"
-					}		 
-				},
-				requestEnd: function(e) {
-					if(e.type==="create") {
-						itemModel.empty();
-						alert("Created");
-					} else if(e.type==="update") {
-						alert("updated")
-					}
-				}		
-			});	
-
-		var recordsDS = new kendo.data.DataSource({
-			schema: {
-				id: "id",
-				data: "records",
-				total: "total"
-			},
-			transport: {
-				read: {
-					url: itemRecordBaseUri,
-					dataType: "json",
-					type: "GET"
-				},
-				parameterMap: function(data, operation) {
-					if(operation!=="read"||data.models) {
-						return { models: data.models };
-					}
-					return data;
-				}
-			},
-			serverFiltering: true,
-			serverPaging: true,
-			pageSize: 20
-		});	
-
-		var accountDS = new kendo.data.DataSource({
-			schema: {
-				id: "id"
-			},
-			transport: {
-				read: {
-					url: accountBaseUri,
-					dataType: "json",
-					type: "GET"
-				},
-				parameterMap: function(data, operation) {
-					if(operation!=="read"||data.models) {
-						return { models: data.models };
-					}
-					return data;
-				}
-			}
-		});	
-
-		var typeDS = new kendo.data.DataSource({
-			schema: {
-				id: "id"
-			},
-			transport: {
-				read: {
-					url: typeBaseUri,
-					dataType: "json",
-					type: "GET"
-				},
-				parameterMap: function(data, operation) {
-					if(operation!=="read"||data.models) {
-						return { models: data.models };
-					}
-					return data;
-				}
-			}
-		});
-
-		var measureDS = new kendo.data.DataSource({
-			schema: {
-				id: "id"
-			},
-			transport: {
-				read: {
-					url: measureBaseUri,
-					dataType: "json",
-					type: "GET"
-				},
-				parameterMap: function(data, operation) {
-					if(operation!=="read"||data.models) {
-						return { models: data.models };
-					}
-					return data;
-				}
-			}
-		});
-
-		//Model
-		var itemModel = kendo.observable({
-			itemRecords 	: recordsDS,
-			accounts 		: accountDS,
-			types 			: typeDS,
-			measures 		: measureDS,
-			isEditable 		: false,
-			setCurrent 		: function(id) {
-				this.set("current", itemsDS.get(id));
-			},
-			sku 			: "",
-			name 			: "",
-			measure_id  	: "",
-			cost 			: "",
-			price 			: "",
-			sale_descript   : "",
-			purchase_descript: "",
-			type 			: "",
-			account 		: "",
-			cogs_account 	: "",
-			income_account 	: "",
-			status 			: "",
-			empty 			: function() {
-				this.set("sku", "");
-				this.set("name", "");
-				this.set("measure_id", "");
-				this.set("cost", "");
-				this.set("price", "");
-				this.set("type", "");this
-				this.set("sale_descript", "");
-				this.set("purchase_descript", "");
-				this.set("account", "");
-				this.set("income_account", "");
-				this.set("cogs_account", "");
-				this.set("status", "");
-			},
-			record 			: function(e) {
-				var validator = $(e.currentTarget).parent();
-				var validated = validator.kendoValidator().data("kendoValidator");
-				if(validated.validate()){
-					itemsDS.add({
-						item_sku : this.get("sku"),
-						name 	 : this.get("name"),
-						unit_measure_id : this.get("measure_id"),
-						cost 	 : this.get("cost"),
-						price 	 : this.get("price"),
-						item_type_id: this.get("type"),
-						sale_description : this.get("sale_descript"),
-						purchase_description: this.get("purchase_descript"),
-						general_account_id : this.get("account"),
-						income_account_id : this.get("income_account"),
-						cogs_account_id : this.get("cogs_account"),
-						status: this.get("status")
-					});
-
-					itemsDS.sync();
-				}	
-			},
-			update 			: function(e) {
-				var validator = $(e.currentTarget).parent();
-				var validated = validator.kendoValidator().data("kendoValidator");
-				if(validated.validate()){
-					var model = itemsDS.get(this.get("current").id);
-					model.set("item_sku", this.get("sku"));
-					model.set("name", this.get("name"));
-					model.set("unit_measure_id", this.get("measure_id"));
-					model.set("cost", this.get("cost"));
-					model.set("price", this.get("price"));
-					model.set("item_type_id", this.get("type"));
-					model.set("sale_description", this.get("sale_descript"));
-					model.set("purchase_description", this.get("purchase_descript"));
-					model.set("general_account_id", this.get("account"));
-					model.set("income_account_id", this.get("income_account"));
-					model.set("cogs_account_id", this.get("cogs_account"));
-					model.set("status", this.get("status"));
-
-					itemsDS.sync();
-				}	
-			}
-		});
-
-		var measurementModel = new kendo.observable({
-		});
-
-		//view
-		var layoutView 	= new kendo.Layout("layoutView", { model: itemModel });
-		var itemView 	= new kendo.View("itemView", { model: itemModel });
-		var itemNewView = new kendo.View("itemNewView", { model: itemModel });
-		var itemEditView= new kendo.View("itemEditView", { model: itemModel });
-		var itemDeleteView= new kendo.View("itemDeleteView", { model: itemModel });
-
-		var itemGrid = $("#items").kendoListView({
-			dataSource: itemsDS,
-			template: kendo.template($("#asideTmpl").html()),
-			selectable: true,
-			change: function() {
-				var uid = this.select().data('uid');
-				var model = this.dataSource.getByUid(uid);
-				recordsDS.filter({value: model.id});
-				itemRouter.navigate("/item/"+model.id);
-				itemModel.set("isEditable", true);
-			}
-		}).data("kendoListView");
-
 	});
 
 	banhji.router.route("pmt/:id", function(id){
@@ -23882,7 +23559,7 @@
 			dataValueField: "value",
 			index: 1,
 			change: function(e) {
-				banhji.item.itemsStore.filter([
+				banhji.items.itemsStore.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
 					{field: "item_type_id", value: this.value()}
 				]);
@@ -23890,13 +23567,13 @@
 		}).data('kendoDropDownList');
 		$("#search").on('click', function(){
 			if($search.val() !== "") {
-				banhji.item.itemsStore.filter([
+				banhji.items.dataStore.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
 					{field: "name LIKE", value: $search.val()+'%'},
 					{field: "item_type_id", value: type.value()}
 				]);
 				} else {
-				banhji.item.itemsStore.filter([
+				banhji.item.dataStore.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
 					{field: "item_type_id", value: type.value()}
 				]);
@@ -23904,7 +23581,7 @@
 		});
 
 		$("#itemsSidebar").kendoGrid({
-			dataSource: banhji.item.itemsStore,
+			dataSource: banhji.items.dataStore,
 			columns: [
 				{ title: "&nbsp;", field: "name"}
 			],
@@ -23912,7 +23589,8 @@
 			change: function(e) {
 				var tr = this.select();
 				var selected = this.dataItem(tr);
-				console.log(selected.id);
+				banhji.items.setCurrent('current', selected);
+				banhji.view.items.showIn("#itemDetail", banhji.view.itemsDetail);
 			}
 		});
 	});
