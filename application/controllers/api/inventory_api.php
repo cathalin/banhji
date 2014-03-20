@@ -51,6 +51,7 @@ class Inventory_api extends REST_Controller {
 					'item_sku' 				=> $row->item_sku,
 					'name' 			   		=> $row->name,
 					'quantity' 	    		=> $row->quantity,
+					'order_point'			=> $row->order_point,
 					'cost' 	    			=> $row->cost,
 					'price' 	    		=> $row->price,
 					'purchase_description'  => $row->purchase_description,					 
