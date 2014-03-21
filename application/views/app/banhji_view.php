@@ -20614,10 +20614,10 @@
 									pay_amount 		: kendo.parseFloat(data.total)/kendo.parseFloat(data.rate),
 									rate 			: data.rate,
 									sub_code 		: data.sub_code,
-									customer_id 	: this.get("customer").id,
-									account_receiveable_id: this.get("customer").account_receiveable_id,
-									class_id 		: this.get("customer").class_id,
-									balance 		: this.get("customer").balance 
+									customer_id 	: data.people.id,
+									account_receiveable_id: data.people.account_receiveable_id,
+									class_id 		: data.people.class_id,
+									balance 		: data.people.balance 
 								});
 
 								if(i>0){
