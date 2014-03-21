@@ -142,7 +142,8 @@ var themerPrimaryColor = primaryColor;
 </script>
 
 
-<script src="<?php echo base_url(JS."kendo.all.min.js");?>"></script>
+<script src="<?php echo base_url(JS."kendo.dataviz.min.js");?>"></script>
+<script src="<?php echo base_url(JS."kendo.web.min.js");?>"></script>
 <script src="<?php echo base_url(JS."cultures/kendo.culture.km-KH.min.js");?>"></script>
 
 <!--start kendo localization in Khmer-->
