@@ -232,10 +232,9 @@ class Invoices extends REST_Controller {
 	//UPDATE BATCH
 	function invoice_batch_put(){
 		$ids = json_decode($this->put("ids"));
-	  	foreach ($ids as $key => $value) {
-	  		$data[] = $value;	  				 				  	
-	  	}
-	  	$result = $this->invoice->update_many($data, array('status'=>1));
+	  	foreach ($ids as $row) {
+	  		$result = $this->invoice->update($row->id, array("status"=>$row->status));	  				 				  	
+	  	}	  	
 		$this->response($result, 200);		
 	}
 
@@ -321,7 +320,8 @@ class Invoices extends REST_Controller {
 				   	$total  	 = $totalAmount - $totalPaid;
 
 					$extra = array(	'total_paid' 		=> $totalPaid,   
-								   	'total' 			=> $total								   								   	
+								   	'total' 			=> $total,
+								   	'people'			=> $this->people->get($row->customer_id)								   								   	
 							  	);
 
 					//Cast object to array
