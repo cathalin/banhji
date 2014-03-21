@@ -58,15 +58,18 @@ class Payments extends REST_Controller {
 	function payment_post() {
 		$data = array('invoice_id' 		=> $this->post('invoice_id'),					
 					'amount_paid' 		=> $this->post('amount_paid'),
+					'rate' 				=> $this->post('rate'),
 					'discount' 			=> $this->post('discount'),
 					'fine' 				=> $this->post('fine'),
+					'sub_code'			=> $this->post('sub_code'),
 					'payment_date' 		=> $this->post('payment_date'),
 					'payment_method_id'	=> $this->post('payment_method_id'),
 					'check_no' 			=> $this->post('check_no'),
 					'cash_account_id' 	=> $this->post('cash_account_id'),
 					'payment_note' 		=> $this->post('payment_note'),
 					'cashier' 			=> $this->post('cashier'),
-					'customer_id' 		=> $this->post('customer_id')					 
+					'customer_id' 		=> $this->post('customer_id'),
+					'class_id'			=> $this->post('class_id')					 
 		);
 
 		//Update invoice's status

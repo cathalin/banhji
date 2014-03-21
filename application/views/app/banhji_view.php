@@ -20336,6 +20336,7 @@
 			customerBalanceList	: [],			
 			
 			pageLoad 			: function(){
+				this.clear();
 				this.loadPaymentForCashier();
 			},
 			customerSearch 		: function(){
@@ -20373,10 +20374,55 @@
 		    		var response = e.response;
     				var type = e.type;
 
-					if(type==="read"){
-						var d = response[0];											
-						self.set("invoices", response);
-			    		self.addInvoiceList();	
+					if(type==="read" && response.length>0){
+						var total = kendo.parseFloat(self.get("total"));
+				    	var tpay = kendo.parseFloat(self.get("pay_amount"));				    	
+			    		
+				    	$.each(response, function(index, data){
+				    		var isExisting = false;
+					    	$.each(self.get("invoiceList"), function(indexx, datax){			    			
+				    			if(data.id==datax.id){
+				    				isExisting = true;
+				    				return false;
+				    			}
+				    		});
+
+					    	if(isExisting==false){
+					    		var t = kendo.parseFloat(data.total)/kendo.parseFloat(data.rate);				    		
+				    			total += t;
+				    			tpay += t;
+				    							    			
+								self.get("invoiceList").push({				
+									id 				: data.id,
+									isPay 			: true,				
+									issued_date 	: data.issued_date,
+									fullname 		: data.people.number +' '+ data.people.surname +' '+ data.people.name,							
+									number			: data.number,				
+									total 			: t,
+									pay_amount 		: t,
+									rate 			: data.rate,
+									sub_code 		: data.sub_code,
+									customer_id 	: data.customer_id,
+									account_receiveable_id: data.people.account_receiveable_id,
+									class_id 		: data.people.class_id,
+									balance 		: data.people.balance 
+								});
+
+								//Highlight first row
+								if(index===0){									
+									$("#rowGrid-"+data.id).addClass("alert alert-error");
+								}
+							}
+														
+						});				    	
+
+						var remain = total - tpay;
+						    	
+				    	self.set("pay_amount", kendo.toString(tpay, "c"));    	
+				    	self.set("total", kendo.toString(total, "c"));
+				    	self.set("remain", kendo.toString(remain,"c"));
+				    	
+				    	self.autoIncreaseNo();	
 				  	}			  	  			  	
 				});	
 			},
@@ -20426,10 +20472,10 @@
 							pay_amount 		: kendo.parseFloat(data.total)/kendo.parseFloat(data.rate),
 							rate 			: data.rate,
 							sub_code 		: data.sub_code,
-							customer_id 	: this.get("customer").id,
-							account_receiveable_id: this.get("customer").account_receiveable_id,
-							class_id 		: this.get("customer").class_id,
-							balance 		: this.get("customer").balance 
+							customer_id 	: data.people.id,
+							account_receiveable_id: data.people.account_receiveable_id,
+							class_id 		: data.people.class_id,
+							balance 		: data.people.balance 
 						});
 
 						if(i>0){
@@ -20664,6 +20710,8 @@
 		});
 
 		var singleModel = kendo.observable({
+			sub_code 			: "km-KH",
+
 			total_customer 		: 0,
 			total_payment 		: kendo.toString(0,"c"),
 			searchField 		: "",	
@@ -20697,67 +20745,52 @@
 			customerBalanceList	: [],			
 			
 			pageLoad 			: function(invoice_id){
-				this.loadInvoice(invoice_id);
+				this.clear();
+				this.loadInvoice(invoice_id);				
 			},			
 			loadInvoice 		: function(id){
 				var self = this;
 				
-				invoiceDS.filter({
-					filters: [
-						{ field: "id", value: id },				
-						{ field: "status", value: 0 }				
-					]
-				});
+				invoiceDS.filter({ field: "id", value: id });
 				invoiceDS.bind("requestEnd", function(e){
 		    		var response = e.response;
     				var type = e.type;
 
-					if(type==="read"){
-						var d = response[0];											
-						var total = kendo.parseFloat(this.get("total"));
-				    	var tpay = kendo.parseFloat(this.get("pay_amount"));
+					if(type==="read" && response.length>0){																	
+						var total = kendo.parseFloat(self.get("total"));
+				    	var tpay = kendo.parseFloat(self.get("pay_amount"));
+				    	var subCode = "km-KH";
 				    	
-				    	$.each(d, function(index, data){						    
-				    		var isExisting = false;				    		    		
-				    		$.each(this.get("invoiceList"), function(indexx, datax){				    			
-				    			if(data.id==datax.id){
-				    				isExisting = true;
-				    				break;
-				    			}
-				    		});
-
-				    		if(isExisting==false){
-				    			total += parseFloat(data.total);
-				    			tpay += parseFloat(data.total);
-				    			
-								this.invoiceList.push({				
-									id 				: data.id,
-									isPay 			: true,				
-									issued_date 	: data.issued_date,							
-									number			: data.number,				
-									total 			: kendo.parseFloat(data.total)/kendo.parseFloat(data.rate),
-									pay_amount 		: kendo.parseFloat(data.total)/kendo.parseFloat(data.rate),
-									rate 			: data.rate,
-									sub_code 		: data.sub_code,
-									customer_id 	: data.people.id,
-									account_receiveable_id: data.people.account_receiveable_id,
-									class_id 		: data.people.class_id,
-									balance 		: data.people.balance 
-								});
-
-								if(i>0){
-									$("#rowGrid-"+data.id).addClass("alert alert-error");
-								}
-							}
+				    	$.each(response, function(index, data){
+				    		var t = kendo.parseFloat(data.total)/kendo.parseFloat(data.rate);				    		
+			    			total += t;
+			    			tpay += t;
+			    							    			
+							self.get("invoiceList").push({				
+								id 				: data.id,
+								isPay 			: true,				
+								issued_date 	: data.issued_date,							
+								number			: data.number,				
+								total 			: t,
+								pay_amount 		: t,
+								rate 			: data.rate,
+								sub_code 		: data.sub_code,
+								customer_id 	: data.customer_id,
+								account_receiveable_id: data.people.account_receiveable_id,
+								class_id 		: data.people.class_id,
+								balance 		: data.people.balance 
+							});
+							self.set("customer", data.people);
+							subCode = data.sub_code;
 						});
 
 						var remain = total - tpay;
 						    	
-				    	this.set("pay_amount", kendo.toString(tpay, "c0"));    	
-				    	this.set("total", kendo.toString(total, "c0"));
-				    	this.set("remain", kendo.toString(remain,"c0"));
+				    	self.set("pay_amount", kendo.toString(tpay, "c", subCode));    	
+				    	self.set("total", kendo.toString(total, "c", subCode));
+				    	self.set("remain", kendo.toString(remain,"c", subCode));
 				    	
-				    	this.autoIncreaseNo();	
+				    	self.autoIncreaseNo();	
 				  	}			  	  			  	
 				});	
 			},			
@@ -20770,18 +20803,19 @@
 				   $(element).text(index + 1); 
 				});
 			},
-			change				: function(){		
+			change				: function(){
+				var subCode = "km-KH";		
 				var total = 0;		
 			    var tpay = 0;	    
-				for(var i=0; i < this.invoiceList.length; i++){
-					var data = this.invoiceList[i];
-					total += kendo.parseFloat(data.total)*kendo.parseFloat(data.rate);
-			    	tpay += kendo.parseFloat(data.pay_amount)*kendo.parseFloat(data.rate);			    	
-				}
-				this.set("total", kendo.toString(total, "c0"));    	   	    	
-		    	this.set("pay_amount", kendo.toString(tpay, "c0"));
+				$.each(this.get("invoiceList"), function(index, data){
+					total += kendo.parseFloat(data.total);
+			    	tpay += kendo.parseFloat(data.pay_amount);
+			    	subCode = data.sub_code;			    	
+				});
+				this.set("total", kendo.toString(total, "c", subCode));    	   	    	
+		    	this.set("pay_amount", kendo.toString(tpay, "c", subCode));
 		    	var remain = (total + kendo.parseFloat(this.get("fine"))) - (tpay + kendo.parseFloat(this.get("discount")));
-		    	this.set("remain", kendo.toString(remain, "c0"));
+		    	this.set("remain", kendo.toString(remain, "c", subCode));
 
 		    	this.autoIncreaseNo();    	
 			},	
@@ -20806,52 +20840,56 @@
 		    	this.change();
 		    },
 			add 		 		: function(){
-				if(kendo.parseFloat(this.get("pay_amount"))>0){				
+				var self = this;				
+				var t = this.get("total");
+		        var tt = Number(t.replace(/[^0-9\.]+/g,""));
+
+		        if(tt>0){		        				
 					var ids = new Array();
 					var arr = new Array();
 
-					for (var i=0; i<this.invoiceList.length; i++){
-						var data = this.invoiceList[i];
-						
+					$.each(this.get("invoiceList"), function(index, data){						
 						if(data.pay_amount > 0){				
 							if(data.pay_amount >= data.total){
 								ids.push({id:data.id, status: 1}); //Paid
 							}else{
 								ids.push({id:data.id, status: 2}); //Partially Paid
-							}
+							}							
 													
 							//Add new invoice payment
-							this.paymentList.push({
+							self.paymentList.push({
 								invoice_id 			: data.id,								
-								amount_paid 		: kendo.parseFloat(data.pay_amount)*kendo.parseFloat(data.rate),
-								discount 			: kendo.parseFloat(this.get("discount"))*kendo.parseFloat(data.rate),
-								fine 				: kendo.parseFloat(this.get("fine"))*kendo.parseFloat(data.rate),			
+								amount_paid 		: tt*kendo.parseFloat(data.rate),
+								rate 				: data.rate,
+								discount 			: kendo.parseFloat(self.get("discount"))*kendo.parseFloat(data.rate),
+								fine 				: kendo.parseFloat(self.get("fine"))*kendo.parseFloat(data.rate),
+								sub_code 			: data.sub_code,			
 								payment_date		: kendo.toString(this.get("payment_date"), "yyyy-MM-dd"),
-								payment_method_id	: this.get("payment_method_id"),
-								check_no 			: this.get("check_no"),							  	  
-								cash_account_id 	: this.get("cash_account_id"),
-								payment_note		: this.get("payment_note"),
-								cashier				: this.get("cashier"),
+								payment_method_id	: self.get("payment_method_id"),
+								check_no 			: self.get("check_no"),							  	  
+								cash_account_id 	: self.get("cash_account_id"),
+								payment_note		: self.get("payment_note"),
+								cashier				: self.get("cashier"),
 								customer_id			: data.customer_id,
-								class_id 			: this.get("class_id")													
+								class_id 			: self.get("class_id")													
 							});
 
 							//Add new customer balances to []
 							var balance = 0;										
 							var index = jQuery.inArray(data.customer_id, arr);					
 							if(index > -1){ //If a customer has two invoices											
-								balance = kendo.parseFloat(this.customerBalanceList[index].balance) - kendo.parseFloat(data.pay_amount);
-								this.customerBalanceList[index].set("balance", balance);
+								balance = kendo.parseFloat(self.customerBalanceList[index].balance) - kendo.parseFloat(data.pay_amount);
+								self.customerBalanceList[index].set("balance", balance);
 							}else{
 								arr.push(data.customer_id);
 								balance = kendo.parseFloat(data.balance) - kendo.parseFloat(data.pay_amount);
-								this.customerBalanceList.push({
+								self.customerBalanceList.push({
 									id			: kendo.parseInt(data.customer_id),
 									balance 	: balance
 								});	
 							}
 						}		
-					}
+					});
 
 					//Add payments to database
 					if(this.get("paymentList").length>0){
@@ -20873,10 +20911,8 @@
 								//var data = response.d;			  
 							}
 						});
-					}			
-				}else{
-					alert("ពុំមានការបង់ប្រាក់ទេ");
-				}		
+					}
+				}							
 			},
 			addJournal 			: function(){
 				var self = this;				
@@ -20967,11 +21003,11 @@
 			},			
 			clear 				: function() {
 				this.set("check_no", "");				
-				this.set("total", kendo.toString(0,"c0"));
+				this.set("total", kendo.toString(0,"c"));
 				this.set("discount", 0);
 				this.set("fine", 0);		
-				this.set("pay_amount", kendo.toString(0,"c0"));
-				this.set("remain", kendo.toString(0,"c0"));
+				this.set("pay_amount", kendo.toString(0,"c"));
+				this.set("remain", kendo.toString(0,"c"));
 
 				this.set("invoiceList", []);
 				this.set("paymentList", []);
@@ -21609,14 +21645,13 @@
 		banhji.cashier.singleModel.pageLoad(id);		
 		
 		var validator = $("#example").kendoValidator().data("kendoValidator"),
-			status = $("#status");						
+			status = $("#status");
 
 		$("#save").click(function(e){
 			e.preventDefault();			
-			var payAmount = kendo.parseFloat(banhji.cashier.viewModel.get("pay_amount"));
 
-            if(validator.validate() && payAmount>0){
-            	banhji.cashier.viewModel.add();           	
+            if(validator.validate()){
+            	banhji.cashier.singleModel.add();           	
             	
 	            status.text("កត់ត្រាបានសំរេច")
 		            .removeClass("alert alert-error")
