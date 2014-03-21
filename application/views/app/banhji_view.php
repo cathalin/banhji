@@ -20439,58 +20439,7 @@
 						self.set("total_payment", kendo.toString(kendo.parseFloat(response.total_payment), 'c0'));
 					}
 				});
-			},	
-			addInvoiceList 		: function(){		
-		    	var total = kendo.parseFloat(this.get("total"));
-		    	var tpay = kendo.parseFloat(this.get("pay_amount"));
-		    	var invs = this.get("invoices");
-		    	var fullname = this.get("customer").number + " " + this.get("customer").surname + " " + this.get("customer").name;
-		    	
-				for (var i=0; i< invs.length; i++) {
-				    var data = invs[i];
-				    
-		    		var isExisting = false;    		
-		    		for (var j=0;j<this.invoiceList.length;j++) {
-		    			var dj = this.invoiceList[j];
-		    			if(data.id==dj.id){
-		    				isExisting = true;
-		    				break;
-		    			}
-		    		}
-
-		    		if(isExisting==false){
-		    			total += parseFloat(data.total);
-		    			tpay += parseFloat(data.total);
-		    			
-						this.invoiceList.push({				
-							id 				: data.id,
-							isPay 			: true,				
-							issued_date 	: data.issued_date,
-							fullname 		: fullname,
-							number			: data.number,				
-							total 			: kendo.parseFloat(data.total)/kendo.parseFloat(data.rate),
-							pay_amount 		: kendo.parseFloat(data.total)/kendo.parseFloat(data.rate),
-							rate 			: data.rate,
-							sub_code 		: data.sub_code,
-							customer_id 	: data.people.id,
-							account_receiveable_id: data.people.account_receiveable_id,
-							class_id 		: data.people.class_id,
-							balance 		: data.people.balance 
-						});
-
-						if(i>0){
-							$("#rowGrid-"+data.id).addClass("alert alert-error");
-						}
-					}
-				}
-				var remain = total - tpay;
-				    	
-		    	this.set("pay_amount", kendo.toString(tpay, "c0"));    	
-		    	this.set("total", kendo.toString(total, "c0"));
-		    	this.set("remain", kendo.toString(remain,"c0"));
-		    	
-		    	this.autoIncreaseNo();
-			},
+			},			
 			autoIncreaseNo 		: function(){
 				$(".sno").each(function(index,element){                 
 				   $(element).text(index + 1); 
