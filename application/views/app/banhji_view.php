@@ -10217,9 +10217,46 @@
 	            serverFiltering: true,
 	            serverSorting: true
 			}),
-			getManyBy 	: function(itemId) {},
-			query 		: function(query) {},
-			getById 	: function(itemId) {}
+			getItem 	: function(itemId) {
+				var dfd = $.Deferred();
+				this.dataSource.filter({ field: item_id, value: itemId});
+				this.dataSource.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("Could not find");
+					}
+				});
+				return dfd.promise();
+			},
+			getBy 	: function(itemId) {
+				var dfd = $.Deferred();
+				if(itemId) {
+					this.dataSource.filter({ field: item_id, value: itemId});
+				} else {
+					this.dataSource.filter({ field: item_id, value: itemId});
+				}
+				this.dataSource.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("Could not find");
+					}
+				});
+				return dfd.promise();
+			},
+			query 		: function(query) {
+				var dfd = $.Deferred();
+				this.itemReqStore.query(query);
+				this.itemReqStore.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("Could not find");
+					}
+				});
+				return dfd.promise();
+			}
 		});
 
 		return viewModel;
@@ -10593,6 +10630,16 @@
 				if(this.get("dataStore").hasChanges() && this.get("current").dirty) {
 					this.get("dataStore").sync();
 				}
+			},
+			getReport 			: function(itemId) {
+				var reports = [];
+				// requests
+
+				// po
+
+				// so
+
+				// grn
 			}			
 		});
 		
