@@ -312,7 +312,9 @@ class Invoices extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}			
-			$arr = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))->get_many_by($para);							
+			$arr = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
+								->where_in('status', array(0,2))
+								->get_many_by($para);							
 			if(count($arr) >0){
 				foreach($arr as $row) {
 					$totalAmount = $row->amount;										   

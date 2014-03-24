@@ -6118,7 +6118,7 @@
 					<div class="row-fluid">
 						<div class="span4">
 							<div class="innerAll padding-bottom-none-phone">
-								<a href="#" class="widget-stats widget-stats-gray widget-stats-4"> 
+								<a href="javascript:void(0)" class="widget-stats widget-stats-gray widget-stats-4"> 
 									<span class="txt">អតិថិជន</span>
 									<span class="count" data-bind="text: total_customer"></span>
 									<span class="glyphicons user"><i></i></span>
@@ -6130,8 +6130,8 @@
 
 						<div class="span4">
 							<div class="innerAll padding-bottom-none-phone">
-								<a href="#" class="widget-stats widget-stats-primary widget-stats-4">
-									<span class="txt">បង់ប្រាក់</span>
+								<a href="#dailyPayment" class="widget-stats widget-stats-primary widget-stats-4">
+									<span class="txt">បង់ប្រាក់ប្រចាំថ្ងៃ</span>
 									<span class="count"><span data-bind="text: total_payment" style="font-size: 35px;"></span></span>
 									<span class="glyphicons coins"><i></i></span>
 									<div class="clearfix"></div>
@@ -6142,7 +6142,7 @@
 
 						<div class="span4">
 							<div class="innerAll padding-bottom-none-phone">
-								<a href="<?php echo base_url(); ?>customer/daily_payment" class="widget-stats widget-stats-inverse widget-stats-5">
+								<a href="#reconcile" class="widget-stats widget-stats-inverse widget-stats-5">
 									<span class="glyphicons refresh"><i></i></span>
 									<span class="txt">ផ្ទៀងផ្ទាត់ &<br><br> ផ្ទេរសាច់ប្រាក់</span>
 									<div class="clearfix"></div>
@@ -6439,6 +6439,251 @@
 					style="width: 120px;">
 			<i class="icon-trash" data-bind="events: { click: remove "></i>						
 		</td>				
+    </tr>   
+</script>
+
+<script id="dailyPayment" type="text/x-kendo-template">
+	<div id="slide-form">
+		<div class="row-fluid">
+			<div class="span12">
+				<div id="example" class="k-content">
+					<div align="right">			        				        	
+			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
+					</div>
+					
+					<div>
+						<input data-role="datepicker" data-bind="value: payment_date_from" data-format="dd-MM-yyyy" placeHolder="ចាប់ពី" />
+						<input data-role="datepicker" data-bind="value: payment_date_to" data-format="dd-MM-yyyy" placeHolder="ដល់" />
+						<button type="button" class="btn btn-default" data-bind="click: searchPayment"><i class="icon-search"></i></button>
+					</div>
+
+					<div align="center">
+						<h4>របាយការណ៍ទទួលប្រាក់</h4>
+						ថ្ងៃទី
+						<span data-bind="text: payment_date_from_str"></span>																	
+						<span data-bind="text: payment_date_to_str"></span>
+						<br>									
+						ដោយ
+						<span data-bind="text: cashier_name"></span>									
+					</div>
+
+					<br>
+
+					<div data-role="grid" data-bind="source: paymentList"
+						data-pageable="true"
+				        data-auto-bind="false" data-row-template="dailyPaymentRowTemplate"                  
+				        data-columns='[	                
+				            { title: "ថ្ងៃបង់ប្រាក់" },				            
+				            { title: "ឈ្មោះ" },						                
+				            { title: "លេខវិក្កយបត្រ" },
+				            { title: "ទឹកប្រាក់" },	                    	                     
+				            { title: "ប្រាក់ទទួលបាន" }	                    	                    
+				            ]'>
+					</div>
+
+					<br>
+
+					<div class="row-fluid">				
+						<div class="span4 offset8">
+							<div class="innerAll padding-bottom-none-phone">
+								<a href="#" class="widget-stats widget-stats-primary widget-stats-4">
+									<span class="txt">សរុប</span>
+									<span class="count"><span data-bind="text: totalPaid" style="font-size: 35px;"></span></span>
+									<span class="glyphicons coins"><i></i></span>
+									<div class="clearfix"></div>
+									<i class="icon-play-circle"></i>
+								</a>
+							</div>
+						</div>				
+					</div>
+				</div><!-- //End div example-->
+			</div><!-- //End div span12-->
+		</div><!-- //End div row-fluid-->
+	</div>	
+</script>
+<script id="dailyPaymentRowTemplate" type="text/x-kendo-tmpl">		
+	<tr>					
+		<td>#:kendo.toString(new Date(payment_date), "dd-MM-yyyy")#</td>
+		<td>#:customers.number# #:customers.surname# #:customers.name#</td>		
+		<td>#:invoices.number#</td>				
+		<td align="right">#:kendo.toString(kendo.parseFloat(invoices.amount), "c")#</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(amount_paid), "c")#</td>				
+    </tr>   
+</script>
+<script id="reconcile" type="text/x-kendo-template">
+	<div id="slide-form">
+		<div class="row-fluid">
+			<div class="span12">
+				<div id="example" class="k-content">
+					<div align="right">			        				        	
+			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
+					</div>
+
+					<div align="center">
+						<h4>របាយការណ៍ផ្ទៀងផ្ទាត់ និង ផ្ទេរសាច់ប្រាក់</h4>
+						ថ្ងៃទី
+						<span data-bind="text: today"></span>
+						<br>
+						ដោយ
+						<span data-bind="text: cashier_name"></span>
+					</div>
+
+					<div data-role="grid" data-bind="source: denominationList" data-editable="true"						
+			            data-row-template="denominationRowTemplate"                  
+			            data-columns='[	                
+			                { title: "ប្រាក់", width: 65 },	                
+			                { title: "ចំនួនប្រាក់ដុល្លា" },
+			                { title: "ចំនួនប្រាក់រៀល" },	                    	                     
+			                { title: "ទឹកប្រាក់ជាដុល្លា" },
+			                { title: "ទឹកប្រាក់ជារៀល" },
+			                { title: "ចំ.ប្រាក់ដុល្លាផ្ទេរ" },
+			                { title: "ចំ.ប្រាក់រៀលផ្ទេរ" },	                    	                     
+			                { title: "ប្រាក់ជាដុល្លាផ្ទេរ" },
+			                { title: "ប្រាក់ជារៀលផ្ទេរ" }	                    	                    
+			                ]'>
+					</div>
+
+					<br>
+
+					<div class="row-fluid">
+						<!-- //Reconcile -->
+						<div class="span6">
+							<h4 class="heading">ផ្ទៀងផ្ទាត់</h4>
+
+							<table class="table table-condensed">
+								<tr>
+									<td>ប្រាក់ទទួលបាន</td>
+									<td></td>											
+									<td align="right"><span class="count" data-bind="text: totalReceive"></span></td>												
+								</tr>
+								<tr>
+									<td>ប្រាក់នៅសល់ពីមុន</td>
+									<td></td>											
+									<td align="right" style="border-bottom: 1px solid black;"><span class="count" data-bind="text: prevRemain"></span></td>												
+								</tr>
+								<tr>
+									<td>សមតុល្យសាច់ប្រាក់(ក)</td>
+									<td></td>												
+									<td align="right"><span class="count" data-bind="text: totalCash"></span></td>
+								</tr>
+
+								<!-- Reconcile -->
+								<tr>
+									<td>ប្រាក់ជាដុល្លា</td>
+									<td>
+										$<span class="count" data-bind="text: totalD"></span> x
+										<input data-role="numerictextbox" data-format="c0" data-min="0" data-bind="value: rate"  style="width:70px;">
+									</td>
+									<td align="right"><span class="count" data-bind="text: totalDtoR"></span></td>												
+								</tr>
+								<tr>
+									<td>ប្រាក់ជារៀល</td>
+									<td></td>
+									<td align="right" style="border-bottom: 1px solid black;"><span class="count" data-bind="text: totalR"></span></td>												
+								</tr>
+								<tr>
+									<td>សាច់ប្រាក់ទទួលជាក់ស្ដែងសរុប(ខ)</td>
+									<td></td>												
+									<td align="right"><span class="count" data-bind="text: totalDR"></span></td>
+								</tr>
+								<tr id="reconcileBalance">
+									<td>ផ្ទៀងផ្ទាត់(ក-ខ)</td>
+									<td></td>												
+									<td align="right"><span class="count" data-bind="text: reconcileBalance"></span></td>
+								</tr>																				
+							</table>
+						</div>
+
+						<!-- //Transfer -->
+						<div class="span6">
+							<div class="heading">
+								<h4>
+									ផ្ទេរសាច់ប្រាក់
+									<span class="btn btn-mini btn-primary btn-icon glyphicons share" data-bind="click: transferAll"><i></i> ផ្ទេរទាំងអស់</span>
+								</h4>											
+							</div>
+							
+							<table class="table table-condensed">
+								<tr>
+									<td>ប្រាក់ផ្ទេរជាដុល្លា</td>
+									<td>
+										$<span class="count" data-bind="text: totalDT"></span> x
+										<input data-role="numerictextbox" data-format="c0" data-min="0" data-bind="value: rate"  style="width:70px;">												
+									</td>
+									<td align="right"><span class="count" data-bind="text: totalDTtoRT"></span></td>												
+								</tr>
+								<tr>
+									<td>ប្រាក់ផ្ទេរជារៀល</td>
+									<td></td>
+									<td align="right" style="border-bottom: 1px solid black;"><span class="count" data-bind="text: totalRT"></span></td>												
+								</tr>
+								<tr>
+									<td>ប្រាក់ផ្ទេរសរុប</td>
+									<td></td>												
+									<td align="right"><span class="count" data-bind="text: totalTransferCash"></span></td>
+								</tr>
+								<tr>
+									<td>សាច់ប្រាក់ចុងគ្រា</td>
+									<td></td>												
+									<td align="right"><span class="count" data-bind="text: transferBalance"></span></td>
+								</tr>
+								<tr>
+									<td>ផ្ទេរទៅគណនីណាមួយ</td>
+									<td>
+										<select id="transferAccountId" name="transferAccountId" data-role="combobox" 
+												data-text-field="name" data-value-field="id" 
+												data-bind="source: accountList, value: transfer_account_id"
+												required data-required-msg="ត្រូវការ ផ្ទេរទៅគណនីណាមួយ"></select>
+									</td>
+									<td><select id="classes" name="classes" data-role="combobox" 
+					              				data-text-field="name" data-value-field="id" 
+					              				data-bind="source: classList, value: class_id"
+					              				placeholder="Class"
+					              				required data-required-msg="ត្រូវការ Class"></select></td>
+								</tr>
+								<tr align="top">
+									<td>សំគាល់:</td>
+									<td colspan="2">
+										<textarea id="address" cols="0" rows="2" class="k-textbox" style="width:100%" data-bind="value: memo"></textarea>
+									</td>
+								</tr>								
+							</table>
+							
+							<div align="right">
+								<div id="status"></div>
+								<span id="save" class="btn btn-success btn-icon glyphicons hdd"><i></i>កត់ត្រាផ្ទៀងផ្ទាត់ និង ផ្ទេរសាច់ប្រាក់</span>											
+							</div>																			
+						</div>									
+					</div>				
+				</div><!-- //End div example-->
+			</div><!-- //End div span12-->
+		</div><!-- //End div row-fluid-->
+	</div>	
+</script>
+<script id="denominationRowTemplate" type="text/x-kendo-tmpl">		
+	<tr align="right">				
+		<td>#:kendo.toString(kendo.parseFloat(denomination), "n0")#</td>
+		<td>
+			<input data-role="numerictextbox" data-format="n0" data-min="0" style="width:90px;"
+				data-bind="value: qty_usd, events: {change : change}" #: denomination>100 ? disabled="disabled" : "" # >
+		</td>
+		<td>
+			<input data-role="numerictextbox" data-format="n0" data-min="0" style="width:90px;"
+				data-bind="value: qty_khr, events: {change : change}" #: denomination<100 ? disabled="disabled" : "" # >
+		</td>
+		<td>$#:kendo.toString(denomination * qty_usd,'n0')#</td>
+		<td>#:kendo.toString(denomination * qty_khr,'c0')#</td>
+
+		<td bgcolor="silver">
+			<input data-role="numerictextbox" data-format="n0" data-min="0" style="width:90px;"
+				data-bind="value: qty_usd_transfer, events: {change : change}" #: denomination>100 ? disabled="disabled" : "" # >
+		</td>
+		<td bgcolor="silver">
+			<input data-role="numerictextbox" data-format="n0" data-min="0" style="width:90px;"
+				data-bind="value: qty_khr_transfer, events: {change : change}" #: denomination<100 ? disabled="disabled" : "" # >
+		</td>
+		<td bgcolor="silver">$#:kendo.toString(denomination * qty_usd_transfer,'n0')#</td>
+		<td bgcolor="silver">#:kendo.toString(denomination * qty_khr_transfer,'c0')#</td>					
     </tr>   
 </script>
 <!-- END OF DAWINE -->
@@ -7989,8 +8234,7 @@
 		});
 
 		return viewModel;
-	}());
-	
+	}());	
 	
 	banhji.bill = (function(){
 		var billPayments = new kendo.data.DataSource({
@@ -10647,8 +10891,6 @@
 	}());
 
 	//By Visal ----------------------------------
-	
-
 	banhji.inventory = (function(){
 	
 		var itemBaseUri = banhji.baseUrl +"api/inventory_api/item";
@@ -20338,15 +20580,7 @@
 			 	model: {
 				  	id : "id"
 			  	}		
-		  	},
-		  	requestEnd: function(e) {
-		  		var response = e.response;
-		    	var type = e.type;	    			   
-			    if(type==="create"){			    	
-			    	viewModel.clear();
-			    	payment_for_cashier();  	
-			    }
-		  	}
+		  	}		  	
 		});
 		
 		var viewModel = kendo.observable({
@@ -20411,19 +20645,15 @@
 				var self = this;
 
 				statementCollectionDS.filter({ field: "customer_id", value: customer_id });
-				invoiceDS.filter({
-					filters: [
-						{ field: "customer_id", value: customer_id },				
-						{ field: "status", value: 0 }				
-					]
-				});
+				invoiceDS.filter({ field: "customer_id", value: customer_id });				
 				invoiceDS.bind("requestEnd", function(e){
 		    		var response = e.response;
     				var type = e.type;
 
 					if(type==="read" && response.length>0){
 						var total = kendo.parseFloat(self.get("total"));
-				    	var tpay = kendo.parseFloat(self.get("pay_amount"));				    	
+				    	var tpay = kendo.parseFloat(self.get("pay_amount"));
+				    	var highlightIndex = 0;				    	
 			    		
 				    	$.each(response, function(index, data){
 				    		var isExisting = false;
@@ -20436,8 +20666,8 @@
 
 					    	if(isExisting==false){
 					    		var t = kendo.parseFloat(data.total)/kendo.parseFloat(data.rate);				    		
-				    			total += t;
-				    			tpay += t;
+				    			total += kendo.parseFloat(data.total);
+				    			tpay += kendo.parseFloat(data.total);
 				    							    			
 								self.get("invoiceList").push({				
 									id 				: data.id,
@@ -20454,14 +20684,17 @@
 									class_id 		: data.people.class_id,
 									balance 		: data.people.balance 
 								});
-
-								//Highlight first row
+								
 								if(index===0){									
-									$("#rowGrid-"+data.id).addClass("alert alert-error");
+									highlightIndex = data.id;
 								}
-							}
-														
-						});				    	
+							}																					
+						});
+						
+						//Highlight first row
+						if(highlightIndex>0){
+							$("#rowGrid-"+highlightIndex).addClass("alert alert-error");	
+						}									    	
 
 						var remain = total - tpay;
 						    	
@@ -20500,10 +20733,10 @@
 					total += kendo.parseFloat(data.total)*kendo.parseFloat(data.rate);
 			    	tpay += kendo.parseFloat(data.pay_amount)*kendo.parseFloat(data.rate);			    	
 				}
-				this.set("total", kendo.toString(total, "c0"));    	   	    	
-		    	this.set("pay_amount", kendo.toString(tpay, "c0"));
+				this.set("total", kendo.toString(total, "c"));    	   	    	
+		    	this.set("pay_amount", kendo.toString(tpay, "c"));
 		    	var remain = (total + kendo.parseFloat(this.get("fine"))) - (tpay + kendo.parseFloat(this.get("discount")));
-		    	this.set("remain", kendo.toString(remain, "c0"));
+		    	this.set("remain", kendo.toString(remain, "c"));
 
 		    	this.autoIncreaseNo();    	
 			},	
@@ -20673,7 +20906,9 @@
 					inJournal: 1			 			 		
 			 	});
 
-			 	journalDS.sync();	 	
+			 	journalDS.sync();
+			 	this.loadPaymentForCashier();
+			 	this.clear();			 		 	
 			},
 			updateCustomerBalance : function(){
 				var data = this.get("customerBalanceList");
@@ -20707,6 +20942,7 @@
 
 		var singleModel = kendo.observable({
 			sub_code 			: "km-KH",
+			rate 				: 1,
 
 			total_customer 		: 0,
 			total_payment 		: kendo.toString(0,"c"),
@@ -20777,6 +21013,7 @@
 								balance 		: data.people.balance 
 							});
 							self.set("customer", data.people);
+							self.set("rate", data.rate);
 							subCode = data.sub_code;
 						});
 
@@ -20912,53 +21149,31 @@
 			},
 			addJournal 			: function(){
 				var self = this;				
-				var journalEntries = [];
-				var arList = {};
-				var invList = this.get("invoiceList");
+				var journalEntries = [];				
+				var payAmount = kendo.parseFloat(this.get("pay_amount"));
+				var rate = this.get("rate");
 
-				$.each(invList, function(index, data){
-					var amt = kendo.parseFloat(data.pay_amount)*kendo.parseFloat(data.rate);
-					var arID = kendo.parseInt(data.account_receiveable_id);																
-					if(arID>0){
-						if(arList[arID]===undefined){
-							arList[arID]={"id": arID, "amt": amt, "rate": data.rate, "class_id": data.class_id};						
-						}else{											
-							if(arList[arID].id===arID){
-								arList[arID].amt += amt;
-							}else{
-								arList[arID]={"id": arID, "amt": amt, "rate": data.rate, "class_id": data.class_id};
-							}
-						}
-					}
+				//Cash on Dr
+				journalEntries.push({
+			 		account_id 	: this.get("cash_account_id"),	 		
+			 		dr 			: payAmount, 
+			 		cr 			: 0,
+			 		class_id  	: this.get("class_id"),
+			 		memo 		: "",
+			 		exchange_rate: 1,
+				 	main: 0 	 		
 				});
 
-				if(!jQuery.isEmptyObject(arList)){
-					var payAmount = kendo.parseFloat(this.get("pay_amount"));
-
-					//Cash on Dr
-					journalEntries.push({
-				 		account_id 	: this.get("cash_account_id"),	 		
-				 		dr 			: payAmount, 
-				 		cr 			: 0,
-				 		class_id  	: this.get("class_id"),
-				 		memo 		: "",
-				 		exchange_rate: 1,
-					 	main: 0 	 		
-					});
-
-					// A/R on Cr
-					$.each(arList, function(index, data){
-						journalEntries.push({
-					 		account_id 	: data.id,	 		
-					 		dr 			: 0, 
-					 		cr 			: data.amt,
-					 		class_id  	: data.class_id,
-					 		memo 		: "",
-					 		exchange_rate: data.rate,
-						 	main 		: 0	 		
-						});
-					});
-				}
+				// A/R on Cr				
+				journalEntries.push({
+			 		account_id 	: this.get("customer").account_receiveable_id,	 		
+			 		dr 			: 0, 
+			 		cr 			: payAmount,
+			 		class_id  	: this.get("class_id"),
+			 		memo 		: "",
+			 		exchange_rate: rate,
+				 	main 		: 0	 		
+				});				
 								
 				journalDS.add({
 					company_id: banhji.config.userData.company,
@@ -20983,7 +21198,8 @@
 					inJournal: 1			 			 		
 			 	});
 
-			 	journalDS.sync();	 	
+			 	journalDS.sync();
+			 	this.clear();	 	
 			},
 			updateCustomerBalance : function(){
 				var data = this.get("customerBalanceList");
@@ -21020,6 +21236,476 @@
 			singleModel 	: singleModel
 		};	
 	}());
+
+	banhji.dailyPayment = (function(){
+		var paymentDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/payments/payment",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			pageSize: 50,	
+			serverFiltering: true
+		});
+		
+		var viewModel = kendo.observable({			
+			today 				: new Date(),
+			payment_date_from	: new Date(),
+			payment_date_to  	: "",
+			
+			payment_date_from_str	: function(){
+				var strDate = "";
+				var date = Date.parse(this.get("payment_date_from"));		
+				if(isNaN(date)==false){		
+					strDate = kendo.toString(this.get("payment_date_from"), "dd-MM-yyyy");
+				}	
+				return strDate;	
+			},
+			payment_date_to_str  	: function(){
+				var strDate = "";
+				var date = Date.parse(this.get("payment_date_to"));		
+				if(isNaN(date)==false){		
+					strDate = " ដល់ " + kendo.toString(this.get("payment_date_to"), "dd-MM-yyyy");
+				}	
+				return strDate;	
+			},
+			closeX 				: function(){
+				kendo.fx($("#slide-form")).slideIn("up").play();				
+				window.history.go(-1);
+			},
+			cashier 			: banhji.config.userData.userId,
+			cashier_name 		: banhji.config.userData.username,
+			totalPaid			: kendo.toString(0, 'c'),			
+			
+			paymentList 		: paymentDS,
+				
+			searchPayment 		: function(){
+				var self = this;
+				var paymentDateFrom = kendo.toString(new Date(this.get("payment_date_from")), "yyyy-MM-dd");		
+					
+				var paymentDateTo = paymentDateFrom;
+				var date = Date.parse(this.get("payment_date_to"));	
+				if(isNaN(date)==false){		
+					paymentDateTo = kendo.toString(new Date(this.get("payment_date_to")), "yyyy-MM-dd");
+				}
+
+				paymentDS.filter({
+					filters: [
+						{ field: "payment_date >=", value: paymentDateFrom },
+						{ field: "payment_date <=", value: paymentDateTo },
+						{ field: "cashier", value: this.get('cashier') }				
+					]
+				});
+				paymentDS.bind("requestEnd", function(e){
+		    		var response = e.response;
+    				var type = e.type;
+
+					if(type==="read"){
+					  	var total = 0;
+				    	for (var i=0; i< response.length; i++) {
+				    		total += kendo.parseFloat(response[i].amount_paid);
+				    	}
+				    	self.set('totalPaid', kendo.toString(total, 'c'));											  
+				  	}			  	  			  	
+				});
+			}				
+		});
+
+		return {
+			viewModel 		: viewModel
+		};
+	}());
+
+	banhji.reconcile = (function(){
+		var receivePaymentDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/payments/payment",
+					type: "GET",
+					dataType: "json"
+				}
+			},		
+			serverFiltering: true
+		});	
+
+		var reconcileDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/reconciles/reconcile",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+		            url: banhji.baseUrl + "api/reconciles/reconcile",
+		            type: "POST",
+		            dataType: "json"
+		        },
+		        parameterMap: function(options, operation) {
+		            if (operation !== "read" && options.models) {
+		                return {models: kendo.stringify(options.models)};
+		            }
+		            return options;
+		        }
+			},		
+			schema: {
+				model: {
+					id: "id"
+				}		
+			},			
+			serverPaging: true,
+			pageSize: 1,		
+			serverFiltering: true
+		});
+
+		var accountDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/accounts/account",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter:[ 
+				{ field: "account_type_id", value: 6 }		
+			]
+		});
+
+		var journalDS = new kendo.data.DataSource({
+		  	transport: {	  
+			    create: {
+				  	url : banhji.baseUrl + "api/accounting_api/journals",
+				  	type: "POST",
+				  	dataType: "json"
+			    },
+		        parameterMap: function(options, operation) {
+		            if (operation !== "read" && options.models) {
+		                return {models: kendo.stringify(options.models)};
+		            }
+		            return options;
+		        }
+		  	},  
+		  	schema: {
+			 	model: {
+				  	id : "id"
+			  	}		
+		  	}
+		});
+
+		var classDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/classes/class",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter: { field: "type", value: "Class" },
+			serverFiltering: true		
+		});
+		
+		var viewModel = kendo.observable({
+			transfer_account_id : "",
+			class_id 			: "",
+			memo 				: "",
+
+			cashier 			: banhji.config.userData.userId,
+			cashier_name 		: banhji.config.userData.username,
+			
+			totalReceive 		: kendo.toString(0, 'c'),
+			prevRemain 			: kendo.toString(0, 'c'),
+
+			classList 			: classDS,
+
+			closeX 				: function(){
+				kendo.fx($("#slide-form")).slideIn("up").play();				
+				window.history.go(-1);
+			},	
+			totalCash 			: function(){
+				var tc = kendo.parseFloat(this.get('totalReceive')) + kendo.parseFloat(this.get('prevRemain'));
+				return kendo.toString(tc, 'c0');
+			},
+			reconcileBalance 	: function(){		
+				var reBal = kendo.parseFloat(this.totalCash()) - kendo.parseFloat(this.totalDR());				
+				if(reBal==0){			
+					$("#reconcileBalance").removeClass("alert alert-error");
+					$("#reconcileBalance").addClass("alert alert-success");
+				}else{
+					$("#reconcileBalance").removeClass("alert alert-success");
+					$("#reconcileBalance").addClass("alert alert-error");			
+				}
+				return kendo.toString(reBal,'c0');
+			},
+			transferBalance 	: function(){
+				var tranBal = kendo.parseFloat(this.totalDR()) - kendo.parseFloat(this.totalTransferCash());
+				return kendo.toString(tranBal, 'c0');
+			},
+
+			rate 				: 4000,
+
+			totalD				: "0.00",	
+			totalR				: kendo.toString(0, 'c'),	
+			totalDtoR 			: function(){
+				var rate = kendo.parseFloat(this.get("rate"));
+				var td = kendo.parseFloat(this.get("totalD"));
+				var tdtor = td * rate;
+				return kendo.toString(tdtor, 'c0');
+			},
+			totalDR 	 		: function(){		
+				var tdr = kendo.parseFloat(this.totalDtoR()) + kendo.parseFloat(this.get("totalR"));
+				return kendo.toString(tdr, 'c0');
+			},
+
+			totalDT 			: "0.00",
+			totalRT 			: kendo.toString(0, 'c'),
+			totalDTtoRT			: function(){
+				var rate = kendo.parseFloat(this.get("rate"));
+				var tdt = kendo.parseFloat(this.get("totalDT"));
+				var tdttort = tdt * rate;
+				return kendo.toString(tdttort, 'c0');
+			},
+			totalTransferCash 	: function(){		
+				var tc = kendo.parseFloat(this.totalDTtoRT()) + kendo.parseFloat(this.get("totalRT"));
+				return kendo.toString(tc, 'c0');
+			},
+				
+			accountList 		: accountDS,
+			reconcileItemList 	: [],
+
+			denominationList 	: [
+				{ 'denomination':1, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':2, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':5, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':10, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':20, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':50, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':100, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':500, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':1000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':2000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':5000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':10000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':20000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':50000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' },
+				{ 'denomination':100000, 'qty_khr':'', 'qty_usd':'', 'qty_khr_transfer':'', 'qty_usd_transfer': '' }
+			],
+
+			pageLoad 			: function(){
+				var self = this;
+				var today = kendo.toString(new Date(), "yyyy-MM-dd");
+
+				reconcileDS.filter({
+					filters: [
+						{ field: "reconciled_date <", value: today },
+						{ field: "cashier", value: this.get('cashier') }				
+					]
+				});
+				reconcileDS.bind("requestEnd", function(e){
+		    		var response = e.response;
+    				var type = e.type;
+
+					if(type==="read" && response.length>0){
+					  	var totalRemain = response.reconcile_amount - response.transfer_amount;
+	    				self.set('prevRemain', kendo.toString(totalRemain, 'c'));											  
+				  	}			  	  			  	
+				});
+
+				receivePaymentDS.filter({
+					filters: [
+						{ field: "payment_date", value: today },
+						{ field: "cashier", value: this.get('cashier') }				
+					]
+				});				
+				receivePaymentDS.bind("requestEnd", function(e){
+		    		var response = e.response;
+    				var type = e.type;
+
+					if(type==="read" && response.length>0){
+					  	var total = 0;
+				    	for (var i=0; i< response.length; i++) {
+				    		total += kendo.parseFloat(response[i].amount_paid);
+				    	}
+				    	self.set('totalReceive', kendo.toString(total, 'c'));
+				    	self.change();											  
+				  	}			  	  			  	
+				});				
+			},
+			searchPayment 		: function(){
+				var paymentDateFrom = kendo.toString(new Date(this.get("payment_date_from")), "yyyy-MM-dd");		
+					
+				var paymentDateTo = paymentDateFrom;
+				var date = Date.parse(this.get("payment_date_to"));	
+				if(isNaN(date)==false){		
+					paymentDateTo = kendo.toString(new Date(this.get("payment_date_to")), "yyyy-MM-dd");
+				}		
+			},
+			change				: function(){
+				var totalD = 0;
+				var totalR = 0;
+				var totalDT = 0;
+				var totalRT = 0;
+
+				for(var i=0; i < this.denominationList.length; i++){
+					var data = this.denominationList[i];
+					var dem = kendo.parseFloat(data.denomination);
+
+			    	totalD += kendo.parseFloat(data.qty_usd) * dem;
+			    	totalR += kendo.parseFloat(data.qty_khr) * dem;
+
+			    	totalDT += kendo.parseFloat(data.qty_usd_transfer) * dem;
+			    	totalRT += kendo.parseFloat(data.qty_khr_transfer) * dem;	    	
+				}
+
+				this.set('totalD', kendo.toString(totalD, 'n0'));
+				this.set('totalR', kendo.toString(totalR, 'c0'));
+
+				this.set('totalDT', kendo.toString(totalDT, 'n0'));
+				this.set('totalRT', kendo.toString(totalRT, 'c0'));		  	 	
+			},	
+			transferAll 		: function(){
+				for(var i=0; i < this.denominationList.length; i++){
+					var data = this.denominationList[i];			
+					if(data.qty_usd>0){
+						data.set('qty_usd_transfer', data.qty_usd);
+					}
+
+					if(data.qty_khr>0){
+						data.set('qty_khr_transfer', data.qty_khr);
+					}	    	   	
+				}
+				this.change();
+			},
+			save 				: function(){
+				this.addReconcile();
+				this.addJournal();
+				this.clear();
+			},
+			addReconcile 		: function(){
+				for(var i=0; i < this.denominationList.length; i++){
+					var data = this.denominationList[i];
+								
+					if(data.qty_usd>0 || data.qty_khr>0 || data.qty_usd_transfer>0 || data.qty_khr_transfer>0){
+						this.reconcileItemList.push({
+							'denomination' 		: data.denomination,					
+							'qty_usd' 			: data.qty_usd,
+							'qty_khr' 			: data.qty_khr,
+							'qty_usd_transfer' 	: data.qty_usd_transfer,
+							'qty_khr_transfer' 	: data.qty_khr_transfer,
+							'reconcile_id'		: 0
+						});
+					}						    		    	
+				}
+
+				reconcileDS.add({
+					cashier 			: this.get('cashier'),					 
+					reconciled_date 	: kendo.toString(new Date(), 'yyyy-MM-dd'),					
+					rate				: this.get('rate'),
+					reconcile_amount	: kendo.parseFloat(this.totalDR()),
+					transfer_amount		: kendo.parseFloat(this.totalTransferCash()),
+					transfer_account_id : this.get('transfer_account_id'),
+					class_id 			: this.get('class_id'),
+					memo 				: this.get('memo'),
+
+					reconcileItems 		: this.get('reconcileItemList')
+				});
+
+				reconcileDS.sync();		
+			},
+			addJournal 			: function(){
+				var self = this;
+				var journalEntries = [];
+
+				//Transfer account on Dr				
+				journalEntries.push({
+			 		account_id 	: this.get("transfer_account_id"),	 		
+			 		dr 			: kendo.parseFloat(this.totalTransferCash()), 
+			 		cr 			: 0,
+			 		class_id  	: this.get("class_id"),
+			 		memo 		: this.get("memo"),
+			 		exchange_rate: 1,
+				 	main 		: 0	 		
+				});
+
+				var cashInTillList = {};
+				$.each(receivePaymentDS.data(), function(index, data){
+					var cash_in_till_id = data.cash_account_id;
+					var amt = kendo.parseFloat(data.amount_paid)															
+					if(cash_in_till_id>0){
+						if(cashInTillList[cash_in_till_id]===undefined){
+							cashInTillList[cash_in_till_id]={"id": cash_in_till_id, "amt": amt};						
+						}else{											
+							if(cashInTillList[cash_in_till_id].id===cash_in_till_id){
+								cashInTillList[cash_in_till_id].amt += amt;
+							}else{
+								cashInTillList[cash_in_till_id]={"id": cash_in_till_id, "amt": amt};
+							}
+						}
+					}
+				});
+
+				//Cash in till on Cr
+				$.each(cashInTillList, function(index, value){
+					journalEntries.push({
+				 		account_id 	: value.id,	 		
+				 		dr 			: 0, 
+				 		cr 			: value.amt,
+				 		class_id  	: self.get("class_id"),
+				 		memo 		: self.get("memo"),
+				 		exchange_rate: 1,
+					 	main 		: 0	 		
+					});
+				});				
+
+				//Add journal to datasource				
+			 	journalDS.add({
+					company_id: banhji.config.userData.company,
+					vendor_id: 0,
+					people_id: 0,
+					employee_id: banhji.config.userData.userId,
+					payment_id: 0,
+					transaction_type: "Reconcile",
+					payment_method: "",
+					check_no: "",
+					memo: "ផ្ទៀងផ្ទាត់ និង ផ្ទេរសាច់ប្រាក់",
+					date: kendo.toString(new Date(), "yyyy-MM-dd"),
+					//due_date: kendo.toString(this.dateDue, "yyyy-MM-dd"),
+					// amount_billed: 0,
+					// amount_due: 0,
+					// amount_paid: 0,
+					voucher: "",
+					number: "",
+					class_id: this.get("class_id"),
+					status: 1,
+					journalEntries: journalEntries,
+					inJournal: 1			 		 		
+			 	});	 	
+
+			  	journalDS.sync();
+			},
+			clear 				: function(){    	
+				this.set("reconcileItemList", []);
+
+				totalD			: "0.00";	
+				totalR			: kendo.toString(0, 'c0');	
+				totalDtoR 		: kendo.toString(0, 'c0');
+				totalDR 	 	: kendo.toString(0, 'c0');
+
+				totalDT 		: "0.00";
+				totalRT 		: kendo.toString(0, 'c0');
+				totalDTtoRT		: kendo.toString(0, 'c0');
+				totalTransferCash : kendo.toString(0, 'c0');
+
+				reconcileDS.data([]);
+				journalDS.data([]);				
+				this.pageLoad();
+		    }	
+		});
+
+		return {
+			viewModel 		: viewModel
+		};
+	}());	
 	//END OF DAWINE ----------------
 
 	
@@ -21115,6 +21801,8 @@
 
 		var cashier = new kendo.View("#cashier", {model: banhji.cashier.viewModel});
 		var cashierSingle = new kendo.View("#cashierSingle", {model: banhji.cashier.singleModel});
+		var dailyPayment = new kendo.View("#dailyPayment", {model: banhji.dailyPayment.viewModel});
+		var reconcile = new kendo.View("#reconcile", {model: banhji.reconcile.viewModel});
 		//END OF DAWINE
 
 		return {
@@ -21194,7 +21882,9 @@
 			notice 			: notice,
 
 			cashier 		: cashier,
-			cashierSingle 	: cashierSingle			
+			cashierSingle 	: cashierSingle,
+			dailyPayment 	: dailyPayment,
+			reconcile 		: reconcile			
 		};
 	}());	
 
@@ -21648,6 +22338,57 @@
 
             if(validator.validate()){
             	banhji.cashier.singleModel.add();           	
+            	
+	            status.text("កត់ត្រាបានសំរេច")
+		            .removeClass("alert alert-error")
+		            .addClass("alert alert-success");
+	        }else{		        	
+	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
+	                .removeClass("alert alert-success")
+		            .addClass("alert alert-error");
+	        }
+		});			
+	});
+
+	banhji.router.route("dailyPayment", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.dailyPayment);
+		kendo.fx($("#slide-form")).slideIn("down").play();
+		//banhji.dailyPayment.viewModel.pageLoad();
+
+		var validator = $("#example").kendoValidator().data("kendoValidator"),
+			status = $("#status");
+
+		$("#save").click(function(e){
+			e.preventDefault();			
+
+            if(validator.validate()){
+            	         	
+            	
+	            status.text("កត់ត្រាបានសំរេច")
+		            .removeClass("alert alert-error")
+		            .addClass("alert alert-success");
+	        }else{		        	
+	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
+	                .removeClass("alert alert-success")
+		            .addClass("alert alert-error");
+	        }
+		});			
+	});
+
+	banhji.router.route("reconcile", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.reconcile);
+		kendo.fx($("#slide-form")).slideIn("down").play();
+		banhji.reconcile.viewModel.pageLoad();
+
+		var validator = $("#example").kendoValidator().data("kendoValidator"),
+			status = $("#status");
+
+		$("#save").click(function(e){
+			e.preventDefault();			
+			var totalTransferCash = kendo.parseFloat(banhji.reconcile.viewModel.totalTransferCash());
+			
+            if(validator.validate() && totalTransferCash>0){
+            	banhji.reconcile.viewModel.save();        	
             	
 	            status.text("កត់ត្រាបានសំរេច")
 		            .removeClass("alert alert-error")
