@@ -12,6 +12,9 @@ class Items extends REST_Controller {
 		$this->load->model('inventory/purchase_request_items_model', 'requestItems');
 		$this->load->model("people/people_model", "people");
 		$this->load->model('inventory/item_model', 'item');
+		$this->load->model('accounting/invoice_item_model', 'so');
+		$this->load->model('inventory/item_record_model', 'item_records');
+		$this->load->model('accounting/invoice_model', 'invoice');
 	}
 
 	// requests section
@@ -35,7 +38,7 @@ class Items extends REST_Controller {
 				$data[] = array(
 					"id" 			=> $row->id,
 					"user" 			=> $this->people->get($row->user_id),
-					"items"			=> $this->requestItems->get_many_by(array("purhcase_request_id"=>$row->id)),
+					"items"			=> $this->requestItems->get_many_by(array("purchase_request_id"=>$row->id)),
 					"expected_date" => $row->expected_date,
 					"status"		=> $row->status,
 					"created_at"	=> $row->created_at
@@ -44,7 +47,7 @@ class Items extends REST_Controller {
 			$this->response(array("status"=>"OK", "count"=>count($count), "results"=>$data), 200);
 		} else {
 			$data = array();
-			$this->response(array("status"=>"ERROR", "count"=>0, "results"=>$data), 400);
+			$this->response(array("status"=>"ERROR", "count"=>0, "results"=>$data), 200);
 		}
 	}
 
@@ -139,7 +142,7 @@ class Items extends REST_Controller {
 				$data[] = array(
 					"id" 			=> $row->id,
 					"request"		=> $this->requests->get($row->purchase_request_id),
-					"item"			=> $this->item->get(array("purhcase_request_id"=>$row->id)),
+					"item"			=> $this->item->get($row->item_id),
 					"cost" 			=> $row->cost,
 					"quantity"		=> $row->quantity,
 					"created_at"	=> $row->created_at

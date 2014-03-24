@@ -2604,13 +2604,15 @@
 						<th>លិខិទទួល</th>
 						<th>វិក្កយប័ត្រ</th>
 						<th>លិខិតបញ្ជាលក់</th>
-						<th>នៅសល់</th>
+						<th>នៅសល់ជាក់ស្ដែង</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
 			</table>
 		</div>
-		<div>Graph</div>
+		<div>
+			<div id="itemReportGraph"></div>
+		</div>
 	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsNewView">
@@ -2689,6 +2691,14 @@
 <script type="text/x-kendo-template" id="itemsRequestView">
 </script>
 <script type="text/x-kendo-template" id="itemsReportView">
+	<tr>
+		<td>#=request#</td>
+		<td>#=po#</td>
+		<td>#=grn#</td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
 </script>
 <!-- End Item Section-->
 
@@ -7437,13 +7447,95 @@
 
 		return viewModel;
 	}());
+
+	var Transaction = kendo.Class.extend({
+		dataSource 	: new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "PUT",
+					dataType: "json"
+				},
+				destroy: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "DELETE",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},
+			serverFiltering: true,
+			filter: [
+				{ field: "company_id", value: banhji.config.userData.company },
+				{ field: "archived", value: 0}
+			],
+			schema: {
+				model: { id: "id"},
+				data: "results"
+			}
+		}),
+		setCurrent 	: function(tranId){
+			this.set('current', this.dataSource.get(tranId));
+		},
+		getCurrent 	: function() {
+			return this.get('current');
+		},
+		query 		: function(query) {},
+		getById 	: function(id) {
+			var self = this, dfd = $.Deferred();
+			this.dataSource.filter(
+				{ field: "id", value: id}
+			);
+			this.dataSource.bind("requestEnd", function(e){
+				dfd.resolve(e.response);
+			});
+			this.dataSource.bind("error", function(e){
+				dfd.reject(e.response);
+			});
+			return dfd.promise();
+		},
+		getBy 		: function(criteria) {
+			var self = this, dfd = $.Deferred();
+			this.dataSource.filter(criteria);
+			this.dataSource.bind("requestEnd", function(e){
+				dfd.resolve(e.response);
+			});
+			this.dataSource.bind("error", function(e){
+				dfd.reject(e.response);
+			});
+			return dfd.promise();
+		},
+		add 		: function(data) {
+			this.dataSource.add(data);
+		},
+		cancel 		: function() {
+			this.dataSource.cancelChanges();
+		},
+		save 		: function() {
+			this.dataSource.sync();	
+		}
+	});
 	banhji.vendor = (function(){
 		// get a copy of vendors datasource
 		var vendorDS = banhji.ds.vendors;
 
 		var viewModel = kendo.observable({
 			transactions: [],
-			currency: {KHR: { code:"km-KH"}, USD:{ code:"en-US"}, THB: { code:"th-TH"}, VND: { code: "vi-VN"}},
+			currency: {KHR: "km-KH", USD:"en-US", THB:"th-TH", VND: "vi-VN"},
 			init: function() {
 				var self = this;
 				banhji.transaction.getBy([
@@ -7570,8 +7662,7 @@
 					vendor.push();
 					this.vendorsList.add({
 						id: null,
-						company: this.get("company"), 
-						people_type_id: this.get("type"),
+						company: this.get("company"),
 						address: this.get("address"),
 						surname: this.get("lastName"),
 						name: this.get("firstName"),
@@ -7584,7 +7675,7 @@
 						currency: this.get("currency"),
 						// created_by: user,
 						// upated_by: user,
-						company_id: "45454"
+						company_id: banhji.config.userData['company']
 					});
 					this.vendorsList.sync();
 					this.vendorsList.remove(this.vendorsList.at(0));
@@ -7771,6 +7862,7 @@
 			},
 			getAmountOwed: function() {
 				var amount = 0, self = this;
+				var currency = '';
 				var tranx = this.get("transactions");
 				if(this.get("current").id !== null) {
 					if(tranx.length>0) {
@@ -7780,6 +7872,7 @@
 							}
 						});
 					}
+					currency = banhji.vendor.currency[this.currency_code()];
 				} else {
 					if(tranx.length>0) {
 						$.each(tranx, function(index, value){
@@ -7788,13 +7881,15 @@
 							}
 						});
 					}
+					currency = 'USD';
 				}
-				return kendo.toString(amount, 'c2', banhji.vendor.currency[this.currency_code()].code);
+				return kendo.toString(amount, 'c2', currency);
 				// console.log(this.get("currency")[this.get("current").currency_code]);
 			},
 			getMonthlyExpense: function() {
 				// e.preventDefault();
 				var amount = 0;
+				var currency = '';
 				var tranx = this.get("transactions");
 				if(this.get("current").id !== null) {
 					if(tranx.length>0) {
@@ -7810,9 +7905,8 @@
 								}
 							}
 						});
-
 					}
-
+					currency = banhji.vendor.currency[this.currency_code()];
 				} else {
 					if(tranx.length>0) {
 						$.each(tranx, function(index, value){
@@ -7827,8 +7921,9 @@
 							}
 						});
 					}
+					currency = 'USD';
 				}
-				return kendo.toString(amount, 'c2', banhji.vendor.currency[this.currency_code()].code);
+				return kendo.toString(amount, 'c2', currency);
 			},
 			showMonthlyExpense: function(e) {
 				e.preventDefault();
@@ -7990,7 +8085,6 @@
 
 		return viewModel;
 	}());
-	
 	
 	banhji.bill = (function(){
 		var billPayments = new kendo.data.DataSource({
@@ -10247,7 +10341,19 @@
 			},
 			query 		: function(query) {
 				var dfd = $.Deferred();
-				this.itemReqStore.query(query);
+				this.dataSource.filter(query);
+				this.dataSource.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("Could not find");
+					}
+				});
+				return dfd.promise();
+			},
+			getReqItemBy: function(itemId) {
+				var dfd = $.Deferred();
+				this.itemReqStore.filter({field: "item_id", value: itemId});
 				this.itemReqStore.bind("requestEnd", function(e){
 					if(e.response.status === "OK") {
 						dfd.resolve(e.response.results);
@@ -10469,6 +10575,7 @@
 			remove 		 		: function(id) {}			
 		});
 		var itemModel = kendo.observable({
+			reportData 			: [],
 			items 				: [{
 				sku 	: null,
 				name 	: null,
@@ -10632,15 +10739,104 @@
 				}
 			},
 			getReport 			: function(itemId) {
-				var reports = [];
-				// requests
+				var self = this;
 
 				// po
-
-				// so
-
+				var po = new Transaction();
+				
 				// grn
-			}			
+				var grn = new Transaction();
+
+				$.when(
+					banhji.requests.query({field: "status", value: 1})
+					.then(function(data) {
+						var count = 0;
+						$.each(data, function(i,v){
+							$.each(v.items, function(i,v){
+								if(v.item_id == itemId) {
+									count+= parseInt(v.quantity);
+								}
+							});
+						});
+						return count;
+					}),
+					po.getBy([{field: "transaction_type", value: "po"},{field: "status", value: 0}])
+					.then(function(data) {
+						var count = 0;
+						$.each(data.results, function(i,v){ 
+							$.each(v.entries, function(i,v){
+								if(v.item_id == itemId) {
+									count+= parseInt(v.quantity);
+								}
+							});
+						});
+						return count;
+					}),
+					grn.getBy([{field: "transaction_type", value: "grn"},{field: "status", value: 1}])
+					.then(function(data) {
+						var count = 0;
+						$.each(data.results, function(i,v){ 
+							$.each(v.entries, function(i,v){
+								if(v.item_id == itemId) {
+									count+= parseInt(v.quantity);
+								}
+							});
+						});
+						return count;
+					})
+				)
+				.then(function(request, po, grn){
+					$("#itemReportTable > tbody").kendoListView({
+						dataSource: [{
+							request: request,
+							po: po,
+							grn: grn
+						}],
+						template: kendo.template($("#itemsReportView").html())
+					});
+					$("#itemReportGraph").kendoChart({
+		                title: {
+		                    position: "bottom",
+		                    text: "Share of Internet Population Growth, 2007 - 2012"
+		                },
+		                legend: {
+		                    visible: false
+		                },
+		                chartArea: {
+		                    background: ""
+		                },
+		                seriesDefaults: {
+		                    labels: {
+		                        visible: true,
+		                        background: "transparent",
+		                        template: "#= category #: #= value#"
+		                    }
+		                },
+		                series: [{
+		                    type: "pie",
+		                    startAngle: 150,
+		                    data: [{
+		                        category: "សំណើរទិញ",
+		                        value: request,
+		                        color: "#9de219"
+		                    },{
+		                        category: "បញ្ជាទិញ",
+		                        value: po,
+		                        color: "#90cc38"
+		                    },{
+		                        category: "លិខិទទួល",
+		                        value: grn,
+		                        color: "#068c35"
+		                    }]
+		                }],
+		                tooltip: {
+		                    visible: true,
+		                    format: "{0}"
+		                }
+		            });
+				});
+			}
+
 		});
 		
 		return  itemModel;
@@ -24159,6 +24355,7 @@
 				var tr = this.select();
 				var selected = this.dataItem(tr);
 				banhji.items.setCurrent(selected);
+				banhji.items.getReport(selected.id);
 				banhji.items.itemRecords.getByItem(selected.id)
 				.then(
 					function(data){
