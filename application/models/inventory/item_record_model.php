@@ -71,5 +71,10 @@ class Item_record_model extends MY_Model {
 			return 0;
 		}
 	} 
+
+	function in($field, $array) {
+		$this->db->where_in($field, $array);
+		return $this;
+	}
 }
 

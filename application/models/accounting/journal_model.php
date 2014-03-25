@@ -380,4 +380,8 @@ class Journal_model extends MY_Model {
 		}
 	}
 
+	function select($fields) {
+    	$this->db->select($fields);
+    	return $this;
+    }
 }

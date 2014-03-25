@@ -69,5 +69,8 @@ class Invoice_model extends MY_Model {
 		return $this;
 	}
 
-					
+	function select($fields) {
+        $this->db->select($fields);
+        return $this;
+    }					
 }
