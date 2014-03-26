@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="<?php echo base_url(CSS."kendo.common.min.css");?>">
 <link rel="stylesheet" href="<?php echo base_url(CSS."kendo.bootstrap.min.css");?>">
 <link rel="stylesheet" href="<?php echo base_url(CSS."kendo.dataviz.min.css");?>">
-<link rel="stylesheet" href="<?php echo base_url(CSS."kendo.dataviz.flat.min.css");?>">
+<link rel="stylesheet" href="<?php echo base_url(CSS."kendo.dataviz.bootstrap.min.css");?>">
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="<?php echo base_url();?>resources/common/bootstrap/css/bootstrap.css">
@@ -145,6 +145,8 @@ var themerPrimaryColor = primaryColor;
 <script src="<?php echo base_url(JS."kendo.dataviz.min.js");?>"></script>
 <script src="<?php echo base_url(JS."kendo.web.min.js");?>"></script>
 <script src="<?php echo base_url(JS."cultures/kendo.culture.km-KH.min.js");?>"></script>
+<script src="<?php echo base_url(JS."cultures/kendo.culture.th-TH.min.js");?>"></script>
+<script src="<?php echo base_url(JS."cultures/kendo.culture.vi-VN.min.js");?>"></script>
 
 <!--start kendo localization in Khmer-->
 <script>

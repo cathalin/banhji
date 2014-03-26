@@ -32,8 +32,6 @@ class Vendors extends REST_Controller {
 				$vendors[] = array(
 					"id"				=> $r->id,
 					"bank_account"		=> $r->bank_account,
-					"card_number"		=> $r->card_number,
-					"commune_id"		=> $r->commune_id,
 					"company"			=> $r->company,
 					"created_at"		=> $r->created_at,
 					"number"			=> $r->number,
@@ -86,9 +84,9 @@ class Vendors extends REST_Controller {
 			"phone"				=> $postedData['phone'],
 			"email"				=> $postedData['email'],
 			"status"			=> 1,
-			"currency_code"		=> $postedData['currency_code']
+			"currency_code"		=> $postedData['currency']['code'],
 			// "status" 			=> $r->status,
-			
+			"company_id"		=> $postedData['company_id']
 		);
 
 
@@ -97,9 +95,31 @@ class Vendors extends REST_Controller {
 		$justCreated = $this->people->get($generatedId);
 
 		if(count($justCreated) > 0) {
-			$this->response(array("status"=>"OK", "message"=>"Vendor created.", "results"=>array("id"=>$generatedId)), 200);
+			$data = array(
+				"id" => $justCreated->id,
+				"bank_account"		=> $justCreated->bank_account,
+				"company"			=> $justCreated->company,
+				"created_at"		=> $justCreated->created_at,
+				"number"			=> $justCreated->number,
+				"email"				=> $justCreated->email,
+				"gender"			=> $justCreated->gender,
+				"image_url"			=> $justCreated->image_url,
+				"latitute"			=> $justCreated->latitute,
+				"longtitute"		=> $justCreated->longtitute,
+				"memo"				=> $justCreated->memo,
+				"name"				=> $justCreated->name,
+				"people_type_id"	=> $justCreated->people_type_id,
+				"phone"				=> $justCreated->phone,
+				"status" 			=> $justCreated->status,
+				"surname" 			=> $justCreated->surname,
+				"class_id"			=> $justCreated->class_id,
+				"currency_code"		=> $justCreated->currency_code,
+				"use_electricity" 	=> $justCreated->use_electricity,
+				"currency_code"		=> $justCreated->currency_code
+			);
+			$this->response(array("status"=>"OK", "message"=>"Vendor created.", "results"=>$data), 200);
 		} else {
-			$this->response(array("status"=>"failed", "message"=>"not able to create", "results"=>$vendors), 200);
+			$this->response(array("status"=>"failed", "message"=>"not able to create", "results"=>array()), 200);
 		}
 	}
 

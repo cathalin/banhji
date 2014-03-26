@@ -797,7 +797,7 @@ class Accounting_api extends REST_Controller {
 				} elseif($row->transaction_type === "purchase") {
 					$entries = $this->item_records->get_many_by(array("bill_id"=>$row->id));
 				} elseif($row->transaction_type === "grn") {
-					$entries = $this->invoice_item->get_many_by(array("invoice_id"=>$row->id));
+					$entries = $this->item_records->get_many_by(array("bill_id"=>$row->id));
 				} else {
 					$entries = array();
 				}

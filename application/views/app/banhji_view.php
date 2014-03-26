@@ -2518,7 +2518,6 @@
 			<li class="k-state-active">ព័តមានលំអិត</li>
 			<li>ប្រត្តិប័ត្រការណ៍</li>
 			<li>របាយការណ៍</li>
-			<li>Graph</li>
 		</ul>
 		<div>
 			<table class="table table-bordered">
@@ -2581,36 +2580,24 @@
 			<button class="btn" data-bind="visible: shown, click: record">Record</button>
 		</div>
 		<div>
-			<table id="itemTransDetail" class="table table-condensed"  style="height: 200px; overflow: auto;">
-				<thead>
-					<tr>
-						<th>កាលបរិច្ឆេទ</th>
-						<th>តំលៃទិញចូល</th>
-						<th>តំលៃលក់ចេញ</th>
-						<th>ព៌ណនា</th>
-						<th>ចូល/ចេញ</th>
-						<th>សរុប</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
+			<div id="itemTransDetail" class="table table-bordered"  style="height: 200px; overflow: auto;">
+			</div>
 		</div>
 		<div>
 			<table id="itemReportTable" class="table table-condensed"  style="height: 200px; overflow: auto;">
 				<thead>
 					<tr>
-						<th>ស្នើរទិញចូល</th>
-						<th>បញ្ជាទិញ</th>
-						<th>លិខិទទួល</th>
+						<th>នៅសល់ជាក់ស្ដែង</th>
+						<th>ស្នើរលក់ចេញ</th>
 						<th>វិក្កយប័ត្រ</th>
-						<th>លិខិតបញ្ជាលក់</th>
-						<th>នៅសល់</th>
+						<th>អាចលក់បាន</th>
+						<th>បញ្ជាទិញ</th>
+						<th>អាចប្រើបាន</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
 			</table>
 		</div>
-		<div>Graph</div>
 	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsNewView">
@@ -2679,16 +2666,21 @@
 <script type="text/x-kendo-template" id="itemsRecordView">
 	<tr>
 		<td>#=kendo.toString(created_at, 'dd-MM-yyyy')#</td>
-		<td>#:kendo.toString(cost, 'c2')#</td>
-		<td>#:kendo.toString(price, 'c2')#</td>
-		<td>#:description#</td>
+		<td><a href="<?php echo base_url();?>app\##:type.type ? type.type : "request"#/#=type.id#">#:type.type ? type.type : "request"#</a></td>
 		<td>#:kendo.toString(quantity, 'n2')#</td>
-		<td>#:amount#</td>
 	</tr>
 </script>
 <script type="text/x-kendo-template" id="itemsRequestView">
 </script>
 <script type="text/x-kendo-template" id="itemsReportView">
+	<tr>
+		<td>#=actual#</td>
+		<td>#=so#</td>
+		<td>#=inv#</td>
+		<td>#=parseInt(actual)-(parseInt(so)+parseInt(inv))#</td>
+		<td>#=po#</td>
+		<td>#=parseInt(po)+(parseInt(actual)-(parseInt(so)+parseInt(inv)))#</td>
+	</tr>
 </script>
 <!-- End Item Section-->
 
@@ -7682,13 +7674,95 @@
 
 		return viewModel;
 	}());
+
+	var Transaction = kendo.Class.extend({
+		dataSource 	: new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "PUT",
+					dataType: "json"
+				},
+				destroy: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "DELETE",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},
+			serverFiltering: true,
+			filter: [
+				{ field: "company_id", value: banhji.config.userData.company },
+				{ field: "archived", value: 0}
+			],
+			schema: {
+				model: { id: "id"},
+				data: "results"
+			}
+		}),
+		setCurrent 	: function(tranId){
+			this.set('current', this.dataSource.get(tranId));
+		},
+		getCurrent 	: function() {
+			return this.get('current');
+		},
+		query 		: function(query) {},
+		getById 	: function(id) {
+			var self = this, dfd = $.Deferred();
+			this.dataSource.filter(
+				{ field: "id", value: id}
+			);
+			this.dataSource.bind("requestEnd", function(e){
+				dfd.resolve(e.response);
+			});
+			this.dataSource.bind("error", function(e){
+				dfd.reject(e.response);
+			});
+			return dfd.promise();
+		},
+		getBy 		: function(criteria) {
+			var self = this, dfd = $.Deferred();
+			this.dataSource.filter(criteria);
+			this.dataSource.bind("requestEnd", function(e){
+				dfd.resolve(e.response);
+			});
+			this.dataSource.bind("error", function(e){
+				dfd.reject(e.response);
+			});
+			return dfd.promise();
+		},
+		add 		: function(data) {
+			this.dataSource.add(data);
+		},
+		cancel 		: function() {
+			this.dataSource.cancelChanges();
+		},
+		save 		: function() {
+			this.dataSource.sync();	
+		}
+	});
 	banhji.vendor = (function(){
 		// get a copy of vendors datasource
 		var vendorDS = banhji.ds.vendors;
 
 		var viewModel = kendo.observable({
 			transactions: [],
-			currency: {KHR: { code:"km-KH"}, USD:{ code:"en-US"}, THB: { code:"th-TH"}, VND: { code: "vi-VN"}},
+			currency: {KHR: "km-KH", USD:"en-US", THB:"th-TH", VND: "vi-VN"},
 			init: function() {
 				var self = this;
 				banhji.transaction.getBy([
@@ -7815,8 +7889,7 @@
 					vendor.push();
 					this.vendorsList.add({
 						id: null,
-						company: this.get("company"), 
-						people_type_id: this.get("type"),
+						company: this.get("company"),
 						address: this.get("address"),
 						surname: this.get("lastName"),
 						name: this.get("firstName"),
@@ -7829,7 +7902,7 @@
 						currency: this.get("currency"),
 						// created_by: user,
 						// upated_by: user,
-						company_id: "45454"
+						company_id: banhji.config.userData['company']
 					});
 					this.vendorsList.sync();
 					this.vendorsList.remove(this.vendorsList.at(0));
@@ -8016,6 +8089,7 @@
 			},
 			getAmountOwed: function() {
 				var amount = 0, self = this;
+				var currency = '';
 				var tranx = this.get("transactions");
 				if(this.get("current").id !== null) {
 					if(tranx.length>0) {
@@ -8025,6 +8099,7 @@
 							}
 						});
 					}
+					currency = banhji.vendor.currency[this.currency_code()];
 				} else {
 					if(tranx.length>0) {
 						$.each(tranx, function(index, value){
@@ -8033,13 +8108,15 @@
 							}
 						});
 					}
+					currency = 'USD';
 				}
-				return kendo.toString(amount, 'c2', banhji.vendor.currency[this.currency_code()].code);
+				return kendo.toString(amount, 'c2', currency);
 				// console.log(this.get("currency")[this.get("current").currency_code]);
 			},
 			getMonthlyExpense: function() {
 				// e.preventDefault();
 				var amount = 0;
+				var currency = '';
 				var tranx = this.get("transactions");
 				if(this.get("current").id !== null) {
 					if(tranx.length>0) {
@@ -8055,9 +8132,8 @@
 								}
 							}
 						});
-
 					}
-
+					currency = banhji.vendor.currency[this.currency_code()];
 				} else {
 					if(tranx.length>0) {
 						$.each(tranx, function(index, value){
@@ -8072,8 +8148,9 @@
 							}
 						});
 					}
+					currency = 'USD';
 				}
-				return kendo.toString(amount, 'c2', banhji.vendor.currency[this.currency_code()].code);
+				return kendo.toString(amount, 'c2', currency);
 			},
 			showMonthlyExpense: function(e) {
 				e.preventDefault();
@@ -8234,7 +8311,11 @@
 		});
 
 		return viewModel;
+<<<<<<< HEAD
 	}());	
+=======
+	}());
+>>>>>>> d96478b9bc0b3e8178db0b13dbff5dbdebf74a82
 	
 	banhji.bill = (function(){
 		var billPayments = new kendo.data.DataSource({
@@ -10491,7 +10572,19 @@
 			},
 			query 		: function(query) {
 				var dfd = $.Deferred();
-				this.itemReqStore.query(query);
+				this.dataSource.filter(query);
+				this.dataSource.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("Could not find");
+					}
+				});
+				return dfd.promise();
+			},
+			getReqItemBy: function(itemId) {
+				var dfd = $.Deferred();
+				this.itemReqStore.filter({field: "item_id", value: itemId});
 				this.itemReqStore.bind("requestEnd", function(e){
 					if(e.response.status === "OK") {
 						dfd.resolve(e.response.results);
@@ -10629,6 +10722,66 @@
 				}
 			}
 		});
+		var so = new kendo.data.DataSource({
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			transport: {
+				read: {
+					url: banhji.baseUrl +"api/items/so",
+					dataType: "json",
+					type: "GET"
+				},
+				parameterMap: function(data, operation) {
+					if(operation!=="read"||data.models) {
+						return { models: data.models };
+					}
+					return data;
+				}
+			},
+			serverFiltering: true
+		});
+		var inv = new kendo.data.DataSource({
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			transport: {
+				read: {
+					url: banhji.baseUrl +"api/items/invoice",
+					dataType: "json",
+					type: "GET"
+				},
+				parameterMap: function(data, operation) {
+					if(operation!=="read"||data.models) {
+						return { models: data.models };
+					}
+					return data;
+				}
+			},
+			serverFiltering: true
+		});
+		var tranx = new kendo.data.DataSource({
+			schema: {
+				model: {id: "id"}
+			},
+			transport: {
+				read: {
+					url: banhji.baseUrl +"api/items/tranx",
+					dataType: "json",
+					type: "GET"
+				},
+				parameterMap: function(data, operation) {
+					if(operation!=="read"||data.models) {
+						return { models: data.models };
+					}
+					return data;
+				}
+			},
+			serverFiltering: false
+		});
+
 		var accountDS = new kendo.data.DataSource({
 		    transport: {
 			    read: {
@@ -10672,7 +10825,7 @@
 			removeCart 			: function() {
 				this.cart.splice(0, this.cart.length);
 			},
-			getByItem 	 			: function(id) {
+			getByItem 	 		: function(id) {
 				var dfd = $.Deferred();
 				if(id === null) {
 					itemRecordsStore.query({
@@ -10696,6 +10849,19 @@
 				
 				return dfd.promise();
 			},
+			getItemTranx 		: function() {
+				var dfd = $.Deferred();
+				tranx.read();
+				tranx.bind("requestEnd", function(e){
+					var data = e.response;
+					if(data && data.length>0) {
+						dfd.resolve(data);
+					} else {
+						dfd.reject("no data found");
+					}
+				});
+				return dfd.promise();
+			},
 			create 				: function(data) {
 				var dfd = $.Deferred();
 				itemRecordsStore.add(data);
@@ -10713,6 +10879,7 @@
 			remove 		 		: function(id) {}			
 		});
 		var itemModel = kendo.observable({
+			reportData 			: [],
 			items 				: [{
 				sku 	: null,
 				name 	: null,
@@ -10779,11 +10946,11 @@
 			getBy 				: function(id) {
 				var dfd = $.Deferred();
 				itemsStore.filter({field: "id", value: id});
-				itemsStore.bind('change', function(e){
-					if(this.data().length>0) {
-						dfd.resolve(this.data()[0]);
+				itemsStore.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						dfd.resolve(e.response);
 					} else {
-						dfd.reject("No data found!");
+						dfd.reject(e.response);
 					}
 				});
 				return dfd.promise();
@@ -10875,16 +11042,102 @@
 					this.get("dataStore").sync();
 				}
 			},
+			inSO 				: function(itemId) {
+				var dfd = $.Deferred();
+				so.filter([{field:"type", value: "SO"},{field: "status", value: "0"}]);
+				so.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						var itemInSO = [];
+						$.each(e.response.results, function(i,v){
+							if(v.items.id == itemId) {
+								itemInSO.push(v);
+							}
+						});
+						dfd.resolve(itemInSO);
+					} else {
+						dfd.reject(e.response);
+					}
+				});
+				return dfd.promise();
+			},
+			inInv 				: function(itemId) {
+				var dfd = $.Deferred();
+				inv.filter([{field:"type", value: "Invoice"},{field: "status", value: "0"}]);
+				inv.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						var itemInInv = [];
+						$.each(e.response.results, function(i,v){
+							if(v.items.id == itemId) {
+								itemInInv.push(v);
+							}
+						});
+						dfd.resolve(itemInInv);
+					} else {
+						dfd.reject(e.response);
+					}
+				});
+				return dfd.promise();
+			},
 			getReport 			: function(itemId) {
-				var reports = [];
-				// requests
+				var self = this;
 
 				// po
-
-				// so
-
-				// grn
-			}			
+				var po = new Transaction();
+				
+				$.when(
+					this.inSO(itemId)
+					.then(function(data){
+						var count = 0;
+						$.each(data, function(i,v){
+							count += parseInt(v.quantity);
+						});
+						return count;
+					}),
+					this.inInv(itemId)
+					.then(function(data){
+						var count = 0;
+						$.each(data, function(i,v){
+							count += parseInt(v.quantity);
+						});
+						return count;
+					}),
+					banhji.requests.query({field: "status", value: 1})
+					.then(function(data) {
+						var count = 0;
+						$.each(data, function(i,v){
+							$.each(v.items, function(i,v){
+								if(v.item_id == itemId) {
+									count+= parseInt(v.quantity);
+								}
+							});
+						});
+						return count;
+					}),
+					po.getBy([{field: "transaction_type", value: "po"},{field: "status", value: 0}])
+					.then(function(data) {
+						var count = 0;
+						$.each(data.results, function(i,v){ 
+							$.each(v.entries, function(i,v){
+								if(v.item_id == itemId) {
+									count+= parseInt(v.quantity);
+								}
+							});
+						});
+						return count;
+					})
+				)
+				.then(function(so, inv, po){
+					$("#itemReportTable > tbody").kendoListView({
+						dataSource: [{
+							actual: self.get('current').quantity,
+							so: so,
+							inv: inv,
+							po: po,
+						}],
+						template: kendo.template($("#itemsReportView").html())
+					});
+				});
+			}
 		});
 		
 		return  itemModel;
@@ -24840,7 +25093,7 @@
 		}
 		$("#header").html(template(menu));
 		$("#home-menu").text("Banhji សន្និធិ");
-		$("#secondary-menu").html("<li><a href='\#new/item'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
+		$("#secondary-menu").html("<li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 
 		var $search = $("#searchField");
 		var type = $("#searchOptions").kendoDropDownList({
@@ -24900,12 +25153,24 @@
 				var tr = this.select();
 				var selected = this.dataItem(tr);
 				banhji.items.setCurrent(selected);
-				banhji.items.itemRecords.getByItem(selected.id)
+				banhji.items.getReport(selected.id);
+				banhji.items.itemRecords.getItemTranx()
 				.then(
 					function(data){
-						$("#itemTransDetail > tbody").kendoListView({
-							dataSource: data.results,
-							template: kendo.template($("#itemsRecordView").html())
+						var items = [];
+						$.each(data, function(i,v){
+							if(v.items.id === selected.id) {
+								items.push(v);
+							}
+						});
+						$("#itemTransDetail").kendoGrid({
+							dataSource: items,
+							columns: [
+								{ field: "កាលបរិច្ឆេទ", width: "150px" },
+								{ field: "ប្រភេទ" },
+								{ field: "ចំនួន" }
+							],
+							rowTemplate: kendo.template($("#itemsRecordView").html())
 						});
 				},
 					function(error){
@@ -25168,19 +25433,8 @@
 	/*---------- Adjustment ----------*/
 	//Adjustment	
 	banhji.router.route("load_adjustment", function(){
-		banhji.view.layout.showIn("#layout-view", banhji.view.inventory);
-		banhji.view.layout.showIn("#main", banhji.view.layMain);
-		banhji.view.layout.showIn("#cont", banhji.view.loadAdjustment);
-
-		var template = kendo.template($("#menu").html());
-		var menu = [];
-		for(var i=0;i<banhji.km.length; i++) {
-			var current = banhji.km[i];
-			if(banhji.config.userData.allowedModules[i]) {
-				menu.push(current);
-			}
-		}
-		$("#header").html(template(menu));
+		banhji.view.layout.showIn("#layout-view", banhji.view.index);
+		banhji.view.index.showIn("#content", banhji.view.loadAdjustment);
 	});
 
 	$(function(){
