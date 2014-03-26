@@ -10,7 +10,7 @@ class People_api extends REST_Controller {
 		$this->load->model("people/people_model", "people");
 		$this->load->model('people/people_type_model', 'people_type');
 
-		$this->load->model('currency_m', 'currency');
+		$this->load->model('currency_m', 'currency');		
 		$this->load->model('company_m', 'company');
 
 		$this->load->model('accounting/class_model', 'classes');
@@ -414,14 +414,10 @@ class People_api extends REST_Controller {
 			}			
 		 	$arr = $this->people->type($type)->limit($limit, $offset)->get_many_by($para);		 			 	
 			if(count($arr) >0){
-				foreach($arr as $row) {
-					$fullname = $row->surname .' '. $row->name;
-					
+				foreach($arr as $row) {					
 				   	//Add extra fields
-					$extra = array( 'fullname' 		=> $fullname,									
-									'people_types'	=> $this->people_type->get($row->people_type_id),
-								   	'amperes' 		=> $this->ampere->get($row->ampere_id),								   	
-								   	'classes'		=> $this->company->get($row->class_id)
+					$extra = array('people_types'=> $this->people_type->get($row->people_type_id),
+									'currencies' => $this->currency->get_by('code', $row->currency_code)
 							  );
 
 					//Cast object to array
@@ -433,7 +429,7 @@ class People_api extends REST_Controller {
 				$data['total'] = $this->people->type($type)->count_by($para);
 				$this->response($data, 200);		
 			}else{
-				$this->response(FALSE, 200);
+				$this->response(array(), 200);
 			}
 		}
 	}
