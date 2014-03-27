@@ -349,7 +349,7 @@ class Meter_records extends REST_Controller {
 								'people'			=> $this->people->get($row->customer_id),
 								//'meters'			=> $this->meter->get($row->meter_id),
 							   	'electricity_boxes' => $this->electricity_box->get($row->electricity_box_id),
-							   	'check'				=> false						   	
+							   	'isCheck'				=> false						   	
 						  );
 
 				//Cast object to array

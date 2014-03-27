@@ -5734,7 +5734,7 @@
 <script id="eInvoiceRowTemplate" type="text/x-kendo-tmpl">
 	<tr>
 		<td align="center">
-		   <input type="checkbox" data-bind="checked: check, events: {change : change" #: invoice_id>0 ? disabled="disabled" : "" # />
+		   <input type="checkbox" data-bind="checked: isCheck, events: {change : change}" #: invoice_id>0 ? disabled="disabled" : "" # />
 		</td>
 		<td>#:kendo.toString(new Date(month_of), "MM-yyyy") #</td>
 		<td>#:people.number#</td>			
@@ -20013,8 +20013,7 @@
 					viewModel.set("total_reading", response.length);
 							
 				}	
-		  	},
-		  	aggregate: { field: "check", aggregate: "sum" },  
+		  	},		  	
 			serverFiltering: true
 		});
 
@@ -20179,13 +20178,6 @@
 		  	}
 		});
 
-		//Read all data sources
-		planItemDS.fetch();
-		tariffDS.fetch();
-		tariffItemDS.fetch();
-		maintenanceDS.fetch();
-		exemptionDS.fetch();
-
 		//View model
 		var viewModel = kendo.observable({	
 			next_id			: 0,
@@ -20236,6 +20228,12 @@
 			customerIDList  : [],
 			
 			pageLoad 		: function(){
+				planItemDS.fetch();
+				tariffDS.fetch();
+				tariffItemDS.fetch();
+				maintenanceDS.fetch();
+				exemptionDS.fetch();
+
 				this.setDueDate();
 				this.setNumber();								
 			},				    
@@ -20284,21 +20282,34 @@
 			changeAll 		: function(){		
 				var bolValue = this.get("checkAll");
 				var data = meterRecordDS.data();
-				if(data.length>0){
-					var ts = 0;		
+
+				if(bolValue){
+					this.set("totalSelected", data.length);
+				}else{
+					this.set("totalSelected", 0);
+				}
+				
+				if(data.length>0){						
 			        for (var i = 0; i < data.length; i++) {
 			            var d = data[i];
 			            if(d.invoice_id==0){					
-							d.set("check", bolValue);
-							ts++;
+							d.set("isCheck", bolValue);
 						}
-			        }
-			        this.set("totalSelected", ts);
-		        }
+			        }			        
+		        }							
 			},
 			change 			: function(){		
-				var ageAggregates = meterRecordDS.aggregates().check;
-				this.set("totalSelected", ageAggregates.sum); 
+				var data = meterRecordDS.data();
+				var ts = 0;
+				if(data.length>0){
+			        for (var i = 0; i < data.length; i++) {
+			            var d = data[i];
+			            if(d.isCheck){					
+							ts++;
+						}
+			        }			        
+		        }
+		        this.set("totalSelected", ts);
 			},
 			getTariffId  	: function(tariff_plan_id, month_of){
 				var tariff_id = 0;						
@@ -20418,7 +20429,7 @@
 
 						if(isFree==false){ //Free
 				        	if(d.customer_id==dx){
-				        		if(d.check){  //Check									            	
+				        		if(d.isCheck){  //Check									            	
 				        			hasItem = true;
 				        			dataIndex = i;
 
@@ -20608,7 +20619,7 @@
 										id			: kendo.parseInt(d.meter_record_id),
 										invoice_id 	: invoice_id
 									});							
-								}//if(d.check){
+								}//if(d.isCheck){
 				        	}//if(d.customer_id==dx){
 			        	}//if(isFree==false){	        										
 					}//for loop meterRecordDS
@@ -20703,52 +20714,58 @@
 				var arList = this.get("receiveableList");		
 				for (var i=0;i<arList.length;i++) {
 					var di = arList[i];
-
-					journalEntries.push({				
-						account_id	: di.id,				
-						dr			: di.amt, 
-						cr			: 0,				
-						class_id 	: this.get("class_id"),
-						memo 		: ""
-					});
+					
+					journalEntries.push({
+				 		account_id 	: di.id,	 		
+				 		dr 			: di.amt, 
+				 		cr 			: 0,
+				 		class_id  	: this.get("class_id"),
+				 		memo 		: this.get("memo"),
+				 		exchange_rate: 1,
+					 	main 		: 0	 		
+					});					
 				}
 			
 				//Revenue
 				var revList = this.get("revenueList");		
 				for (var j=0;j<revList.length;j++) {
 					var dj = revList[j];
-
+					
 					journalEntries.push({
-						account_id	: dj.id,
-						dr			: 0, 
-						cr			: dj.amt,
-						class_id 	: this.get("class_id"),
-						memo 		: ""
+				 		account_id 	: dj.id,	 		
+				 		dr 			: 0, 
+				 		cr 			: dj.amt,
+				 		class_id  	: this.get("class_id"),
+				 		memo 		: this.get("memo"),
+				 		exchange_rate: 1,
+					 	main 		: 0	 		
 					});
 				}
 
-				//Add new journal to database			
-				journalDS.add({	 		
-			 		memo		: "វិក្កយបត្រអគ្គីសនី", 
-			 		voucher		: "",
-			 		class_id	: this.get("class_id"),
-			 		budget_id	: 0,
-			 		donor_id	: 0,
-			 		check_no	: "",
-			 		location_id	: 0,
-			 		transaction_type: "eInvoice",
-			 		people_id 	: 0,
-			 		employee_id : this.get('biller'),
-			 		invoice_id 	: 0,
-			 		payment_id  : 0,
-			 		bill_id		: 0,	
-			 		date 		: kendo.toString(lastD, "yyyy-MM-dd"), 
-			 		receipt_id  : 0,
-			 		item_receipt_id : 0,
-			 		cashier 	: 0,
-			 		journalEntries 	: journalEntries	 			 		
-			 	});
-
+				//Add new journal to database
+				journalDS.add({
+					company_id: banhji.config.userData.company,
+					vendor_id: 0,
+					people_id: 0,
+					employee_id: banhji.config.userData.userId,
+					payment_id: 0,
+					transaction_type: "eInvoice",
+					payment_method: "",
+					check_no: "",
+					memo: "វិក្កយបត្រអគ្គីសនី",
+					date: kendo.toString(lastD, "yyyy-MM-dd"),
+					//due_date: kendo.toString(this.dateDue, "yyyy-MM-dd"),
+					// amount_billed: 0,
+					// amount_due: 0,
+					// amount_paid: 0,
+					voucher: "",
+					number: "",
+					class_id: this.get("class_id"),
+					status: 1,
+					journalEntries: journalEntries,
+					inJournal: 1			 		 		
+			 	});			
+				
 			 	journalDS.sync();	 	
 			},
 			postInvoice 	: function(){
@@ -22437,7 +22454,7 @@
 			}
 			$("#header").html(template(menu));
 			$("#home-menu").text("Banhji | អតិថិជន");
-			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li><a href='\#customerBalance'>បញ្ជីអតិថិជន</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li>	</ul></li>");			
+			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li><a href='\#customerBalance'>បញ្ជីអតិថិជន</a></li><li><a href='\#agingSummary'>បំណុលអតិថិជន</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li>	</ul></li>");			
 
 			banhji.customer.viewModel.set("showMenu", false);
 			
