@@ -6813,11 +6813,11 @@
 					
 					<div data-role="grid" data-bind="source: agingList"
 				        data-auto-bind="false" data-row-template="agingDetailRowTemplate"
-				        data-pageable="true"                  
+				        data-pageable="true"                 
 				        data-columns='[				            
-				            { title: "ឈ្មោះ" },
-				            { title: "ប្រភេទ" },
-				            { title: "ថ្ងៃចេញវិក្ក." },	                     
+				            { title: "ឈ្មោះ" },				            
+				            { title: "លេខវិក្កយបត្រ" },
+				            { title: "ថ្ងៃចេញវិក្កយបត្រ" },	                     
 				            { title: "ថ្ងៃផុតកំណត់" },
 				            { title: "អាយុកាល" },				            
 				            { title: "ទឹកប្រាក់" }               	                    
@@ -6830,13 +6830,48 @@
 </script>
 <script id="agingDetailRowTemplate" type="text/x-kendo-tmpl">		
 	<tr>		
-		<td>a</td>
-		<td>b</td>		
-		<td>c</td>
-		<td>d</td>
-		<td>e</td>
-		<td>f</td>
-    </tr>   
+		<td>#:number# #:surname# #:name#</td>		
+		<td></td>		
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+    </tr>
+    #var total = 0;#
+    #if(invoices.length>0){#    	
+    	#for (var i=0;i<invoices.length;i++) {#
+    		#total += kendo.parseFloat(invoices[i].amount)/kendo.parseFloat(invoices[i].rate)#    	
+	    	<tr>	    		
+	    		<td align="right">#:invoices[i].type#</td>
+				<td>#:invoices[i].number#</td>		
+				<td>#:kendo.toString(new Date(invoices[i].issued_date), "dd-MM-yyyy")#</td>
+				<td>#:kendo.toString(new Date(invoices[i].due_date), "dd-MM-yyyy")#</td>
+				<td>
+					# var date = new Date(), dueDate = new Date(invoices[i].due_date).getTime(), toDay = new Date(date).getTime();#
+					#if(dueDate < toDay) {#
+						លើសកំណត់ #:Math.floor((toDay - dueDate)/(1000*60*60*24))# ថ្ងៃ
+					#} else {#
+						#:Math.floor((dueDate - toDay)/(1000*60*60*24))# ថ្ងៃនឹងត្រូវទូទាត់
+					#}#
+				</td>
+				<td align="right">
+					#:kendo.toString(kendo.parseFloat(invoices[i].amount)/kendo.parseFloat(invoices[i].rate), "c", invoices[i].sub_code)#
+				</td>
+	    	</tr>
+    	#}#
+    #}#
+    #if(invoices.length>0){#
+    	<tr>		
+			<td>សរុប:</td>			
+			<td></td>		
+			<td></td>
+			<td></td>
+			<td></td>
+			<td align="right" style="border:solid;border-bottom:thick;border-left:thick;border-right:thick;">
+				#=kendo.toString(total, "c", invoices[0].sub_code)#
+			</td>
+	    </tr>
+    #}#   
 </script>
 <!-- END OF DAWINE -->
 
@@ -22294,7 +22329,7 @@
 		var agingDS = new kendo.data.DataSource({
 		  	transport: {	  
 			  	read: {
-				  	url : banhji.baseUrl + "api/invoices/aging_batch",
+				  	url : banhji.baseUrl + "api/invoices/aging_detail",
 				  	type: "GET",
 				  	dataType: "json"		  
 			  	}
@@ -22570,7 +22605,7 @@
 			}
 			$("#header").html(template(menu));
 			$("#home-menu").text("Banhji | អតិថិជន");
-			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span>របាយការណ៍</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#​aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#​aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
+			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
 
 			banhji.customer.viewModel.set("showMenu", false);
 			
@@ -23045,7 +23080,7 @@
 		});			
 	});
 
-	banhji.router.route("aging_summary", function(){
+	banhji.router.route("aging_summary", function(){		
 		banhji.view.layout.showIn("#layout-view", banhji.view.agingSummary);
 		kendo.fx($("#slide-form")).slideIn("down").play();
 				
