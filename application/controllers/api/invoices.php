@@ -713,6 +713,96 @@ class Invoices extends REST_Controller {
 		$this->response($data, 200);				
 	}
 
+	/* --- AGING DETAIL --- */	
+	function aging_detail_get(){
+		$filter = $this->get("filter");	
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}				
+		$company_id = $para["company_id"];
+		$issued_date = $para["issued_date"];
+		$typeList = array("Invoice", "eInvoice", "Notice");		
+		
+		$limit 	= $this->get('pageSize');
+		$offset = $this->get('skip');
+						
+		$data = array();
+		$data["people"] = Array();		
+		$today = new DateTime();
+		
+		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by("company_id", $company_id);
+		if(count($cusList)>0){
+			foreach ($cusList as $cus) {			
+				$invList = $this->invoice->where_in('type', $typeList)
+										->where_in('status', array(0,2))
+										->get_many_by(array('customer_id'=>$cus->id,															
+															'issued_date <='=>$issued_date
+													));
+				if(count($invList)>0){
+					$current = 0;
+					$within30 = 0;
+					$within60 = 0;
+					$within90 = 0;
+					$over90 = 0;
+					$t=0;
+
+			  		foreach($invList as $row) {			  
+						//Compare dates
+						$due_date = new DateTime($row->due_date);
+						$day = 0;					
+						if($due_date < $today){		  
+						  	$dDiff = $due_date->diff($today);				  	
+						  	$day = $dDiff->days;
+						}
+												
+						//Calculate total amount
+						$pay = 0;	
+						if(intval($row->status)===2){
+							$pay = $this->payment->get_total_payment($row->id);
+						}			  	
+					  	$total = floatval($row->amount) - $pay;
+						$t += $total;
+								
+						//Add total to age[]
+						if($day < 1){						
+							$current += $total;
+						}else if(($day > 0) && ($day <= 30)){						
+							$within30 += $total;
+						}else if(($day > 30) && ($day <= 60)){						
+							$within60 += $total;
+						}else if(($day > 60) && ($day <= 90)){						
+							$within90 += $total;
+						}else{						
+							$over90 += $total;
+						}						
+					}
+
+					if($t>0){
+						$data["people"][] = array(
+							'number' => $cus->number,						
+					  		'fullname'  	=> $cus->surname.' '.$cus->name,
+					  		'current'		=> $current,
+							'within30' 		=> $within30,
+							'within60' 		=> $within60,
+							'within90' 		=> $within90,
+							'over90'   		=> $over90
+						);
+					}					  			  			  
+				}
+			}			
+		}
+
+		$countPara = array("invoices.status"=>0, "invoices.issued_date <="=>$issued_date);
+		if(!empty($para["class_id"]) && isset($para["class_id"])){
+			$countPara += array("people.class_id"=>$para["class_id"]);
+		}
+		$data["total"] = $this->invoice->join_people()
+										->where_in('type', $typeList)
+										->count_by($countPara);
+		$this->response($data, 200);				
+	}
+
 	/* --- DISCONNECT LIST --- */	
 	function disconnect_list_get(){		
 		$filter = $this->get("filter");			
