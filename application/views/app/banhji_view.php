@@ -6744,7 +6744,14 @@
 			<div class="span12">
 				<div id="example" class="k-content">				
 					<div>						
-						<select data-role="combobox" data-text-field="abbr" data-value-field="id" data-bind="source: companyList, value: company_id" placeHolder="អាជ្ញាបណ្ណ"></select>
+						<select id="company" name="company" data-role="dropdownlist" 
+								data-text-field="abbr" data-value-field="id" 
+								data-bind="source: companyList, value: company_id" 
+								data-option-label="(--- អាជ្ញាបណ្ណ ---)"></select>
+						<select id="transformer" name="transformer" data-role="dropdownlist" 
+								data-text-field="transformer_number" data-value-field="id"
+		          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
+		          				data-auto-bind="false" data-option-label="(--- ត្រង់ស្វូ ---)"></select>
 						<input data-role="datepicker" data-bind="value: issued_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
 						<button id="search" type="button" class="btn btn-default"><i class="icon-eye-open"></i></button>				
 					</div>
@@ -6800,7 +6807,14 @@
 			<div class="span12">
 				<div id="example" class="k-content">				
 					<div>
-						<select data-role="combobox" data-text-field="abbr" data-value-field="id" data-bind="source: companyList, value: company_id" placeHolder="អាជ្ញាបណ្ណ"></select>
+						<select id="company" name="company" data-role="dropdownlist" 
+								data-text-field="abbr" data-value-field="id" 
+								data-bind="source: companyList, value: company_id" 
+								data-option-label="(--- អាជ្ញាបណ្ណ ---)"></select>
+						<select id="transformer" name="transformer" data-role="dropdownlist" 
+								data-text-field="transformer_number" data-value-field="id"
+		          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
+		          				data-auto-bind="false" data-option-label="(--- ត្រង់ស្វូ ---)"></select>
 						<input data-role="datepicker" data-bind="value: issued_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
 						<button id="search" type="button" class="btn btn-default"><i class="icon-eye-open"></i></button>				
 					</div>
@@ -22256,6 +22270,17 @@
 			}		
 		});
 
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: ARNY.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},	
+			serverFiltering: true
+		});
+
 		var agingDS = new kendo.data.DataSource({
 		  	transport: {	  
 			  	read: {
@@ -22274,10 +22299,12 @@
 		});
 				
 		var viewModel = kendo.observable({
-			class_id 		: null,
+			company_id 		: 0,
+			transformer_id 	: 0,
 			issued_date 	: new Date(),
 
 			companyList 	: companyDS,
+			transformerList : transformerDS,
 			agingList 		: agingDS,
 
 			issued_date_text : function(){
@@ -22292,9 +22319,16 @@
 				var para = [];
 
 				var company_id = this.get("company_id");
-				if(company_id!=null){
+				if(company_id>0){
 					para.push({
-						field: "company_id", value: company_id.id
+						field: "company_id", value: company_id
+					});
+				}
+
+				var transformer_id = this.get("transformer_id");
+				if(transformer_id>0){
+					para.push({
+						field: "transformer_id", value: transformer_id
 					});
 				}		
 				
@@ -22326,6 +22360,17 @@
 			}		
 		});
 
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: ARNY.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},	
+			serverFiltering: true
+		});
+
 		var agingDS = new kendo.data.DataSource({
 		  	transport: {	  
 			  	read: {
@@ -22344,10 +22389,12 @@
 		});
 				
 		var viewModel = kendo.observable({
-			class_id 		: null,
+			company_id 		: 0,
+			transformer_id 	: 0,
 			issued_date 	: new Date(),
 
 			companyList 	: companyDS,
+			transformerList : transformerDS,
 			agingList 		: agingDS,
 
 			issued_date_text : function(){
@@ -22362,9 +22409,16 @@
 				var para = [];
 
 				var company_id = this.get("company_id");
-				if(company_id!=null){
+				if(company_id>0){
 					para.push({
-						field: "company_id", value: company_id.id
+						field: "company_id", value: company_id
+					});
+				}
+
+				var transformer_id = this.get("transformer_id");
+				if(transformer_id>0){
+					para.push({
+						field: "transformer_id", value: transformer_id
 					});
 				}		
 				

@@ -629,19 +629,28 @@ class Invoices extends REST_Controller {
 		$para = array();				
 		for ($i = 0; $i < count($filter['filters']); ++$i) {				
 			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		}				
-		$company_id = $para["company_id"];
+		}		
+		
 		$issued_date = $para["issued_date"];
-		$typeList = array("Invoice", "eInvoice", "Notice");		
+		$typeList = array("Invoice", "eInvoice", "Notice");
 		
 		$limit 	= $this->get('pageSize');
 		$offset = $this->get('skip');
+
+		$cusPara = array();
+		if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
+			$cusPara = array("transformer_id"=>$para["transformer_id"]); 
+		}else{
+			if(!empty($para["company_id"]) && isset($para["company_id"])){
+				$cusPara = array("company_id"=>$para["company_id"]);
+			}
+		}
 						
 		$data = array();
 		$data["people"] = Array();		
 		$today = new DateTime();
 		
-		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by("company_id", $company_id);
+		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by($cusPara);
 		if(count($cusList)>0){
 			foreach ($cusList as $cus) {			
 				$invList = $this->invoice->where_in('type', $typeList)
@@ -703,7 +712,7 @@ class Invoices extends REST_Controller {
 			}			
 		}
 		
-		$data["total"] = $this->people->type(1)->count_by("company_id", $company_id);
+		$data["total"] = $this->people->type(1)->count_by($cusPara);
 		$this->response($data, 200);				
 	}
 
@@ -714,17 +723,26 @@ class Invoices extends REST_Controller {
 		for ($i = 0; $i < count($filter['filters']); ++$i) {				
 			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 		}				
-		$company_id = $para["company_id"];
+		
 		$issued_date = $para["issued_date"];
 		$typeList = array("Invoice", "eInvoice", "Notice");		
 		
 		$limit 	= $this->get('pageSize');
 		$offset = $this->get('skip');
+
+		$cusPara = array();
+		if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
+			$cusPara = array("transformer_id"=>$para["transformer_id"]); 
+		}else{
+			if(!empty($para["company_id"]) && isset($para["company_id"])){
+				$cusPara = array("company_id"=>$para["company_id"]);
+			}
+		}
 						
 		$data = array();
 		$data["people"] = Array();		
 				
-		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by("company_id", $company_id);
+		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by($cusPara);
 		if(count($cusList)>0){
 			foreach ($cusList as $row) {			
 				$invList = $this->invoice->where_in('type', $typeList)
@@ -745,7 +763,7 @@ class Invoices extends REST_Controller {
 			}			
 		}
 		
-		$data["total"] = $this->people->type(1)->count_by("company_id", $company_id);
+		$data["total"] = $this->people->type(1)->count_by($cusPara);
 		$this->response($data, 200);				
 	}
 
