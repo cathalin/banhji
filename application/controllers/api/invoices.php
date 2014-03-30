@@ -1031,7 +1031,7 @@ class Invoices extends REST_Controller {
 		$data = Array();
 		if(count($arr) >0){
 			foreach($arr as $row) {
-				$amt = $this->invoice_item->get_total_amount($row->id);										   
+				$amt = $row->amount;										   
 			   	$paid = $this->payment->get_total_payment($row->id);
 			   	$total = $amt - $paid;
 
@@ -1044,7 +1044,7 @@ class Invoices extends REST_Controller {
 			   	$tpayment = 0;							
 				if(count($prevInv)>0){
 					foreach ($prevInv as $inv) {						
-						$tdebt += $this->invoice_item->get_total_amount($inv->id);
+						$tdebt += $inv->amount;
 						$tpayment += $this->payment->get_total_payment($inv->id);
 					}
 				}
