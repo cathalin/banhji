@@ -1024,10 +1024,11 @@ class Invoices extends REST_Controller {
 		$para = array();				
 		for ($i = 0; $i < count($filter['filters']); ++$i) {				
 			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		}			
-		$arr = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
+		}
+		$typeList = array("Invoice", "eInvoice", "Notice");			
+		$arr = $this->invoice->where_in('type', $typeList)
 							->get_many_by($para);
-		
+
 		$data = Array();
 		if(count($arr) >0){
 			foreach($arr as $row) {
@@ -1035,7 +1036,8 @@ class Invoices extends REST_Controller {
 			   	$paid = $this->payment->get_total_payment($row->id);
 			   	$total = $amt - $paid;
 
-			   	$prevInv = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
+			   	$prevInv = $this->invoice->where_in('type', $typeList)
+			   							->where_in('status', array(0,2))
 		   								->get_many_by(array("customer_id"=>$row->customer_id, 
 		   													"issued_date <"=>$row->issued_date,
 		   													"status"=>0,
