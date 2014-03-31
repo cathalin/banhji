@@ -51,7 +51,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url(); ?>app#items">
+						<a href="<?php echo base_url(); ?>app#inventories">
 							<img src="<?php echo base_url(); ?>resources/img/Inventory.png" alt="Inventory">
 						</a>
 					</li>
@@ -2709,8 +2709,8 @@
 					</tr>
 				</tbody>
 			</table>
-			<button class="btn" data-bind="visible: shown, click: cancelChange">Cancel</button>
-			<button class="btn" data-bind="visible: shown, click: record">Record</button>
+			<button class="btn" data-bind="visible: shown, click: cancelChange">មិនយក</button>
+			<button class="btn" data-bind="visible: shown, click: record">រក្សាទុក</button>
 		</div>
 		<div>
 			<div id="itemTransDetail" class="table table-bordered"  style="height: 200px; overflow: auto;">
@@ -2792,8 +2792,8 @@
 				</tr>
 			</tbody>
 		</table>
-		<button class="btn" data-bind="visible: shown, click: cancelChange">Cancel</button>
-		<button class="btn" data-bind="visible: shown, click: record">Record</button>
+		<button class="btn" data-bind="visible: shown, click: cancelChange">មិនយក</button>
+		<button class="btn" data-bind="visible: shown, click: record">រក្សាទុក</button>
 	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsRecordView">
@@ -11686,6 +11686,101 @@
 		
 		return  itemModel;
 	}());
+
+	banhji.class = (function(){
+		var classCollection = new kendo.data.DataSource({
+	        transport: {
+	            read: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "GET",
+                    dataType: "json",
+                },
+                create: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "POST",
+                    dataType: "json"
+                },
+                update: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "PUT",
+                    dataType: "json"
+                },  
+                destroy: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "DELETE",
+                    dataType: "json"
+                },   
+                parameterMap: function(data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models: kendo.stringify(data.models)};
+                    }   
+                    return data;
+               	}
+	        },
+            schema: {
+                    model: {id : "id"}      
+            },
+            serverFiltering: true,
+            serverSorting: true
+        });
+
+        var classVM = kendo.observable({
+        	query 		: function(query) {},
+        	getById 	: function(id) {
+        		var dfd = $.Deferred();
+        		classCollection.filter({field: "id", value: id});
+    			classCollection.bind('requestEnd', function(e){
+    				dfd.resolve(e.response);
+    			});
+    			return dfd.promise();
+        	},
+        	getBy 		: function(criteria) {},
+        	cancelChange: function() {
+        		classCollection.cancelChanges();
+        	},
+        	addNew 		: function() {
+        		classCollection.insert(0, {
+        			company_id: banhji.config.userData['company'],
+        			name: "ឈ្មោះ",
+        			type: "class",
+        			description: "ពណ៌នា"
+        		});
+        	},
+        	save 		: function(data) {
+        		if(data === undefined) {
+        			classCollection.sync();
+        		} else {
+        			classCollection.add(data);
+        			classCollection.sync();
+        		}
+        	},
+        	update 		: function(id, data) {
+        		var dfd = $.Deferred();
+        		if(classCollection.data()>0) {
+        			var model = classCollection.get(id);
+        			$.each(data, function(i, v){
+        				model.set(i,v);
+        			});
+        		} else {
+        			this.getById(id).then(
+        				function(res) {
+        					var model = classCollection.get(id);
+        					$.each(data, function(i, v){
+        						model.set(i, v);
+        					});
+        					collection
+        				}
+        			)
+        			
+        		}
+        		
+        	},
+        	remove 		: function() {}
+        });
+        return classVM;
+	}());
+
+	banhji.class.update(1, {name: "sdfd", description: "fddsfewrew"});
 
 	//By Visal ----------------------------------
 	banhji.inventory = (function(){
@@ -24134,7 +24229,7 @@
 				}
 			}
 		$("#header").html(template(menu));
-		$("#home-menu").text("Banhji-របាយការណ៍");
+		$("#home-menu").text("Banhji | របាយការណ៍");
 	});
 
 	banhji.router.route("pomonitoring", function(){
@@ -25830,8 +25925,8 @@
 				}
 			}
 		$("#header").html(template(menu));
-		$("#home-menu").text("Banhji-គណនេយ្យ");
-		$("#secondary-menu").html("<li><a href='\#accounting/items'>Items</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
+		$("#home-menu").text("Banhji | គណនេយ្យ");
+		$("#secondary-menu").html("<li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.accounting);
 
 		var $acGrid = $("#acctGrid").kendoGrid({
@@ -25868,8 +25963,8 @@
 					menu.push(current);
 				}
 			}
-			$("#header").html(template(menu));
-		$("#secondary-menu").html("<li><a href='\#accounting/items'>Items</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
+		$("#header").html(template(menu));
+		$("#secondary-menu").html("<li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.accountingJournal);
 		var items = [];
 		//datasource
@@ -26156,28 +26251,35 @@
 			}
 		}
 		$("#header").html(template(menu));
-		$("#home-menu").text("Banhji សន្និធិ");
-		$("#secondary-menu").html("<li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
+		$("#home-menu").text("Banhji | គណនេយ្យ");
+		$("#secondary-menu").html("<li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 
 		var $search = $("#searchField");
 		var type = $("#searchOptions").kendoDropDownList({
-			dataSource: [
-				{value:"1", text:"Inventory Parts"}, 
-				{value:"2", text:"Non-inventory Parts"}, 
+			dataSource: [ 
+				{value: "0", text: "ទាំងអស់"},
+				{value:"2", text:"មិនមែនសន្និធិ"}, 
 				{value:"3", text:"Fixed Assets"}, 
-				{value:"4", text:"Services"},
-				{value:"5", text:"Deposit"},
-				{value:"6", text:"VAT"},
-				{value:"7", text:"Other Changes"}
+				{value:"4", text:"សេវាកម្ម"},
+				{value:"5", text:"ប្រាក់កក់"},
+				{value:"6", text:"ពន្នអាករ"},
+				{value:"7", text:"ផ្សេងៗ"}
 			],
 			dataTextField: "text",
 			dataValueField: "value",
-			index: 1,
+			index: -1,
 			change: function(e) {
-				banhji.items.dataStore.filter([
-					{field: "company_id", value: banhji.config.userData['company']},
-					{field: "item_type_id", value: this.value()}
-				]);
+				if(this.value() === "0") {
+					banhji.items.dataStore.filter([
+						{field: "company_id", value: banhji.config.userData['company']},
+						{field: "item_type_id <>", value: 1}
+					]);
+				} else {
+					banhji.items.dataStore.filter([
+						{field: "company_id", value: banhji.config.userData['company']},
+						{field: "item_type_id", value: this.value()}
+					]);
+				}
 			}
 		}).data('kendoDropDownList');
 		$("#search").on('click', function(){
@@ -26206,7 +26308,7 @@
 				}
 			);
 		}
-
+		banhji.items.dataStore.filter([{field: "company_id", value: banhji.config.userData.company}, {field: "item_type_id <>", value: 1}]);
 		$("#itemsSidebar").kendoGrid({
 			dataSource: banhji.items.dataStore,
 			columns: [
@@ -26256,6 +26358,110 @@
 
 	banhji.router.route("requests(/:id)", function(requestId){
 		console.log("request section");
+	});
+
+	banhji.router.route("inventories(/:id)", function(id){
+		banhji.view.layout.showIn("#layout-view", banhji.view.index);
+		banhji.view.index.showIn("#content", banhji.view.items);
+		var transTmpl = kendo.template($("#itemsRecordView").html());
+		var template = kendo.template($("#menu").html());
+		var menu = [];
+		for(var i=0;i<banhji.km.length; i++) {
+			var current = banhji.km[i];
+			if(banhji.config.userData.allowedModules[i]) {
+				menu.push(current);
+			}
+		}
+		$("#header").html(template(menu));
+		$("#home-menu").text("Banhji | សន្និធិ");
+		$("#secondary-menu").html("<li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
+
+		var $search = $("#searchField");
+		var type = $("#searchOptions").kendoDropDownList({
+			dataSource: [
+				{value:"1", text:"សន្និធិ"}
+			],
+			dataTextField: "text",
+			dataValueField: "value",
+			index: 0,
+			change: function(e) {
+				banhji.items.dataStore.filter([
+					{field: "company_id", value: banhji.config.userData['company']},
+					{field: "item_type_id", value: 1}
+				]);
+			}
+		}).data('kendoDropDownList');
+		$("#search").on('click', function(){
+			if($search.val() !== "") {
+				banhji.items.dataStore.filter([
+					{field: "company_id", value: banhji.config.userData['company']},
+					{field: "name LIKE", value: $search.val()+'%'},
+					{field: "item_type_id", value: 1}
+				]);
+				} else {
+				banhji.item.dataStore.filter([
+					{field: "company_id", value: banhji.config.userData['company']},
+					{field: "item_type_id", value: 1}
+				]);
+			}
+		});
+
+		if(id) {
+			banhji.items.getBy(id)
+			.then(
+				function(data) {
+					banhji.items.setCurrent(data);
+				},
+				function(error) {
+					console.log(error);
+				}
+			);
+		}
+
+		banhji.items.dataStore.filter([{field: "company_id", value: banhji.config.userData.company}, {field: "item_type_id", value: 1}]);
+		$("#itemsSidebar").kendoGrid({
+			dataSource: banhji.items.dataStore,
+			columns: [
+				{ title: "&nbsp;", field: "name"}
+			],
+			selectable: true,
+			change: function(e) {
+				var tr = this.select();
+				var selected = this.dataItem(tr);
+				banhji.items.setCurrent(selected);
+				banhji.items.getReport(selected.id);
+				banhji.items.itemRecords.getItemTranx()
+				.then(
+					function(data){
+						var items = [];
+						$.each(data, function(i,v){
+							if(v.items.id === selected.id) {
+								items.push(v);
+							}
+						});
+						$("#itemTransDetail").kendoGrid({
+							dataSource: items,
+							columns: [
+								{ field: "កាលបរិច្ឆេទ", width: "150px" },
+								{ field: "ប្រភេទ" },
+								{ field: "ចំនួន" }
+							],
+							rowTemplate: kendo.template($("#itemsRecordView").html())
+						});
+				},
+					function(error){
+						var data = [];
+						$("#itemTransDetail > tbody").kendoListView({
+							dataSource: data,
+							template: kendo.template($("#itemsRecordView").html())
+						});
+				});
+			}
+		});
+	});
+
+	banhji.router.route("classes(/:id)", function(id){
+		console.log("Classes");
 	});
 
 	//By Visal -----------------------------------

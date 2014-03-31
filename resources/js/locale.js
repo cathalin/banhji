@@ -8,7 +8,7 @@ banhji.km = [
 	{menu:"cashier", locale: "បេឡាករ"},
 	{menu:"customers", locale: "អតិថិជន"},
 	{menu:"accounting", locale: "គណនេយ្យ"},
-	{menu:"items", locale: "សន្និធិ"},
+	{menu:"inventories", locale: "សន្និធិ"},
 	{menu:"reports", locale: "របាយការណ៍"},
 	{menu:"Electricity", locale: "ភ្លើងអគ្គិសនី"},
 	{menu:"my", locale: "គណនេយ្យខ្ម្ញុំ"},
