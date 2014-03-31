@@ -28,14 +28,10 @@ class Payments extends REST_Controller {
 			$arr = $this->payment->get_many_by($para);
 		
 			if(count($arr) >0){
-				foreach($arr as $row) {
-					$totalAmount = $this->invoice_item->get_total_amount($row->invoice_id);
-					$invoices = $this->invoice->get($row->invoice_id);
-					
+				foreach($arr as $row) {										
 					//Add extra fields
 					$extra = array('customers' 			=> $this->people->get($row->customer_id),									
-									'invoices'			=> $invoices,
-									'total_amount'		=> $totalAmount								   	
+									'invoices'			=> $this->invoice->get($row->invoice_id)								   	
 							  );
 
 					//Cast object to array
@@ -46,12 +42,9 @@ class Payments extends REST_Controller {
 				}
 				$this->response($data, 200);		
 			}else{
-				$this->response(FALSE, 200);
+				$this->response(array(), 200);
 			}
-		}else{
-			$data = $this->payment->get_all();
-			$this->response($data, 200);
-		}			
+		}		
 	}
 	
 	//POST

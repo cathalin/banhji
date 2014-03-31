@@ -308,7 +308,7 @@ class Inventory_api extends REST_Controller {
 		}		
 	}
 
-	function itemrecords_get() {
+	/*function itemrecords_get() {
 		$filter= $this->get('filter');
 		if(!empty($filter) && isset($filter)){			
 			$criteria = array();				
@@ -339,7 +339,7 @@ class Inventory_api extends REST_Controller {
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 		}	
-	}
+	}*/
 
 	function itemrecords_post() {
 		$postedData = $this->post('models');

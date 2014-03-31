@@ -312,7 +312,9 @@ class Invoices extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}			
-			$arr = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))->get_many_by($para);							
+			$arr = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
+								->where_in('status', array(0,2))
+								->get_many_by($para);							
 			if(count($arr) >0){
 				foreach($arr as $row) {
 					$totalAmount = $row->amount;										   
@@ -622,23 +624,28 @@ class Invoices extends REST_Controller {
 	}
 
 	/* --- AGING BATCH --- */	
-	function aging_batch_get(){		
-		$limit 	= $this->get('pageSize');
-		$offset = $this->get('skip');
-		$filter = $this->get("filter");		
-			
+	function aging_batch_get(){
+		$filter = $this->get("filter");	
 		$para = array();				
 		for ($i = 0; $i < count($filter['filters']); ++$i) {				
 			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		}
+		}		
 		
 		$issued_date = $para["issued_date"];
+		$typeList = array("Invoice", "eInvoice", "Notice");
 		
-		$cusPara = array("status"=>1);
-		if(!empty($para["company_id"]) && isset($para["company_id"])){
-			$cusPara += array("company_id"=>$para["company_id"]);
-		}			
+		$limit 	= $this->get('pageSize');
+		$offset = $this->get('skip');
 
+		$cusPara = array();
+		if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
+			$cusPara = array("transformer_id"=>$para["transformer_id"]); 
+		}else{
+			if(!empty($para["company_id"]) && isset($para["company_id"])){
+				$cusPara = array("company_id"=>$para["company_id"]);
+			}
+		}
+						
 		$data = array();
 		$data["people"] = Array();		
 		$today = new DateTime();
@@ -646,9 +653,9 @@ class Invoices extends REST_Controller {
 		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by($cusPara);
 		if(count($cusList)>0){
 			foreach ($cusList as $cus) {			
-				$invList = $this->invoice->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
-										->get_many_by(array('customer_id'=>$cus->id,
-															'status'=>0,
+				$invList = $this->invoice->where_in('type', $typeList)
+										->where_in('status', array(0,2))
+										->get_many_by(array('customer_id'=>$cus->id,															
 															'issued_date <='=>$issued_date
 													));
 				if(count($invList)>0){
@@ -667,12 +674,14 @@ class Invoices extends REST_Controller {
 						  	$dDiff = $due_date->diff($today);				  	
 						  	$day = $dDiff->days;
 						}
-						
-						//Calculate total amount	
-						$amt = $this->invoice_item->get_total_amount($row->id);
-					  	$pay = $this->payment->get_total_payment($row->id);
-					  	$total = ($amt - $pay);
-					  	$t += $total;
+												
+						//Calculate total amount
+						$pay = 0;	
+						if(intval($row->status)===2){
+							$pay = $this->payment->get_total_payment($row->id);
+						}			  	
+					  	$total = floatval($row->amount) - $pay;
+						$t += $total;
 								
 						//Add total to age[]
 						if($day < 1){						
@@ -702,14 +711,59 @@ class Invoices extends REST_Controller {
 				}
 			}			
 		}
+		
+		$data["total"] = $this->people->type(1)->count_by($cusPara);
+		$this->response($data, 200);				
+	}
 
-		$countPara = array("invoices.status"=>0, "invoices.issued_date <="=>$issued_date);
-		if(!empty($para["class_id"]) && isset($para["class_id"])){
-			$countPara += array("people.class_id"=>$para["class_id"]);
+	/* --- AGING DETAIL --- */	
+	function aging_detail_get(){
+		$filter = $this->get("filter");	
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}				
+		
+		$issued_date = $para["issued_date"];
+		$typeList = array("Invoice", "eInvoice", "Notice");		
+		
+		$limit 	= $this->get('pageSize');
+		$offset = $this->get('skip');
+
+		$cusPara = array();
+		if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
+			$cusPara = array("transformer_id"=>$para["transformer_id"]); 
+		}else{
+			if(!empty($para["company_id"]) && isset($para["company_id"])){
+				$cusPara = array("company_id"=>$para["company_id"]);
+			}
 		}
-		$data["total"] = $this->invoice->join_people()
-										->where_in('type', array('Invoice', 'eInvoice', 'Notice'))
-										->count_by($countPara);
+						
+		$data = array();
+		$data["people"] = Array();		
+				
+		$cusList = $this->people->type(1)->limit($limit, $offset)->get_many_by($cusPara);
+		if(count($cusList)>0){
+			foreach ($cusList as $row) {			
+				$invList = $this->invoice->where_in('type', $typeList)
+										->where_in('status', array(0,2))
+										->get_many_by(array('customer_id'=>$row->id,															
+															'issued_date <='=>$issued_date
+													));
+				if(count($invList)>0){
+					$extra = array(	'invoices' => $invList
+								);
+
+					//Cast object to array
+					$original = (array) $row;
+
+					//Merge arrays
+					$data["people"][] = array_merge($original, $extra);			  			  			  
+				}
+			}			
+		}
+		
+		$data["total"] = $this->people->type(1)->count_by($cusPara);
 		$this->response($data, 200);				
 	}
 
@@ -977,7 +1031,7 @@ class Invoices extends REST_Controller {
 		$data = Array();
 		if(count($arr) >0){
 			foreach($arr as $row) {
-				$amt = $this->invoice_item->get_total_amount($row->id);										   
+				$amt = $row->amount;										   
 			   	$paid = $this->payment->get_total_payment($row->id);
 			   	$total = $amt - $paid;
 
@@ -990,7 +1044,7 @@ class Invoices extends REST_Controller {
 			   	$tpayment = 0;							
 				if(count($prevInv)>0){
 					foreach ($prevInv as $inv) {						
-						$tdebt += $this->invoice_item->get_total_amount($inv->id);
+						$tdebt += $inv->amount;
 						$tpayment += $this->payment->get_total_payment($inv->id);
 					}
 				}

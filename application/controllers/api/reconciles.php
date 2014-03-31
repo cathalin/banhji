@@ -40,12 +40,9 @@ class Reconciles extends REST_Controller {
 				}
 				$this->response($data, 200);		
 			}else{
-				$this->response(FALSE, 200);
+				$this->response(array(), 200);
 			}
-		}else{
-			$data = $this->reconcile->get_all();
-			$this->response($data, 200);
-		}		
+		}	
 	}
 	
 	//POST

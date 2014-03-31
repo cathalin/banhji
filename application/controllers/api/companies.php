@@ -73,14 +73,18 @@ class Companies extends REST_Controller {
 	//By the great mighty Dawine
 	//GET 
 	function company_get() {
-		$filter = $this->get("filter");		
-		if(!empty($filter) && isset($filter)){
-			$arr = $this->company->get_many_by($filter['filters'][0]['field'], $filter['filters'][0]['value']);
+		$filter = $this->get("filter");
+		if(!empty($filter) && isset($filter)){				
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			$arr = $this->company->get_many_by($para);
 
 			if(count($arr) >0){
 				foreach($arr as $row) {
 					//Add extra fields
-					$extra = array('based_currencies' 	=> $this->currency->get($row->based_currency),
+					$extra = array('based_currencies' 	=> $this->currency->get_by("code",$row->based_currency),
 									'parents'			=> $this->company->get($row->parent_id)						   	
 							  );
 
@@ -92,13 +96,12 @@ class Companies extends REST_Controller {
 				}
 				$this->response($data, 200);
 			}else{
-				$empty_array = Array();
-				$this->response($empty_array, 200);
-			}			
+				$this->response(Array(), 200);
+			}
 		}else{
-			$data = $this->company->get_all();	
-		}				
-		$this->response($data, 200);
+			$data = $this->company->get_all();
+			$this->response($data, 200);
+		}			
 	}
 	
 	//POST
