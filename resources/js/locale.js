@@ -5,7 +5,7 @@ banhji.km = [
 	{menu:"company", locale: "ក្រុមហ៊ុន"},
 	{menu:"vendors", locale: "អ្នកផ្គត់ផ្គង"},
 	{menu:"sales", locale: "លក់"},
-	{menu:"recipt", locale: "បេឡាករ"},
+	{menu:"cashier", locale: "បេឡាករ"},
 	{menu:"customers", locale: "អតិថិជន"},
 	{menu:"accounting", locale: "គណនេយ្យ"},
 	{menu:"items", locale: "សន្និធិ"},
