@@ -7,7 +7,8 @@ class Classes extends REST_Controller {
 	//CONSTRUCTOR
 	function __construct() {
 		parent::__construct();		
-		$this->load->model('accounting/class_model', 'classes');	
+		$this->load->model('accounting/class_model', 'classes');
+		$this->load->model('company_m', 'company');	
 	}
 	
 		
@@ -19,11 +20,24 @@ class Classes extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$data = $this->classes->get_many_by($para);			
+			$query = $this->classes->get_many_by($para);
+			if(count($query)>0) {
+				foreach($query as $row) {
+					$data[] = array(
+						"id" => $row->id,
+						"company" => $this->company->get($row->company_id),
+						"name" => $row->name,
+						"type" => $row->type,
+						"description" => $row->description
+					);
+				}
+				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
+			} else {
+				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
+			}	
 		}else{
-			$data = $this->classes->get_all();	
+			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);	
 		}				
-		$this->response($data, 200);
 	}
 	
 	//POST

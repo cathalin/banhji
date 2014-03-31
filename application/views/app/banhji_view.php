@@ -2606,6 +2606,18 @@
 		</div>
 	</div>
 </script>
+<!--   Class Section -->
+<script type="text/x-kendo-template" id="classesTmpl">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="clsGrid"></div>
+		</div>
+	</div>
+</script>
+<script type="text/x-kendo-template" id="newClsTmpl">
+	fdjflksjlfd
+</script>
+<!--End Class Section-->
 <!--   Item Section  -->
 <script type="text/x-kendo-template" id="itemsView">
 	<div class="widget widget-heading-simple widget-body-gray widget-employees">			
@@ -11718,13 +11730,26 @@
                	}
 	        },
             schema: {
-                    model: {id : "id"}      
+                    model: {
+                    	id : "id",
+                    	fields: {
+                    		"name": {type:"string"},
+                    		"description": {type: "string"},
+                    		"type": { type: "string"}
+                    	}
+                    },
+                    data: "results"     
             },
+            filter: {field: "company_id", value: banhji.config.userData['company']},
             serverFiltering: true,
             serverSorting: true
         });
 
         var classVM = kendo.observable({
+        	dataSource 	: classCollection,
+        	setDataSource: function(dataSource) {
+        		this.set("dataSurce", dataSource);
+        	},
         	query 		: function(query) {},
         	getById 	: function(id) {
         		var dfd = $.Deferred();
@@ -11766,9 +11791,9 @@
         				function(res) {
         					var model = classCollection.get(id);
         					$.each(data, function(i, v){
-        						model.set(i, v);
+        						// model.set(i, v);
         					});
-        					collection
+        					
         				}
         			)
         			
@@ -12752,8 +12777,7 @@
 		return{
 			viewModel: viewModel
 
-		}
-			
+		}		
 	}());
 
 	banhji.unitMeasure = (function(){
@@ -13480,7 +13504,6 @@
 		return{
 			viewModel: viewModel
 		}
-
 	}());
 
 	//BY DAWINE -------------------------	
@@ -23043,6 +23066,11 @@
 		var itemsNew = new kendo.View("#itemsNewView", {model: banhji.items});
 		var itemsReport = new kendo.View("#itemsReportView", {model: banhji.items});
 		// items ends
+
+		// class section starts
+		var classes = new kendo.View("#classesTmpl");
+		var newCls 	= new kendo.View("#newClsTmpl");
+		// class section ends
 		
 		var blank = new kendo.View("#blank");
 		var accDetail = new kendo.View("#account-detail", {model: banhji.account});
@@ -23164,6 +23192,8 @@
 			acCreate: accreate,
 			poTracker: poTracker,
 			po: po,
+			cls: classes,
+			newCls: newCls,
 			
 			//Visal
 			inventory: inventory,
@@ -26461,7 +26491,32 @@
 	});
 
 	banhji.router.route("classes(/:id)", function(id){
-		console.log("Classes");
+		banhji.view.layout.showIn("#layout-view", banhji.view.index);
+		banhji.view.index.showIn("#content", banhji.view.cls);
+
+		function categoryDropDownEditor(container, options) {
+            $('<input required data-text-field="name" data-value-field="type" data-bind="value:' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    data: [
+                    	{ type: "class", name: "ថ្នាក់"},
+                    	{ type: "donor", name: "ម្ាស់គំរោង"},
+                    	{ type: "project", name: "គំរោង"},
+                    	{ type: "budget", name: "កញ្ចប់ថវិកា"}
+                    ]
+                });
+        }
+		var clssGrid = $("#clsGrid").kendoGrid({
+			dataSource: banhji.class.get('dataSource'),
+			editable: "popup",
+			toolbar: ["create", "cancel"],
+			columns: [
+				{ title: "ឈ្មោះ", field: "name"},
+				{ title: "ពណ៌នា", field: "description"},
+				{ title: "ប្រភេទ", field: "type",  editor: categoryDropDownEditor},
+				{ title: "&nbsp;", command: ["edit"]}
+			]
+		}).data("kendoGrid");
 	});
 
 	//By Visal -----------------------------------
