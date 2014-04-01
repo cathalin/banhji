@@ -3618,36 +3618,65 @@
 <!-- Customer -->
 <script id="customer" type="text/x-kendo-template">
 	<div class="span12" id="header"></div>
-	<div id="content" class="row">		
-		<div class="span3" id="sidebar"></div>
-		<div class="span9">	
-			<div class="navbar" data-bind="visible: showMenu">
-				<div class="navbar-inner">					
-					<ul class="nav">
-						<li><a href="#" data-bind="click: goDashBoard">ប្រតិបត្តិការ</a></li>
-						<li><a href="#" data-bind="click: goDetail">ព័តមានលំអិតអថិជន</a></li>
-						<li><a href="#" data-bind="click: goStatement">បញ្ជីបំណុល</a></li>
-						<li><a href="#invoice">វិក្កយប័ត្រ</a></li>
-						<li><a href="#receipt">បង្កាន់ដៃលក់</a></li>				
-						<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្នែកអគ្គីសនី <i class="caret"></i></a>
-							<ul class="dropdown-menu">
-								<li><a href="#" data-bind="click: goEMeter">កុងទ័រ</a></li>
-							    <li><a href="#" data-bind="click: goEReadingSingle">អំនានកុងទ័រ</a></li>
-							    <li><a href="#" data-bind="click: goNotice">លិខិតរំលឹក</a></li>
-							</ul>
-						</li>
-						<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្សេងៗ <i class="caret"></i></a>
-							<ul class="dropdown-menu">
-								<li><a href="#so">បញ្ជាលក់</a></li>
-							    <li><a href="#estimate">សម្រង់តម្លៃ</a></li>
-							    <li><a href="#gdn">លិខិតដឹកជញ្ជូន</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
 
-			<div id="detail"></div>			
+	<div id="content" class="row">
+		<div class="widget widget-heading-simple widget-body-gray widget-employees">		
+			<div class="widget-body padding-none">	
+				<div class="row-fluid row-merge">
+					<div class="span3 listWrapper" style="height: 500px;">
+						<div class="innerAll">
+							<form autocomplete="off" class="form-inline">
+								<div class="widget-search separator bottom">
+									<button type="button" class="btn btn-default pull-right" id="search"><i class="icon-search"></i></button>
+									<div class="overflow-hidden">
+										<input id="searchField" name="searchField" type="search" value="" placeholder="ស្វែងរក">
+									</div>
+								</div>
+								<div class="select2-container" style="width: 100%;">
+									<div class="overflow-hidden">
+										<select id="searchOptions" name="searchOptions" style="width: 100%;" tabindex="-1">
+											<option value="class_id">Class</option>
+							                <option value="name">ឈ្មោះ</option>
+										</select>
+									</div>
+								</div>
+							</form>
+						</div>						
+						<div class="table table-condensed" id="sidebar" style="height: 605px;"></div>
+					</div>
+					<div class="span9 detailsWrapper">
+						<div class="innerLR">
+							<div class="navbar" data-bind="visible: showMenu">
+								<div class="navbar-inner">					
+									<ul class="nav">
+										<li><a href="#" data-bind="click: goDashBoard">ប្រតិបត្តិការ</a></li>
+										<li><a href="#" data-bind="click: goDetail">ព័តមានលំអិតអថិជន</a></li>
+										<li><a href="#" data-bind="click: goStatement">បញ្ជីបំណុល</a></li>
+										<li><a href="#invoice">វិក្កយប័ត្រ</a></li>
+										<li><a href="#receipt">បង្កាន់ដៃលក់</a></li>				
+										<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្នែកអគ្គីសនី <i class="caret"></i></a>
+											<ul class="dropdown-menu">
+												<li><a href="#" data-bind="click: goEMeter">កុងទ័រ</a></li>
+											    <li><a href="#" data-bind="click: goEReadingSingle">អំនានកុងទ័រ</a></li>
+											    <li><a href="#" data-bind="click: goNotice">លិខិតរំលឹក</a></li>
+											</ul>
+										</li>
+										<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្សេងៗ <i class="caret"></i></a>
+											<ul class="dropdown-menu">
+												<li><a href="#so">បញ្ជាលក់</a></li>
+											    <li><a href="#estimate">សម្រង់តម្លៃ</a></li>
+											    <li><a href="#gdn">លិខិតដឹកជញ្ជូន</a></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<div id="detail"></div>							
+						</div>					
+					</div>
+				</div>	
+			</div>
 		</div>
 	</div>
 </script>
@@ -6989,8 +7018,22 @@
     	#for (var i=0;i<invoices.length;i++) {#
     		#total += kendo.parseFloat(invoices[i].amount)/kendo.parseFloat(invoices[i].rate)#    	
 	    	<tr>	    		
-	    		<td align="right">#:invoices[i].type#</td>
-				<td>#:invoices[i].number#</td>		
+	    		<td align="right">
+	    			#if(invoices[i].type==="eInvoice"){#								
+						វិក្កយបត្រអគ្គីសនី
+					#}else if(invoices[i].type==="Notice"){#
+						លិខិតរំលឹក
+		        	#}else{#
+		        		វិក្កយបត្រ
+		        	#}#	    			
+	    		</td>
+				<td>
+					#if(invoices[i].type==="Invoice"){#								
+						<a href="\#invoice/#=invoices[i].id#"><i></i> #=invoices[i].number#</a>					
+		        	#}else{#
+		        		#=invoices[i].number#
+		        	#}#					
+				</td>		
 				<td>#:kendo.toString(new Date(invoices[i].issued_date), "dd-MM-yyyy")#</td>
 				<td>#:kendo.toString(new Date(invoices[i].due_date), "dd-MM-yyyy")#</td>
 				<td>
@@ -7041,7 +7084,7 @@
 
 				<div id="divConsumption">
 					<div align="center">
-						<h3>របាយការណ៍អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</h3>
+						<h3>អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</h3>
 						គិតត្រឹម
 						<span data-bind="text: reading_date_text"></span>
 					</div>
@@ -7075,6 +7118,49 @@
 		<td align="right">#:current#</td>							
     </tr>   
 </script>
+<script id="disconnectList" type="text/x-kendo-template">
+	<div>				
+		<select id="company" name="company" data-role="dropdownlist" data-text-field="abbr" data-value-field="id" 
+	            data-bind="source: companyList, value: company_id" data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>	
+		<input data-role="numerictextbox" data-format=">= # ថ្ងៃ" data-min="1" data-bind="value: over_due_day" placeHolder="ចំនួនថ្ងៃផុតកំណត់">
+		<button type="button" class="btn btn-default" data-bind="click: search"><i class="icon-eye-open"></i></button>				
+	</div>
+
+	<div align="center">
+		<h3>តារាងផ្ដាច់ចរន្ត</h3>
+		ចំនួនថ្ងៃផុតកំណត់លើសចាប់ពី  
+		<span data-bind="text: over_due_day"></span> ថ្ងៃ
+	</div>
+	
+	<div data-role="grid" data-bind="source: disconnectList"
+        data-auto-bind="false" data-row-template="disconnectListRowTemplate"
+        data-pageable="true"                  
+        data-columns='[        				            
+            { title: "លេខកូដ" },
+            { title: "ឈ្មោះ" },
+            { title: "#វិក្កយបត្រ", width: 110 },								            	                     
+            { title: "ថ្ងៃចេញវិក្កយបត្រ" },
+            { title: "ថ្ងៃផុតកំណត់" },
+            { title: "ចំនួនថ្ងលើស" },
+            { title: "ទឹកប្រាក់" },
+            { title: "ប្រាក់បង់រូច" },
+            { title: "សមតុល្យ" }			                              	                    
+        ]'>
+	</div>	
+</script>
+<script id="disconnectListRowTemplate" type="text/x-kendo-tmpl">		
+	<tr>		
+		<td>#:people.number#</td>
+		<td>#:people.surname# #:people.name#</td>
+		<td>#:number#</td>				
+		<td>#:kendo.toString(new Date(issued_date), 'dd-MM-yyyy')#</td>
+		<td>#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>
+		<td align="right">#:over_due_day# ថ្ងៃ</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(total_amount), 'c0')#</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(total_paid), 'c0')#</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(total), 'c0')#</td>							
+    </tr>   
+</script>
 
 <script id="eInvoicePreview" type="text/x-kendo-template">
 	<div class="row-fluid">
@@ -7105,202 +7191,202 @@
 	</div><!-- //End div row-fluid-->	
 </script>
 <script type="text/x-kendo-tmpl" id="eInvoicePreviewTemplate">	
-	  	<div class="print">
-	  		<table width="100%">
-		    	<tr>
-		    		<td valign="top" align="left" width="250">
-		    			<img src="/banhji/#:companys.image_url#" height="200" width="300" >
-		    		</td>
-		    		<td style="float:left;">
-		    			<div class="center">
-			    			<h4>#:companys.name#</h4>
-							<p>
-								#:companys.address# <br>
-								#:companys.phone# /
-								#:companys.mobile#							
-							</p>
-						</div>
-		    		</td>
-		    	</tr>
-		    </table>							
+  	<div class="print">
+  		<table width="100%">
+	    	<tr>
+	    		<td valign="top" align="left" width="250">
+	    			<img src="/banhji/#:companys.image_url#" height="200" width="300" >
+	    		</td>
+	    		<td style="float:left;">
+	    			<div class="center">
+		    			<h4>#:companys.name#</h4>
+						<p>
+							#:companys.address# <br>
+							#:companys.phone# /
+							#:companys.mobile#							
+						</p>
+					</div>
+	    		</td>
+	    	</tr>
+	    </table>							
+	
+		<table width="100%" class="table table-condensed" style="margin-top: 15px">
+			<tr>
+				<td valign="top" rowspan="6">
+					<span class="#:number#"></span>
+					#:customers.number# #:customers.surname# #:customers.name# <br>
+					#:address#
+				</td>
+				<td class="hiddenPrint">លេខវិក្កយបត្រ INVOICE NO</td>
+				<td>#:number#</td>							
+			</tr>
+			<tr>
+				<td class="hiddenPrint">វិក្កយបត្រ INVOICE DATE</td>
+				<td>#:kendo.toString(new Date(issued_date), "dd-MM-yyyy")#</td>											
+			</tr>
+			<tr>
+				<td class="hiddenPrint" width="150px">តំបន់ AREA</td>
+				<td width="150px">#:transformers.transformer_number#</td>							
+			</tr>
+			<tr>
+				<td class="hiddenPrint" width="150px">លេខប្រអប់ BOX NO</td>
+				<td width="150px">#:box_no#</td>				
+			</tr>
+			<tr>
+				<td class="hiddenPrint">គិតចាប់ពីថ្ងៃទី FROM</td>
+				<td>#:kendo.toString(new Date(date_read_from), "dd-MM-yyyy")#</td>							
+			</tr>
+			<tr>
+				<td class="hiddenPrint">ដល់ថ្ងៃទី TO</td>
+				<td>#:kendo.toString(new Date(date_read_to), "dd-MM-yyyy")#</td>
+			</tr>
+		</table>															
+	
+		<table class="hiddenPrint" border="1" width="100%">
+			<tr>
+				<td align="center" width="100">លេខកុងទ័រ <br> METER</td>
+				<td align="center" width="80">អំនានចាស់ <br> PREVIOUS</td>
+				<td align="center" width="80">អំនានថ្មី <br> CURRENT</td>
+				<td align="center" width="70">មេគុណ <br> <span style="font-size:x-small">MULTIPLICATION</span></td>
+				<td align="center" width="100">ប្រើប្រាស់ <br> CONSUMPTION</td>
+				<td align="center" width="80">តំលៃឯកត្តា <br> RATE</td>
+				<td align="center" width="100">តំលៃសរុប <br> AMOUNT</td>	
+			</tr>
+		</table>
+							
+		<table align="right">
+			<tr>
+				<td>ប្រាក់ជំពាក់ខែមុន</td>
+				<td width="150px" align="right">#:kendo.toString(kendo.parseFloat(tdebt)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+			<tr>
+				<td>ប្រាក់សងខែមុន</td>
+				<td align="right">#:kendo.toString(kendo.parseFloat(tpayment)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+			<tr>
+				<td>ប្រាក់នៅជំពាក់</td>
+				<td align="right">#:kendo.toString(kendo.parseFloat(tremain)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+		</table>
 		
-			<table width="100%" class="table table-condensed" style="margin-top: 15px">
-				<tr>
-					<td valign="top" rowspan="6">
-						<span class="#:number#"></span>
-						#:customers.number# #:customers.surname# #:customers.name# <br>
-						#:address#
-					</td>
-					<td class="hiddenPrint">លេខវិក្កយបត្រ INVOICE NO</td>
-					<td>#:number#</td>							
-				</tr>
-				<tr>
-					<td class="hiddenPrint">វិក្កយបត្រ INVOICE DATE</td>
-					<td>#:kendo.toString(new Date(issued_date), "dd-MM-yyyy")#</td>											
-				</tr>
-				<tr>
-					<td class="hiddenPrint" width="150px">តំបន់ AREA</td>
-					<td width="150px">#:transformers.transformer_number#</td>							
-				</tr>
-				<tr>
-					<td class="hiddenPrint" width="150px">លេខប្រអប់ BOX NO</td>
-					<td width="150px">#:box_no#</td>				
-				</tr>
-				<tr>
-					<td class="hiddenPrint">គិតចាប់ពីថ្ងៃទី FROM</td>
-					<td>#:kendo.toString(new Date(date_read_from), "dd-MM-yyyy")#</td>							
-				</tr>
-				<tr>
-					<td class="hiddenPrint">ដល់ថ្ងៃទី TO</td>
-					<td>#:kendo.toString(new Date(date_read_to), "dd-MM-yyyy")#</td>
-				</tr>
-			</table>															
-		
-			<table class="hiddenPrint" border="1" width="100%">
-				<tr>
-					<td align="center" width="100">លេខកុងទ័រ <br> METER</td>
-					<td align="center" width="80">អំនានចាស់ <br> PREVIOUS</td>
-					<td align="center" width="80">អំនានថ្មី <br> CURRENT</td>
-					<td align="center" width="70">មេគុណ <br> <span style="font-size:x-small">MULTIPLICATION</span></td>
-					<td align="center" width="100">ប្រើប្រាស់ <br> CONSUMPTION</td>
-					<td align="center" width="80">តំលៃឯកត្តា <br> RATE</td>
-					<td align="center" width="100">តំលៃសរុប <br> AMOUNT</td>	
-				</tr>
+		<div style="height:350px">
+			<table width="100%">
+				#for(var i=0; i < invoice_items.length; i++) {#
+					<tr>
+						<td width="100">#:invoice_items[i].meter_no#</td>
+						<td align="right" width="80">#:invoice_items[i].prev_reading#</td>
+						<td align="right" width="80">#:invoice_items[i].new_reading#</td>
+						<td align="center" width="70">#:invoice_items[i].multiplier#</td>
+						<td align="right" width="100">#:kendo.toString(kendo.parseInt(invoice_items[i].quantity), 'n0')#</td>
+						<td align="right" width="80">#:kendo.toString(kendo.parseFloat(invoice_items[i].unit_price)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+						<td align="right" width="100">#:kendo.toString(kendo.parseFloat(invoice_items[i].amount)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+					</tr>
+				# } #
 			</table>
-								
-			<table align="right">
-				<tr>
-					<td>ប្រាក់ជំពាក់ខែមុន</td>
-					<td width="150px" align="right">#:kendo.toString(kendo.parseFloat(tdebt)/kendo.parseFloat(rate), 'c', sub_code)#</td>
-				</tr>
-				<tr>
-					<td>ប្រាក់សងខែមុន</td>
-					<td align="right">#:kendo.toString(kendo.parseFloat(tpayment)/kendo.parseFloat(rate), 'c', sub_code)#</td>
-				</tr>
-				<tr>
-					<td>ប្រាក់នៅជំពាក់</td>
-					<td align="right">#:kendo.toString(kendo.parseFloat(tremain)/kendo.parseFloat(rate), 'c', sub_code)#</td>
-				</tr>
-			</table>
-			
-			<div style="height:350px">
-				<table width="100%">
-					#for(var i=0; i < invoice_items.length; i++) {#
+
+			<p>#:memo#</p>
+		</div>		
+
+        <table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
+        	<tr>
+        		<td rowspan="5" style="font-size:smaller">
+        			#=companys.term_of_condition#
+        		</td>
+        		<td width="200">
+        			<div style="float:left;text-align:left;">បំណុលសរុបខែនេះ</div>
+  					<div style="float:right;text-align:right;">TOTAL BALANCE</div>
+        		</td>
+        		<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(total)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
+  					<div style="float:right;text-align:right;">TOTAL DUE</div>
+        		</td>
+        		<td align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue)/kendo.parseFloat(rate), 'c', sub_code)#</td>        		
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">DUE DATE</div>
+        		</td>
+        		<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>        		
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">PAY DATE</div>
+        		</td>
+        		<td></td>        		
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ចំនួនទឹកប្រាក់បានបង់</div>
+  					<div style="float:right;text-align:right;">PAY AMOUNT</div>
+        		</td>
+        		<td></td>        		
+        	</tr>
+        </table>			
+
+		<div class="hiddenPrint" style="border-top: 1px dashed black; margin: 7px 5px 5px 5px;"></div>
+
+		<table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
+			<tr>							
+				<td rowspan="4">
+					<table width="100%">
 						<tr>
-							<td width="100">#:invoice_items[i].meter_no#</td>
-							<td align="right" width="80">#:invoice_items[i].prev_reading#</td>
-							<td align="right" width="80">#:invoice_items[i].new_reading#</td>
-							<td align="center" width="70">#:invoice_items[i].multiplier#</td>
-							<td align="right" width="100">#:kendo.toString(kendo.parseInt(invoice_items[i].quantity), 'n0')#</td>
-							<td align="right" width="80">#:kendo.toString(kendo.parseFloat(invoice_items[i].unit_price)/kendo.parseFloat(rate), 'c', sub_code)#</td>
-							<td align="right" width="100">#:kendo.toString(kendo.parseFloat(invoice_items[i].amount)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+							<td></td>
+							<td style="visibility:visible;">
+								<span class="#:number#"></span>
+							</td>							
 						</tr>
-					# } #
-				</table>
-
-				<p>#:memo#</p>
-			</div>		
-
-	        <table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
-	        	<tr>
-	        		<td rowspan="5" style="font-size:smaller">
-	        			#=companys.term_of_condition#
-	        		</td>
-	        		<td width="200">
-	        			<div style="float:left;text-align:left;">បំណុលសរុបខែនេះ</div>
-	  					<div style="float:right;text-align:right;">TOTAL BALANCE</div>
-	        		</td>
-	        		<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(total)/kendo.parseFloat(rate), 'c', sub_code)#</td>
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
-	  					<div style="float:right;text-align:right;">TOTAL DUE</div>
-	        		</td>
-	        		<td align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue)/kendo.parseFloat(rate), 'c', sub_code)#</td>        		
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">DUE DATE</div>
-	        		</td>
-	        		<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>        		
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">PAY DATE</div>
-	        		</td>
-	        		<td></td>        		
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ចំនួនទឹកប្រាក់បានបង់</div>
-	  					<div style="float:right;text-align:right;">PAY AMOUNT</div>
-	        		</td>
-	        		<td></td>        		
-	        	</tr>
-	        </table>			
-
-			<div class="hiddenPrint" style="border-top: 1px dashed black; margin: 7px 5px 5px 5px;"></div>
-
-			<table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
-				<tr>							
-					<td rowspan="4">
-						<table width="100%">
-							<tr>
-								<td></td>
-								<td style="visibility:visible;">
-									<span class="#:number#"></span>
-								</td>							
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>វិក្កយបត្រ</td>
-								<td>#:number#</td>
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>អតិថិជន</td>
-								<td>#:customers.number# #:customers.surname# #:customers.name#</td>
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>អាសយដ្ឋាន</td>
-								<td>#:address#</td>
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>ទីតាំងចរន្ត</td>
-								<td>#:transformers.transformer_number#, #:box_no#</td>
-							</tr>
-						</table>
-					</td>				
-					<td width="200">
-						<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
-	  					<div style="float:right;text-align:right;">TOTAL DUE</div>
-					</td>
-					<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue)/kendo.parseFloat(rate), 'c', sub_code)#</td>
-				</tr>
-				<tr>			    
-					<td>
-						<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">DUE DATE</div>
-					</td>
-					<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>
-				</tr>
-				<tr>			    
-					<td>
-						<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">PAY DATE</div>
-					</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>
-						<div style="float:left;text-align:left;">អ្នកទទួលប្រាក់</div>
-	  					<div style="float:right;text-align:right;">CASHIER</div>
-					</td>
-					<td></td>
-				</tr>
-			</table>
-		</div>
+						<tr valign="top" style="visibility:visible;">
+							<td>វិក្កយបត្រ</td>
+							<td>#:number#</td>
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>អតិថិជន</td>
+							<td>#:customers.number# #:customers.surname# #:customers.name#</td>
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>អាសយដ្ឋាន</td>
+							<td>#:address#</td>
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>ទីតាំងចរន្ត</td>
+							<td>#:transformers.transformer_number#, #:box_no#</td>
+						</tr>
+					</table>
+				</td>				
+				<td width="200">
+					<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
+  					<div style="float:right;text-align:right;">TOTAL DUE</div>
+				</td>
+				<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+			<tr>			    
+				<td>
+					<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">DUE DATE</div>
+				</td>
+				<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>
+			</tr>
+			<tr>			    
+				<td>
+					<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">PAY DATE</div>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<div style="float:left;text-align:left;">អ្នកទទួលប្រាក់</div>
+  					<div style="float:right;text-align:right;">CASHIER</div>
+				</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
 </script>
 <!-- END OF DAWINE -->
 
@@ -23036,6 +23122,53 @@
 		};
 	}());
 
+	banhji.disconnectList = (function(){
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var disconnectDS = new kendo.data.DataSource({
+		  	transport: {	  
+			  	read: {
+				  	url : banhji.baseUrl + "api/invoices/disconnect_list",
+				  	type: "GET",
+				  	dataType: "json"		  
+			  	}
+		  	},  	
+		  	serverFiltering: true  		
+		});
+		
+		var viewModel = kendo.observable({
+			company_id 		: 0,
+			over_due_day 	: null,
+
+			companyList 	: companyDS,
+			disconnectList 	: disconnectDS,
+				
+			search 			: function(){
+				var company_id = this.get("company_id");
+				var over_due_day = this.get("over_due_day");								
+				if(company_id>0 && over_due_day!=null){
+					disconnectDS.filter({
+						filters: [
+							{ field: "over_due_day", value: this.get("over_due_day") },
+							{ field: "company_id", value: this.get("company_id") }
+						]
+					});
+				}					
+			}	
+		});
+		return {
+			viewModel 	: viewModel
+		};
+	}());
+
 	banhji.eInvoicePreview = (function(){
 		var invoiceDS = new kendo.data.DataSource({
 		  	transport: {	  
@@ -23142,7 +23275,7 @@
 		return {
 			viewModel 	: viewModel
 		};
-	}());		
+	}());
 	//END OF DAWINE ----------------
 
 	
@@ -23246,6 +23379,7 @@
 		var agingSummary = new kendo.View("#agingSummary", {model: banhji.agingSummary.viewModel});
 		var agingDetail = new kendo.View("#agingDetail", {model: banhji.agingDetail.viewModel});
 		var lowConsumption = new kendo.View("#lowConsumption", {model: banhji.lowConsumption.viewModel});
+		var disconnectList = new kendo.View("#disconnectList", {model: banhji.disconnectList.viewModel});
 
 		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.viewModel});
 		//END OF DAWINE
@@ -23336,6 +23470,7 @@
 			agingSummary 	: agingSummary,
 			agingDetail 	: agingDetail,
 			lowConsumption 	: lowConsumption,
+			disconnectList 	: disconnectList,
 
 			eInvoicePreview : eInvoicePreview		
 		};
@@ -23372,18 +23507,18 @@
 			}
 			$("#header").html(template(menu));
 			$("#home-menu").text("Banhji | អតិថិជន");
-			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li><li><a href='\#eInvoice_preview'>បោះពុម្ពវិក្កយបត្រអគ្គីសនី</a></li><li><a href='\#low_consumption'>របាយការណ៍អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
+			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li><li><a href='\#eInvoice_preview'>បោះពុម្ពវិក្កយបត្រអគ្គីសនី</a></li><li><a href='\#disconnect_list'>តារាងផ្ដាច់ចរន្ត</a></li><li><a href='\#low_consumption'>អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
 
 			banhji.customer.viewModel.set("showMenu", false);
 			
-			var grid = $("#sidebar").kendoGrid({
+			var grid = $("#sidebar").kendoListView({
 				dataSource: banhji.customer.viewModel.customerList,
 				selectable: true,
 				columns: [
 					{ title: "&nbsp;"}
 				],
 				height: "400px",
-				rowTemplate: kendo.template($("#customerListTmpl").html()),
+				template: kendo.template($("#customerListTmpl").html()),
 				change: function(){
 					var selected = this.select();
 					var data = this.dataItem(selected);
@@ -23880,6 +24015,11 @@
 	banhji.router.route("low_consumption", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.lowConsumption);				
 		kendo.fx($("#slide-form")).slideIn("down").play();						
+	});
+
+	banhji.router.route("disconnect_list", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.disconnectList);				
+		kendo.fx($("#slide-form")).slideIn("down").play();
 	});
 
 	banhji.router.route("eInvoice_preview(/:number)", function(number){

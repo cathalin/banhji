@@ -776,12 +776,13 @@ class Invoices extends REST_Controller {
 		}
 		
 		$over_due_day = $para["over_due_day"];
-		$company_id = $para['company_id'];
+		$company_id = $para["company_id"];
 									
-		$invoiceList = $this->invoice->join_people()->get_many_by(array('people.company_id'=>$company_id,
-																		'invoices.type'=>'eInvoice',
-																		'invoices.status'=>0
-																	));
+		$invoiceList = $this->invoice
+							->where_in('status', array(0,2))
+							->get_many_by(array('company_id'=>$company_id,
+												'type'=>'eInvoice'														
+												));
 		$data = array();				
 		$today = new DateTime();
 		if(count($invoiceList)>0){
@@ -792,13 +793,13 @@ class Invoices extends REST_Controller {
 			  	$day = $dDiff->days;
 
 			  	if($day>=$over_due_day){
-			  		$totalAmount = $this->invoice_item->sum('amount')->get_many_by('invoice_id',$row->id);
+			  		$totalAmount = floatval($row->amount);
 					$totalPaid = $this->payment->sum('amount_paid')->get_many_by('invoice_id',$row->id);				  	
-				   	$total = floatval($totalAmount[0]->amount) - floatval($totalPaid[0]->amount_paid);						
+				   	$total = $totalAmount - floatval($totalPaid[0]->amount_paid);						
 					
 					//Add extra fields
-					$extra = array( 
-									'total_amount'		=> floatval($totalAmount[0]->amount),
+					$extra = array( 'people' 			=> $this->people->get($row->customer_id),
+									'total_amount'		=> $totalAmount,
 								   	'total_paid' 		=> floatval($totalPaid[0]->amount_paid),   
 								   	'total' 			=> $total,
 								   	'over_due_day'		=> $day					   	
