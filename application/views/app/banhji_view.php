@@ -3634,10 +3634,8 @@
 								</div>
 								<div class="select2-container" style="width: 100%;">
 									<div class="overflow-hidden">
-										<select id="searchOptions" name="searchOptions" style="width: 100%;" tabindex="-1">
-											<option value="class_id">Class</option>
-							                <option value="name">ឈ្មោះ</option>
-										</select>
+										<input id="company" name="company" placeholder="អាជ្ញាបណ្ណ" style="width: 100%" tabindex="-1" />
+										<input id="transformer" name="transformer" placeholder="តំបន់" disabled="disabled" style="width: 100%" tabindex="-1" />										
 									</div>
 								</div>
 							</form>
@@ -23552,7 +23550,35 @@
 					  
 					}											
 				}
-			}).data("kendoGrid");			
+			}).data("kendoGrid");
+
+			var company = $("#company").kendoDropDownList({
+                optionLabel: "Select category...",
+                dataTextField: "abbr",
+                dataValueField: "id",
+                dataSource: {
+                    type: "odata",
+                    serverFiltering: true,
+                    transport: {
+                        read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Categories"
+                    }
+                }
+            }).data("kendoDropDownList");
+
+            var transformer = $("#transformer").kendoDropDownList({
+                autoBind: false,
+                cascadeFrom: "company",
+                optionLabel: "Select product...",
+                dataTextField: "transformer_number",
+                dataValueField: "id",
+                dataSource: {
+                    type: "odata",
+                    serverFiltering: true,
+                    transport: {
+                        read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Products"
+                    }
+                }
+            }).data("kendoDropDownList");			
 		}	
 	});	
 	
