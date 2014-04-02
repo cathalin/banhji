@@ -19,16 +19,26 @@ class Classes extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$data = $this->classes->get_many_by($para);			
+			$query = $this->classes->get_many_by($para);
+			if(count($query)>0) {
+				$this->response($query, 200);
+			} else {
+				$this->response(array('Error'=>true), 404);
+			}		
 		}else{
-			$data = $this->classes->get_all();	
+			$query = $this->classes->get_all();	
+			$this->response($query, 200);
 		}				
-		$this->response($data, 200);
 	}
 	
 	//POST
 	function class_post() {	
-		$id = $this->classes->insert($this->post());
+		$postedData['company_id'] = $this->post('company_id');
+		$postedData['name'] = $this->post('name');
+		$postedData['description'] = $this->post('description');
+		$postedData['type'] = $this->post('type');
+
+		$id = $this->classes->insert($postedData);
 		$this->response($id, 200);		
 	}
 	

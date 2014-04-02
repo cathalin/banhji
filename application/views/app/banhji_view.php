@@ -2817,6 +2817,33 @@
 </script>
 <!-- End Item Section-->
 
+<script id="clsTmpl" type="text/x-kendo-template">
+	<div class="span10 offset1">
+		<button id="newCls" data-role="button">ចំណាត់ថ្នាក់ថ្មី</button>
+		<div id="clsGrid"></div>
+		<div id="clsModal">
+			<table class="table">
+				<tr>
+					<td>ឈ្មោះ</td>
+					<td><input type="text" id="clsName" data-bind="value: current.name"></td>
+				</tr>
+				<tr>
+					<td>ពណ៌នា</td>
+					<td><input type="text" id="clsDescription" data-bind="value: current.description"></td>
+				</tr>
+				<tr>
+					<td>ប្រភេទៈ</td>
+					<td><input type="text" id="clsType"  data-bind="value: current.type"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button data-bind="click: save">រក្សាទុក</button> <button data-bind="click: cancel">មិនយក</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</script>
+
 <!-- By Visal -->
 <!-- InventoryView -->
 <script type="text/x-kendo-template" id="inventory">
@@ -3117,7 +3144,6 @@
 		<input type="checkbox" name="status" data-bind="checked: status">
 		<span class="k-invalid-msg" data-for="status"></span><br>
 		<button class="btn" data-bind="click: record">Record</button>
-
 	</div>
 </script>
 
@@ -11859,13 +11885,30 @@
                	}
 	        },
             schema: {
+<<<<<<< HEAD
                     model: {id : "id"}      
+=======
+                    model: {
+                    	id : "id",
+                    	fields: {
+                    		name : { type:"string" },
+                    		type : { defaultValue: {type:"class", name: "កែចំណាត់ថ្នាក់"} },
+                    	}
+                    }      
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
             },
             serverFiltering: true,
             serverSorting: true
         });
 
         var classVM = kendo.observable({
+<<<<<<< HEAD
+=======
+        	dataSource 	: classCollection,
+        	setCurrent 	: function(model) {
+        		this.set("current", model);
+        	},
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
         	query 		: function(query) {},
         	getById 	: function(id) {
         		var dfd = $.Deferred();
@@ -11876,7 +11919,11 @@
     			return dfd.promise();
         	},
         	getBy 		: function(criteria) {},
+<<<<<<< HEAD
         	cancelChange: function() {
+=======
+        	cancel 		: function() {
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
         		classCollection.cancelChanges();
         	},
         	addNew 		: function() {
@@ -11887,6 +11934,7 @@
         			description: "ពណ៌នា"
         		});
         	},
+<<<<<<< HEAD
         	save 		: function(data) {
         		if(data === undefined) {
         			classCollection.sync();
@@ -11894,6 +11942,10 @@
         			classCollection.add(data);
         			classCollection.sync();
         		}
+=======
+        	save 		: function() {
+        		classCollection.sync();
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
         	},
         	update 		: function(id, data) {
         		var dfd = $.Deferred();
@@ -11907,9 +11959,14 @@
         				function(res) {
         					var model = classCollection.get(id);
         					$.each(data, function(i, v){
+<<<<<<< HEAD
         						model.set(i, v);
         					});
         					collection
+=======
+        						// model.set(i, v);
+        					});
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
         				}
         			)
         			
@@ -11921,8 +11978,11 @@
         return classVM;
 	}());
 
+<<<<<<< HEAD
 	banhji.class.update(1, {name: "sdfd", description: "fddsfewrew"});
 
+=======
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
 	//By Visal ----------------------------------
 	banhji.inventory = (function(){
 	
@@ -23332,6 +23392,10 @@
 		var electricity = new kendo.Layout("#transformer");
 		var electricityReport = new kendo.Layout("#electricityReport");
 		var po = new kendo.View("#po", {model: banhji.po.viewModel});
+<<<<<<< HEAD
+=======
+		var cls= new kendo.View("#clsTmpl", {model: banhji.class});
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
 
 		//By Visal
 		var inventory = new kendo.View("#inventory");
@@ -23424,6 +23488,10 @@
 			acCreate: accreate,
 			poTracker: poTracker,
 			po: po,
+<<<<<<< HEAD
+=======
+			cls: cls,
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
 			
 			//Visal
 			inventory: inventory,
@@ -26742,7 +26810,74 @@
 	});
 
 	banhji.router.route("classes(/:id)", function(id){
+<<<<<<< HEAD
 		console.log("Classes");
+=======
+		banhji.view.layout.showIn("#layout-view", banhji.view.index);
+		banhji.view.index.showIn("#content", banhji.view.cls);
+		var template = kendo.template($("#menu").html());
+			var menu = [];
+			for(var i=0;i<banhji.km.length; i++) {
+				var current = banhji.km[i];
+				if(banhji.config.userData.allowedModules[i]) {
+					menu.push(current);
+				}
+			}
+		$("#header").html(template(menu));
+		$("#home-menu").text("Banhji | គណនេយ្យ");
+		$("#secondary-menu").html("<li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
+		var data = [
+				{ type: "Class", name: "ថ្នាក់"},
+				{ type: "Donor", name: "ម្ចាស់គំរោង"},
+				{ type: "Location", name: "ទីតាំង"},
+				{ type: "Project", name: "គំរោង"}
+			];
+		$("#clsType").kendoDropDownList({
+			dataSource: data,
+			dataTextField: "name",
+			dataValueField: "type",
+			change: function(e) {
+				banhji.class.get('current').set('type', this.value());
+			}
+		});
+		var clsGrid = $("#clsGrid").kendoGrid({
+			dataSource: banhji.class.get('dataSource'),
+			columns: [
+				{ field: "name", title: "ឈ្មោះ", size: "100px"},
+				{ field: "description", title: "ពណ៌នា"},
+				{ field: "type", title: "ប្រភេទ"},
+				{ title: "&nbsp;", width: "152px", command: [{text: "កែ", click: edit},{text: "លុប", click: rm}]}
+			],
+			editable: "popup"
+		}).data("kendoGrid");
+		$("#newCls").on("click", function(){
+			clsWnd.open().center();
+			banhji.class.get("dataSource").insert(0, {company_id: banhji.config.userData['company'], name: "", description: "", type: "Class"});
+			banhji.class.setCurrent(banhji.class.get("dataSource").get(0));
+		});
+		function edit(e){
+			e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            banhji.class.setCurrent(dataItem);
+            clsWnd.center().open();   
+		}
+		function rm(e){
+			e.preventDefault();
+			var myprompt = confirm("តើលោកអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនឬទេ?");
+			if(myprompt){
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+				banhji.class.get("dataSource").remove(dataItem);
+				banhji.class.save();
+			}             
+		}
+		var clsWnd = $("#clsModal").kendoWindow({
+			visible: false,
+			title: "ទំព័រចំណាត់ថ្នាក់",
+			modal: true,
+			width: "400px",
+			height: "350px"
+		}).data("kendoWindow");
+>>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
 	});
 
 	//By Visal -----------------------------------
