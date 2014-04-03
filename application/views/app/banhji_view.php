@@ -7195,7 +7195,7 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->	
 </script>
-<script type="text/x-kendo-tmpl" id="eInvoicePreviewTemplate">	
+<script id="eInvoicePreviewTemplate" type="text/x-kendo-tmpl">	
   	<div class="print">
   		<table width="100%">
 	    	<tr>
@@ -7398,6 +7398,168 @@
 	<div class="row-fluid">
 		<div class="span12">
 			<div id="example" class="k-content">
+				<h1>ចុះឈ្មោះជាមួយ BANHJI <span>ដោយឥតគិតថ្លៃ</span></h1>
+
+				<br>
+
+				<div class="row-fluid">
+					<div class="span4">
+						<table>
+							<tr>
+								<td>ឈ្មោះក្រុមហ៊ុន</td>
+								<td>
+									<input id="name" name="name" class="k-textbox" data-bind="value: name" required data-required-msg="ត្រូវការ ឈ្មោះក្រុមហ៊ុន" />
+								</td>
+							</tr>
+							<tr>
+								<td>ឈ្មោះជាទំរង់ខ្លី</td>
+								<td>
+									<input id="abbr" name="abbr" class="k-textbox" data-bind="value: abbr" required data-required-msg="ត្រូវការ ឈ្មោះជាទំរង់ខ្លី" />						
+								</td>						
+							</tr>
+							<tr>
+								<td>ឆ្នាំបង្កើត</td>
+								<td>
+									<input id="year_founded" name="year_founded" data-role="numerictextbox" data-format="#" data-bind="value: year_founded" required data-required-msg="ត្រូវការ ឆ្នាំបង្កើត" />						
+								</td>						
+							</tr>
+							<tr>
+								<td>លេខអាជ្ញាប័ណ្ណ</td>
+								<td>
+									<input id="operation_license" name="operation_license" class="k-textbox" data-bind="value: operation_license" required data-required-msg="ត្រូវការ លេខអាជ្ញាប័ណ្ណ" />	
+								</td>						
+							</tr>
+							<tr>
+								<td>លេខទូរស័ព្ទដៃ</td>
+								<td>
+									<input id="mobile" name="mobile" class="k-textbox" data-bind="value: mobile" required data-required-msg="ត្រូវការ លេខទូរស័ព្ទដៃ" />
+								</td>						
+							</tr>
+							<tr>
+								<td>លេខទូរស័ព្ទតុ</td>
+								<td>
+									<input id="phone" name="phone" class="k-textbox" data-bind="value: phone" required data-required-msg="ត្រូវការ លេខទូរស័ព្ទតុ" />
+								</td>						
+							</tr>
+							<tr>
+								<td>អីុមែល</td>
+								<td>
+									<input id="email" name="email" class="k-textbox" data-bind="value: email" required data-required-msg="ត្រូវការ អីុមែល" />
+								</td>						
+							</tr>
+							<tr>
+								<td valign="top">អាសយដ្ឋាន</td>
+								<td>
+									<input id="address" name="address" class="k-textbox" data-bind="value: address" 
+											required data-required-msg="ត្រូវការ អាសយដ្ឋាន"></input>
+								</td>						
+							</tr>
+							<tr>
+								<td>អ្នកតំណាង</td>
+								<td>
+									<input id="representative" name="representative" class="k-textbox" data-bind="value: representative" required data-required-msg="ត្រូវការ អ្នកតំណាង" />
+								</td>
+							</tr>
+							<tr>
+								<td>ឆ្នាំសារពើពន្ធ</td>
+								<td>
+									<input id="fiscalYear" name="fiscalYear" data-role="datepicker" data-format="dd-MM-yyyy" 
+											data-bind="value: fiscal_year" required data-required-msg="ត្រូវការ ឆ្នាំសារពើពន្ធ" />
+								</td>						
+							</tr>
+							<tr>
+								<td>VAT NO.</td>
+								<td>
+									<input id="vatNo" name="vatNo" class="k-textbox" data-bind="value: vat_no" />
+								</td>						
+							</tr>
+							<tr>
+								<td>Logo</td>
+								<td>
+									<input name="userfile" id="userfile" type="file" />
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="span8">						
+						<div class="row-fluid">
+							<div class="span4">
+								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
+									<div class="widget widget-heading-simple widget-body-white">
+										<div class="widget-body">
+											<div class="innerL">
+												
+												<div class="separator bottom"></div>
+												<div class="glyphicons glyphicon-large group">
+													<i></i>
+													<h4>Large Left Icons</h4>
+													<p>aaaa</p>
+												</div>
+												
+											</div>
+										</div>
+									</div>
+								</div>								
+							</div>
+							<div class="span4">
+								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
+									<div class="innerTB">
+										<div class="separator bottom"></div>
+										<div class="glyphicons glyphicon-large iphone">
+											<i></i>
+											<h4>No Background</h4>
+											<p>bbbb</p>
+										</div>
+										<div class="separator bottom"></div>
+									</div>
+								</div>
+							</div>							
+						</div>
+						<div class="row-fluid">
+							<div class="span4">
+								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
+									<div class="widget widget-heading-simple widget-body-white">
+										<div class="widget-body">
+											<div class="innerL">
+												
+												<div class="separator bottom"></div>
+												<div class="glyphicons glyphicon-large group">
+													<i></i>
+													<h4>Large Left Icons</h4>
+													<p>aaaa</p>
+												</div>
+												
+											</div>
+										</div>
+									</div>
+								</div>								
+							</div>
+							<div class="span4">
+								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
+									<div class="innerTB">
+										<div class="separator bottom"></div>
+										<div class="glyphicons glyphicon-large iphone">
+											<i></i>
+											<h4>No Background</h4>
+											<p>bbbb</p>
+										</div>
+										<div class="separator bottom"></div>
+									</div>
+								</div>
+							</div>							
+						</div>
+					</div>
+				</div>
+				
+				<br>
+				
+				<h5 class="heading glyphicons warning_sign" style="background-color: Orange;color: Black;">
+						<i></i>សូមចុចប៊ូតុងខាងក្រោម, ដើម្បីយល់ព្រមជាមួយនឹងលក្ខខណ្ឌរបស់ក្រុមហ៊ុនយើងខ្ញុំ។</h5>
+					           
+				<div id="status"></div>
+				
+				<span id="save" class="btn btn-icon-stacked btn-block btn-success glyphicons lock" style="width:260px">
+						<i></i><span>ចុះឈ្មោះជាមួយ BANHJI ដែលមាន</span><span class="strong">ប្រព័ន្ធសុវត្ថិភាពលំដាប់ពិភពលោក</span></span>
 				
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
@@ -13649,7 +13811,7 @@
 
 	}());
 
-	//BY DAWINE -------------------------	
+	//BY DAWINE ------------------------------------------------	
 	banhji.customer = (function(){
 		var statementCollectionDS = new kendo.data.DataSource({
 		  	transport: {	  
@@ -23249,7 +23411,155 @@
 			viewModel 	: viewModel
 		};
 	}());
-	//END OF DAWINE ----------------
+
+	banhji.newCompany = (function(){
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "POST",
+					dataType: "json"
+				},		
+				update: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "PUT",
+					dataType: "json"
+				},		
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}				
+					return options;
+				}
+			},			
+			schema: {
+				model: {
+					id: "id"            
+				}
+			},		
+			filter: { field: "id", value: 1 },
+			serverFiltering: true
+		});
+
+		var parentDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				},				
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},			
+			schema: {
+				model: {
+					id: "id"            
+				}
+			},		
+			filter: { field: "parent_id", value: 0 },
+			serverFiltering: true
+		});
+
+		var currencyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/currencies/index",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+		
+		var viewModel = kendo.observable({
+			id 				: 0,		
+			// name 			: "",
+			parent_id 		: 0,
+			// year_founded    : "",
+			// image_url 		: "",
+			// operation_license : "",
+			// mobile 			: "",
+			// phone 			: "",
+			// email			: "",
+			// address 		: "",
+			// representative  : "",
+			// fiscal_year 	: "",
+			based_currency  : null,
+			//use_generator 	: "គ្មាន",		
+			
+			useGenerators  	: [{id:0,name:"គ្មាន"},{id:1,name:"មាន"}],
+			currencyList 	: currencyDS,
+			parentList 		: parentDS,
+						
+			addCompany 	: function(){
+				var fiscalYear = kendo.toString(this.get("fiscal_year"),"yyyy-MM-dd");
+				// var parents = this.get("parent_id");
+				// var parentId = 0;
+				// if(parents!=null){
+				// 	parentId = parents.id;
+				// }
+
+				companyDS.add({				
+					name 			: this.get("name"),
+					abbr 			: this.get("abbr"),				
+					year_founded	: this.get("year_founded"),
+					image_url		: this.get("image_url"),
+					operation_license: this.get("operation_license"),
+					mobile			: this.get("mobile"),
+					phone			: this.get("phone"),
+					email			: this.get("email"),
+					address			: this.get("address"),
+					term_of_condition : this.get("term_of_condition"),
+					representative	: this.get("representative"),				
+					fiscal_year		: fiscalYear,
+					vat_no 			: this.get("vat_no"),
+					based_currency	: this.get("based_currency").code,
+					use_generator	: this.get("use_generator"),
+					parent_id		: this.get("parent_id")
+				});		
+
+				companyDS.sync();
+			},
+			updateCompany 	: function(){
+				var id = this.get("id");
+				var com = companyDS.get(id);
+
+				var fiscalYear = kendo.toString(this.get("fiscal_year"),"yyyy-MM-dd");
+
+				com.set("name",this.get("name"));
+				com.set("abbr",this.get("abbr"));			
+				com.set("year_founded",this.get("year_founded"));
+				com.set("image_url",this.get("image_url"));
+				com.set("operation_license",this.get("operation_license"));
+				com.set("mobile",this.get("mobile"));
+				com.set("phone",this.get("phone"));
+				com.set("email",this.get("email"));
+				com.set("address",this.get("address"));
+				com.set("term_of_condition",this.get("term_of_condition"));
+				com.set("representative",this.get("representative"));
+				com.set("fiscal_year",fiscalYear);
+				com.set("vat_no", this.get("vat_no"));
+				com.set("based_currency",this.get("based_currency").code);
+				com.set("use_generator",this.get("use_generator"));
+				com.set("parent_id",this.get("parent_id"));
+
+				companyDS.sync();
+			}  			
+		}); 
+
+		return {
+			viewModel 	: viewModel
+		};
+	}());
+	//END OF DAWINE ---------------------------------------------
 
 	
 	/* Banhji Application Views */
@@ -23308,9 +23618,7 @@
 		var electricityReport = new kendo.Layout("#electricityReport");
 		var po = new kendo.View("#po", {model: banhji.po.viewModel});
 
-
 		var cls= new kendo.View("#clsTmpl", {model: banhji.class});
-
 
 		//By Visal
 		var inventory = new kendo.View("#inventory");
@@ -23359,6 +23667,8 @@
 		var disconnectList = new kendo.View("#disconnectList", {model: banhji.disconnectList.viewModel});
 
 		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.viewModel});
+
+		var newCompany = new kendo.View("#newCompany", {model: banhji.newCompany.viewModel});
 		//END OF DAWINE
 
 		return {
@@ -23450,7 +23760,9 @@
 			lowConsumption 	: lowConsumption,
 			disconnectList 	: disconnectList,
 
-			eInvoicePreview : eInvoicePreview		
+			eInvoicePreview : eInvoicePreview,
+
+			newCompany 		: newCompany		
 		};
 	}());	
 
@@ -24183,6 +24495,54 @@
 		if(number!==undefined){
 			banhji.eInvoicePreview.viewModel.pageLoad(number);
 		}					
+	});
+
+	banhji.router.route("new_company", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.newCompany);
+		
+		//Upload file
+		$("#userfile").kendoUpload({
+	        async: {
+	            saveUrl: banhji.baseUrl + "api/files/do_upload_image",
+	            removeUrl: "remove",
+	            autoUpload: true
+	        },
+			localization: {
+				dropFilesHere: "ទំលាក់រួបភាពទីនេះ",
+				select : "រើសរូបភាព",
+				statusUploading: "កំពុងទទួលយករូបភាព",
+				statusFailed: "មិនអាចផ្ញើរ",
+				retry: "សាកល្បងម្ដងទៀត",
+				cancel: "មោឃ៖ភាព"
+			},
+			showFileList: false,
+			success: function(e) {
+				var files = e.files;
+				var name, path;
+				$.each(files, function(index, value){
+					path = "./uploads/logo/" + value.name;
+					viewModel.set("image_url", path);
+				});
+			} 
+	    });
+		
+		var validator = $("#example").kendoValidator().data("kendoValidator"),
+			status = $("#status");
+
+		$("#save").click(function(e){
+			e.preventDefault();			
+						
+            if(validator.validate()){            	   	
+            	
+	            status.text("កត់ត្រាបានសំរេច")
+		            .removeClass("alert alert-error")
+		            .addClass("alert alert-success");
+	        }else{		        	
+	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
+	                .removeClass("alert alert-success")
+		            .addClass("alert alert-error");
+	        }
+		});			
 	});
 	//END OF DAWINE
 
