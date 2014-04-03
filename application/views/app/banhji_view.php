@@ -6663,6 +6663,7 @@
 				            { title: "ថ្ងៃបង់ប្រាក់" },				            
 				            { title: "ឈ្មោះ" },						                
 				            { title: "លេខវិក្កយបត្រ" },
+				            { title: "វិធីបង់ប្រាក់" },
 				            { title: "ទឹកប្រាក់" },	                    	                     
 				            { title: "ប្រាក់ទទួលបាន" }	                    	                    
 				            ]'>
@@ -6692,7 +6693,8 @@
 	<tr>					
 		<td>#:kendo.toString(new Date(payment_date), "dd-MM-yyyy")#</td>
 		<td>#:customers.number# #:customers.surname# #:customers.name#</td>		
-		<td>#:invoices.number#</td>				
+		<td>#:invoices.number#</td>
+		<td>#:payment_methods.name#</td>				
 		<td align="right">#:kendo.toString(kendo.parseFloat(invoices.amount), "c")#</td>
 		<td align="right">#:kendo.toString(kendo.parseFloat(amount_paid), "c")#</td>				
     </tr>   
@@ -6879,10 +6881,6 @@
 		<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">
-					<div align="right">			        				        	
-			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
-					</div>
-
 					<h3 align="center">បញ្ជីអតិថិជន</h3>	
 
 					<div id="top" align="right">
@@ -7396,8 +7394,14 @@
 	</div>
 </script>
 
-<script id="interView" type="text/x-kendo-template">
-
+<script id="newCompany" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->	
 </script>
 <!-- END OF DAWINE -->
 
@@ -22387,6 +22391,12 @@
 			today 				: new Date(),
 			payment_date_from	: new Date(),
 			payment_date_to  	: "",
+
+			cashier 			: banhji.config.userData.userId,
+			cashier_name 		: banhji.config.userData.username,
+			totalPaid			: kendo.toString(0, 'c'),
+
+			paymentList 		: paymentDS,
 			
 			payment_date_from_str	: function(){
 				var strDate = "";
@@ -22407,13 +22417,7 @@
 			closeX 				: function(){
 				kendo.fx($("#slide-form")).slideIn("up").play();				
 				window.history.go(-1);
-			},
-			cashier 			: banhji.config.userData.userId,
-			cashier_name 		: banhji.config.userData.username,
-			totalPaid			: kendo.toString(0, 'c'),			
-			
-			paymentList 		: paymentDS,
-				
+			},				
 			searchPayment 		: function(){
 				var self = this;
 				var paymentDateFrom = kendo.toString(new Date(this.get("payment_date_from")), "yyyy-MM-dd");		
@@ -22836,82 +22840,6 @@
 		    }	
 		});
 
-		return {
-			viewModel 		: viewModel
-		};
-	}());
-
-	banhji.customerBalance = (function(){
-		var customerDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/people_api/people_list",
-					type: "GET",
-					dataType: "json"
-				}
-			},
-			schema: {
-		        data: "customers", 
-		        total: "total" 
-		    },
-			serverPaging: true,
-			pageSize: 200,			
-			serverFiltering: true
-		});
-
-		var companyDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/companies/company",
-					type: "GET",
-					dataType: "json"
-				}
-			}		
-		});
-
-		var transformerDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/electricities/transformer_cascading",
-					type: "GET",
-					dataType: "json"
-				}
-			},	
-			serverFiltering: true
-		});
-
-		var viewModel = kendo.observable({
-			company_id 		: 0,
-
-			companyList 	: companyDS,
-			transformerList : transformerDS,
-			customerList 	: customerDS,
-			
-			closeX 				: function(){
-				kendo.fx($("#slide-form")).slideIn("up").play();				
-				window.history.go(-1);
-			},
-			search	: function(){				
-				var company_id = this.get("company_id");
-				if(company_id>0){
-					var transformer_id = this.get("transformer_id");
-					
-					if(transformer_id!=null){
-						customerDS.filter({
-							filters: [
-								{ field: "transformer_id", value: transformer_id.id }
-							]
-						});
-					}else{
-						customerDS.filter({
-							filters: [
-								{ field: "company_id", value: company_id }
-							]
-						});
-					}			
-				}		
-			}	
-		});
 		return {
 			viewModel 		: viewModel
 		};
@@ -23424,7 +23352,7 @@
 		var dailyPayment = new kendo.View("#dailyPayment", {model: banhji.dailyPayment.viewModel});
 		var reconcile = new kendo.View("#reconcile", {model: banhji.reconcile.viewModel});
 
-		var customerBalance = new kendo.View("#customerBalance", {model: banhji.customerBalance.viewModel});
+		var customerBalance = new kendo.View("#customerBalance");
 		var agingSummary = new kendo.View("#agingSummary", {model: banhji.agingSummary.viewModel});
 		var agingDetail = new kendo.View("#agingDetail", {model: banhji.agingDetail.viewModel});
 		var lowConsumption = new kendo.View("#lowConsumption", {model: banhji.lowConsumption.viewModel});
@@ -24140,11 +24068,11 @@
 		    pageable: true,        
 		    columns: [ 
 		    		{ field: "number", title: "លេខកូដ" }, 
-		    		{ field: "name", title: "ឈ្មោះ" }, 
+		    		{ field: "name", title: "ឈ្មោះ", template: "#=surname# #=name#" }, 
 		    		{ field: "currencies.code", title: "រូបិយ​ប័ណ្ណ" },    		
 		    		{ field: "people_types.name", title: "ប្រភេទ" },
 		    		{ field: "classes.name", title: "Class" },
-		    		{ field: "balance", title: "សមតុល្យចុងគ្រា", template: "#=kendo.toString(kendo.parseFloat(balance), 'c', 'sub_code')#", 
+		    		{ field: "balance", title: "សមតុល្យចុងគ្រា", template: "#=kendo.toString(kendo.parseFloat(balance), 'c', currencies.sub_code)#", 
 		    			attributes: { style: "text-align: right;"} 
 		    		}        
 		    ]
@@ -24185,27 +24113,26 @@
 
 		$("#search").click(function(e){
 			e.preventDefault();            
-            search();	        
+            searchCustomer();	        
 		});
 
-		function search(){			
-			if(company_id!=""){
-				var transformer_id = transformer.value();				
-				if(transformer_id!=null){
-					customerDS.filter({
-						filters: [
-							{ field: "transformer_id", value: transformer_id }
-						]
-					});
-				}else{
-					var company_id = company.value();
-					customerDS.filter({
-						filters: [
-							{ field: "company_id", value: company_id }
-						]
-					});
-				}			
-			}		
+		function searchCustomer(){
+			var transformer_id = transformer.value();
+
+			if(transformer_id!=""){
+				customerDS.filter({
+					filters: [
+						{ field: "transformer_id", value: transformer_id }
+					]
+				});
+			}else{
+				var company_id = company.value();
+				customerDS.filter({
+					filters: [
+						{ field: "company_id", value: company_id }
+					]
+				});
+			}					
 		}			
 	});
 
