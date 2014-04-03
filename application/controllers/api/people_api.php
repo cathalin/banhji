@@ -417,7 +417,8 @@ class People_api extends REST_Controller {
 				foreach($arr as $row) {					
 				   	//Add extra fields
 					$extra = array('people_types'=> $this->people_type->get($row->people_type_id),
-									'currencies' => $this->currency->get_by('code', $row->currency_code)
+									'currencies' => $this->currency->get_by('code', $row->currency_code),
+									'classes' => $this->classes->get($row->class_id)
 							  );
 
 					//Cast object to array
@@ -533,55 +534,39 @@ class People_api extends REST_Controller {
 
 	function customer_listview_get() {		
 		$filter = $this->get("filter");		
-		$limit 	= $this->get('pageSize');
-		$offset = $this->get('skip');			
+					
 		$para = array();				
 		for ($i = 0; $i < count($filter['filters']); ++$i) {				
 			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 		}
 
-		$cusPara = array();
+		$cusPara = array();		
+		
 		if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
 			$cusPara += array("transformer_id"=>$para["transformer_id"]);
 		}
 
 	 	$this->people->type(1);
-
+	 	$limit 	= $this->get('pageSize');
+		$offset = $this->get('skip');
 	 	if(!empty($limit) && isset($limit)){
 	 		$this->people->limit($limit, $offset);
 	 	}
-
+	 	
 	 	if(!empty($para["searchField"]) && isset($para["searchField"])){
-	 		$field = $para["searchField"];
+	 		$field = $para["searchField"];	 		
 			$this->people->where("number LIKE", $field)
+						->or_where("company LIKE", $field)
 						->or_where("surname LIKE", $field)
 						->or_where("name LIKE", $field)
 						->or_where("id LIKE", $field);
 		}
 
-	 	$arr = $this->people->get_many_by($cusPara);		 	
-		if(count($arr) >0){
-			foreach($arr as $row) {
-				$fullname = $row->surname .' '. $row->name;
-				$idName = $row->number .' '. $fullname;
-				
-			   	//Add extra fields
-				$extra = array( 'fullname' 		=> $fullname,
-								'idName' 		=> $idName								
-								//'people_types'	=> $this->people_type->get($row->people_type_id),
-							   	//'amperes' 		=> $this->ampere->get($row->ampere_id)							   							   	
-						  );
-
-				//Cast object to array
-				$original =  (array) $row;
-
-				//Merge arrays
-				$data['customers'][] = array_merge($original, $extra);	
-			}
-			$data['count'][] = count($arr);
+	 	$data = $this->people->get_many_by($cusPara);		 	
+		if(count($data)>0){			
 			$this->response($data, 200);		
 		}else{
-			$this->response(FALSE, 200);
+			$this->response(array(), 200);
 		}		
 	}	
 

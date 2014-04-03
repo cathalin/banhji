@@ -3655,7 +3655,7 @@
 								<div class="widget-search separator bottom">
 									<button type="button" class="btn btn-default pull-right" id="search"><i class="icon-search"></i></button>
 									<div class="overflow-hidden">
-										<input id="searchField" name="searchField" type="search" value="" placeholder="ស្វែងរក">
+										<input id="searchField" name="searchField" type="search" value="" placeholder="ស្វែងរក អតិថិជន">
 									</div>
 								</div>
 								<div class="select2-container" style="width: 100%;">
@@ -3921,13 +3921,12 @@
 	                			required data-required-msg="ត្រូវការ ប្រភេទអតិថិជន"></select>
 					</div>
 					<div class="span3">
-						<label for="status">ស្ថានភាព <span style="color:red">*</span></label>
-			            <input id="status" name="status" data-role="dropdownlist"
-			            		data-text-field="name"
-           						data-value-field="id" 
-			            		data-bind="source: statusList, value: status"					            							            		
-			            		data-option-label="(--- ជ្រើសរើស ---)"
-			            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+						<label for="classes">Class <span style="color:red">*</span></label>
+			            <select id="classes" name="classes" data-role="dropdownlist" 
+	              				data-text-field="name" data-value-field="id" 
+	              				data-bind="source: classList, value: class_id"
+	              				data-option-label="(--- Class ---)"
+	              				required data-required-msg="ត្រូវការ Class"></select>
 					</div>					
 					<div class="span3">
 						<label for="registered_date">ថ្ងៃចុះឈ្មោះ <span style="color:red">*</span></label>
@@ -4031,29 +4030,36 @@
 					        <!-- //OTHER INFOMATION Tab content -->
 					        <div class="tab-pane active" id="tab1-4">
 				            	<table width="100%" cellpadding="5" cellspacing="5">						            	
+				            		<tr>
+						                <td>ស្ថានភាព <span style="color:red">*</span></td>
+						              	<td>
+						              		<input id="status" name="status" data-role="dropdownlist"
+							            		data-text-field="name"
+				           						data-value-field="id" 
+							            		data-bind="source: statusList, value: status"					            							            		
+							            		data-option-label="(--- ជ្រើសរើស ---)"
+							            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+						              	</td>
+						              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
+						              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>								            	
+						            </tr>
 						            <tr>
 						              	<td>ភេទ</td>
 						              	<td><select data-role="dropdownlist" data-bind="source: genders, value: gender"></select></td>
-						              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
-						              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>
+						              	<td>សមាជិកគ្រួសារ</td>
+						              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>
 						            </tr>
 						            <tr>
 						            	<td>ថ្ងៃកំណើត</td>
 						              	<td><input id="dob" data-role="datepicker" data-bind="value: dob" data-format="dd-MM-yyyy" placeholder="ថ្ងែ-ខែ-ឆ្នាំ" /></td>									              	
-						              	<td>សមាជិកគ្រួសារ</td>
-						              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>
-						            </tr>
-						            <tr valign="top">
-						              	<td>ទីកន្លែងកំណើត</td>
-						              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />
 						              	<td>មុខរបរ</td>
 						              	<td><input id="job" class="k-textbox" data-bind="value: job" placeholder="e.g. គ្រូបង្រៀន" /></td>
 						            </tr>
-						            <tr>
+						            <tr valign="top">
+						              	<td>ទីកន្លែងកំណើត</td>
+						              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />						            
 						            	<td>សំគាល់</td>
-						              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>									              	
-						              	<td></td>
-						              	<td></td>									              	
+						              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>									              							              									              	
 						            </tr>								            								            								            			            
 						        </table>
 				        	</div>
@@ -4250,14 +4256,13 @@
 			                			data-option-label="(--- ជ្រើសរើស ---)" 
 			                			required data-required-msg="ត្រូវការ ប្រភេទអតិថិជន"></select>
 							</div>
-							<div class="span3">
-								<label for="status">ស្ថានភាព <span style="color:red">*</span></label>
-					            <input id="status" name="status" data-role="dropdownlist"
-					            		data-text-field="name"
-		           						data-value-field="id" 
-					            		data-bind="source: statusList, value: status"					            							            		
-					            		data-option-label="(--- ជ្រើសរើស ---)"
-					            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+							<div class="span3">								
+								<label for="classes">Class <span style="color:red">*</span></label>
+					            <select id="classes" name="classes" data-role="dropdownlist" 
+			              				data-text-field="name" data-value-field="id" 
+			              				data-bind="source: classList, value: class_id"
+			              				data-option-label="(--- Class ---)"
+			              				required data-required-msg="ត្រូវការ Class"></select>
 							</div>					
 							<div class="span3">
 								<label for="registered_date">ថ្ងៃចុះឈ្មោះ <span style="color:red">*</span></label>
@@ -4360,30 +4365,37 @@
 
 							        <!-- //OTHER INFOMATION Tab content -->
 							        <div class="tab-pane active" id="tab1-4">
-						            	<table width="100%" cellpadding="5" cellspacing="5">						            	
+						            	<table width="100%" cellpadding="5" cellspacing="5">
+						            		<tr>
+								                <td>ស្ថានភាព <span style="color:red">*</span></td>
+								              	<td>
+								              		<input id="status" name="status" data-role="dropdownlist"
+									            		data-text-field="name"
+						           						data-value-field="id" 
+									            		data-bind="source: statusList, value: status"					            							            		
+									            		data-option-label="(--- ជ្រើសរើស ---)"
+									            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+								              	</td>
+								              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
+								              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>								            	
+								            </tr>						            	
 								            <tr>
 								              	<td>ភេទ</td>
-								              	<td><select data-role="dropdownlist" data-bind="source: genders, value: gender"></select></td>
-								              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
-								              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>
+								              	<td><select data-role="dropdownlist" data-bind="source: genders, value: gender"></select></td>								              	
+								            	<td>សមាជិកគ្រួសារ</td>
+								              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>								            	
 								            </tr>
 								            <tr>
 								            	<td>ថ្ងៃកំណើត</td>
 								              	<td><input id="dob" data-role="datepicker" data-bind="value: dob" data-format="dd-MM-yyyy" placeholder="ថ្ងែ-ខែ-ឆ្នាំ" /></td>									              	
-								              	<td>សមាជិកគ្រួសារ</td>
-								              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>
-								            </tr>
-								            <tr valign="top">
-								              	<td>ទីកន្លែងកំណើត</td>
-								              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />
 								              	<td>មុខរបរ</td>
 								              	<td><input id="job" class="k-textbox" data-bind="value: job" placeholder="e.g. គ្រូបង្រៀន" /></td>
 								            </tr>
-								            <tr>
+								            <tr valign="top">
+								              	<td>ទីកន្លែងកំណើត</td>
+								              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />								            
 								            	<td>សំគាល់</td>
-								              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>									              	
-								              	<td></td>
-								              	<td></td>									              	
+								              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>								              										              	
 								            </tr>								            								            								            			            
 								        </table>
 						        	</div>
@@ -5942,18 +5954,17 @@
 	<div class="row-fluid">
 		<div class="span12">			
 			<div class="widget widget-tabs widget-tabs-double widget-tabs-gray">			
-				//Tabs Heading
+				
 				<div class="widget-head">
 					<ul>
 						<li class="active"><a href="#tab1-2" class="glyphicons calculator" data-toggle="tab"><i></i><span class="strong">ជំហានទី ១</span><span>រកថាមពលមធ្យម</span></a></li>
 						<li><a href="#tab2-2" class="glyphicons notes" data-toggle="tab"><i></i><span class="strong">ជំហានទី ២</span><span>បង្កើតលិខិតរំលឹក</span></a></li>						
 					</ul>
-				</div>
-				// Tabs Heading END
+				</div>				
 				
 				<div class="widget-body">
 					<div class="tab-content">					
-						//Tab content 
+						 
 						<div class="tab-pane active" id="tab1-2">
 							<div>											
 								<select data-role="dropdownlist" data-text-field="meter_no" data-value-field="id"
@@ -6002,11 +6013,9 @@
 								</div>
 							</div>
 						</div>
-						//Tab content END 
 						
-						//Tab content
 						<div class="tab-pane" id="tab2-2">
-							<h4 align="center">លិខិតដឹកជញ្ជូន</h4>
+							<h4 align="center">លិខិតរំលឹក</h4>
 
 							<div class="row-fluid">
 								<div class="span8">
@@ -6083,7 +6092,7 @@
 							</div>
 
 						</div>
-						//Tab content END
+						
 						
 					</div>					
 				</div>
@@ -6881,30 +6890,12 @@
 					</div>
 
 					<div>
-					    <select id="company" name="company" data-role="dropdownlist" 
-					    		data-text-field="abbr" data-value-field="id"		          				
-		          				data-bind="source: companyList, value: company_id"  
-		          				data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>
-
-					    <select id="transformer" name="transformer" data-role="dropdownlist" 
-					    		data-text-field="transformer_number" data-value-field="id"					    		
-		          				data-cascade-from="company" data-auto-bind="false"
-		          				data-bind="source: transformerList, value: transformer_id"  
-		          				data-option-label="(--- រើស ត្រង់ស្វូ ---)"></select>	
-
+						<input id="company" name="company" placeholder="អាជ្ញាបណ្ណ" />
+						<input id="transformer" name="transformer" placeholder="តំបន់" disabled="disabled" />					    
 						<button id="search" type="button" class="btn btn-default"><i class="icon-search"></i></button>						
 					</div>
 
-					<div data-role="grid" data-bind="source: customerList"
-						data-pageable="true"
-				        data-auto-bind="false" data-row-template="customerListRowTemplate"                  
-				        data-columns='[	                
-				            { title: "លេខកូដ" },				            
-				            { title: "ឈ្មោះ" },						                
-				            { title: "ប្រភេទ" },				                            	                     
-				            { title: "សមតុល្យចុងគ្រា" }	                    	                    
-				            ]'>
-					</div>			
+					<div id="grid"></div>	
 
 					<br>
 
@@ -6915,14 +6906,6 @@
 			</div><!-- //End div span12-->
 		</div><!-- //End div row-fluid-->
 	</div>	
-</script>
-<script id="customerListRowTemplate" type="text/x-kendo-tmpl">		
-	<tr>				
-		<td>#:number#</td>		
-		<td>#:surname# #:name#</td>
-		<td>#:people_types.name#</td>		
-		<td align="right">#:kendo.toString(kendo.parseFloat(balance),'c', currencies.sub_code)#</td>					
-    </tr>   
 </script>
 <script id="agingSummary" type="text/x-kendo-template">
 	<div id="slide-form">
@@ -6937,7 +6920,7 @@
 						<select id="transformer" name="transformer" data-role="dropdownlist" 
 								data-text-field="transformer_number" data-value-field="id"
 		          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
-		          				data-auto-bind="false" data-option-label="(--- ត្រង់ស្វូ ---)"></select>
+		          				data-auto-bind="false" data-option-label="(--- តំបន់ ---)"></select>
 						<input data-role="datepicker" data-bind="value: issued_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
 						<button id="search" type="button" class="btn btn-default"><i class="icon-eye-open"></i></button>				
 					</div>
@@ -7000,7 +6983,7 @@
 						<select id="transformer" name="transformer" data-role="dropdownlist" 
 								data-text-field="transformer_number" data-value-field="id"
 		          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
-		          				data-auto-bind="false" data-option-label="(--- ត្រង់ស្វូ ---)"></select>
+		          				data-auto-bind="false" data-option-label="(--- តំបន់ ---)"></select>
 						<input data-role="datepicker" data-bind="value: issued_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
 						<button id="search" type="button" class="btn btn-default"><i class="icon-eye-open"></i></button>				
 					</div>
@@ -7411,6 +7394,10 @@
 			</tr>
 		</table>
 	</div>
+</script>
+
+<script id="interView" type="text/x-kendo-template">
+
 </script>
 <!-- END OF DAWINE -->
 
@@ -11885,9 +11872,6 @@
                	}
 	        },
             schema: {
-<<<<<<< HEAD
-                    model: {id : "id"}      
-=======
                     model: {
                     	id : "id",
                     	fields: {
@@ -11895,20 +11879,19 @@
                     		type : { defaultValue: {type:"class", name: "កែចំណាត់ថ្នាក់"} },
                     	}
                     }      
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+
             },
             serverFiltering: true,
             serverSorting: true
         });
 
         var classVM = kendo.observable({
-<<<<<<< HEAD
-=======
+
         	dataSource 	: classCollection,
         	setCurrent 	: function(model) {
         		this.set("current", model);
         	},
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+
         	query 		: function(query) {},
         	getById 	: function(id) {
         		var dfd = $.Deferred();
@@ -11919,11 +11902,8 @@
     			return dfd.promise();
         	},
         	getBy 		: function(criteria) {},
-<<<<<<< HEAD
-        	cancelChange: function() {
-=======
-        	cancel 		: function() {
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+	       	cancel 		: function() {
+
         		classCollection.cancelChanges();
         	},
         	addNew 		: function() {
@@ -11934,18 +11914,9 @@
         			description: "ពណ៌នា"
         		});
         	},
-<<<<<<< HEAD
-        	save 		: function(data) {
-        		if(data === undefined) {
-        			classCollection.sync();
-        		} else {
-        			classCollection.add(data);
-        			classCollection.sync();
-        		}
-=======
         	save 		: function() {
         		classCollection.sync();
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+
         	},
         	update 		: function(id, data) {
         		var dfd = $.Deferred();
@@ -11959,14 +11930,8 @@
         				function(res) {
         					var model = classCollection.get(id);
         					$.each(data, function(i, v){
-<<<<<<< HEAD
-        						model.set(i, v);
-        					});
-        					collection
-=======
         						// model.set(i, v);
         					});
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
         				}
         			)
         			
@@ -11978,11 +11943,7 @@
         return classVM;
 	}());
 
-<<<<<<< HEAD
-	banhji.class.update(1, {name: "sdfd", description: "fddsfewrew"});
 
-=======
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
 	//By Visal ----------------------------------
 	banhji.inventory = (function(){
 	
@@ -13747,13 +13708,11 @@
 			},
 			serverFiltering: true,
 			serverPaging: true,
-			pageSize: 10,
+			pageSize: 200,			
 			schema: {
 				model: {
 					id: "id"
-				},
-				data: "customers",
-				total: "count"
+				}
 			}
 		});
 
@@ -13885,6 +13844,18 @@
 			serverFiltering: true
 		});
 
+		var classDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/classes/class",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter: { field: "type", value: "Class" },
+			serverFiltering: true
+		});
+
 		var provinceDS = new kendo.data.DataSource({
 			transport: {
 				read: {
@@ -13956,6 +13927,7 @@
 
 			company_id 		: 0,
 			transformer_id 	: 0,
+			class_id 		: 0,
 						
 			ampere_id 		: 0,
 			phase_id 		: 0,
@@ -14004,6 +13976,7 @@
 			
 			companyList		: companyDS,
 			transformerList : transformerDS,
+			classList 		: classDS,
 			
 			currencyList 	: currencyDS,
 			accountList 	: accountReceiveablDS,
@@ -14118,6 +14091,9 @@
 				}				
 			},
 
+			search 			: function(para){
+				customerDS.filter(para);
+			},
 			setCurrent		: function(id) {
 				var cus = customerDS.get(id);
 				this.set("customer", cus);
@@ -14149,6 +14125,7 @@
 				this.set("address3", cus.address3);
 				this.set("address4", cus.address4);
 				
+				this.set("class_id", cus.class_id);
 				this.set("transformer_id", cus.transformer_id);						
 				this.set("province_id", cus.province_id);
 				this.set("district_id", cus.district_id);
@@ -14519,6 +14496,7 @@
 				cus.set("account_receiveable_id", this.get("account_receiveable_id"));
 				cus.set("revenue_account_id", this.get("revenue_account_id"));			
 
+				cus.set("class_id", this.get("class_id"));
 				cus.set("company_id", this.get("company_id"));
 
 				//Electricity Customer				
@@ -14553,6 +14531,7 @@
 
 			company_id 		: 0,
 			transformer_id 	: 0,
+			class_id 		: 0,
 						
 			ampere_id 		: 0,
 			phase_id 		: 0,
@@ -14589,6 +14568,7 @@
 			
 			companyList		: companyDS,
 			transformerList : transformerDS,
+			classList 		: classDS,
 			
 			currencyList 	: currencyDS,
 			accountList 	: accountReceiveablDS,
@@ -14708,7 +14688,8 @@
 					address2		: this.get("address2"),
 					address3		: this.get("address3"),
 					address4		: this.get("address4"),
-														
+					
+					class_id 		: this.get("class_id"),									
 					transformer_id	: this.get("transformer_id"),	
 					province_id		: this.get("province_id"),	
 					district_id		: this.get("district_id"),	
@@ -15180,6 +15161,7 @@
 					  	self.set("address", d.address);					  						  	
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -16236,6 +16218,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -17203,6 +17186,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -17792,6 +17776,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -18336,6 +18321,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -20102,6 +20088,7 @@
 
 				var cus = banhji.customer.viewModel.get("customer");
 				this.set("customer_id", cus.id);
+				this.set("class_id", cus.class_id);
 				//this.set("address", cus.address);
 				this.set("noticeItemList", []);
 
@@ -22854,7 +22841,7 @@
 		};
 	}());
 
-	banhji.customerBalance = (function(){		
+	banhji.customerBalance = (function(){
 		var customerDS = new kendo.data.DataSource({
 			transport: {
 				read: {
@@ -22944,7 +22931,7 @@
 		var transformerDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: ARNY.baseUrl + "api/electricities/transformer_cascading",
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
 					type: "GET",
 					dataType: "json"
 				}
@@ -23034,7 +23021,7 @@
 		var transformerDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: ARNY.baseUrl + "api/electricities/transformer_cascading",
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
 					type: "GET",
 					dataType: "json"
 				}
@@ -23392,10 +23379,10 @@
 		var electricity = new kendo.Layout("#transformer");
 		var electricityReport = new kendo.Layout("#electricityReport");
 		var po = new kendo.View("#po", {model: banhji.po.viewModel});
-<<<<<<< HEAD
-=======
+
+
 		var cls= new kendo.View("#clsTmpl", {model: banhji.class});
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+
 
 		//By Visal
 		var inventory = new kendo.View("#inventory");
@@ -23488,10 +23475,7 @@
 			acCreate: accreate,
 			poTracker: poTracker,
 			po: po,
-<<<<<<< HEAD
-=======
-			cls: cls,
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+			cls: cls,			
 			
 			//Visal
 			inventory: inventory,
@@ -23577,16 +23561,16 @@
 
 			banhji.customer.viewModel.set("showMenu", false);
 			
-			var grid = $("#sidebar").kendoListView({
-				dataSource: banhji.customer.viewModel.customerList,
+			var grid = $("#sidebar").kendoGrid({
+				dataSource: banhji.customer.viewModel.customerList,							
 				selectable: true,
 				columns: [
-					{ title: "&nbsp;"}
+					{ title: ""}
 				],
 				height: "400px",
-				template: kendo.template($("#customerListTmpl").html()),
+				rowTemplate: kendo.template($("#customerListTmpl").html()),
 				change: function(){
-					var selected = this.select();
+					var selected = this.select();					
 					var data = this.dataItem(selected);
 
 					banhji.customer.viewModel.set("showMenu", true);
@@ -23621,32 +23605,78 @@
 			}).data("kendoGrid");
 
 			var company = $("#company").kendoDropDownList({
-                optionLabel: "Select category...",
+                optionLabel: "(--- រើស អាជ្ញាប័ណ្ណ ---)",
                 dataTextField: "abbr",
                 dataValueField: "id",
                 dataSource: {
-                    type: "odata",
-                    serverFiltering: true,
                     transport: {
-                        read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Categories"
-                    }
+						read: {
+							url: banhji.baseUrl + "api/companies/company",
+							type: "GET",
+							dataType: "json"
+						}
+					}
                 }
             }).data("kendoDropDownList");
 
             var transformer = $("#transformer").kendoDropDownList({
                 autoBind: false,
                 cascadeFrom: "company",
-                optionLabel: "Select product...",
+                optionLabel: "(--- រើស តំបន់ ---)",
                 dataTextField: "transformer_number",
                 dataValueField: "id",
                 dataSource: {
-                    type: "odata",
-                    serverFiltering: true,
                     transport: {
-                        read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Products"
-                    }
+						read: {
+							url: banhji.baseUrl + "api/electricities/transformer_cascading",
+							type: "GET",
+							dataType: "json"
+						}
+					},	
+					serverFiltering: true
                 }
-            }).data("kendoDropDownList");			
+            }).data("kendoDropDownList");
+
+            $("#search").on('click', function() {
+				customerSearch();				
+			});
+
+			$("#searchField").keyup(function(e) {
+				var keycode = e.keyCode ? e.keyCode : e.which;
+				//Press Enter
+			   	if(keycode === 13) {    
+			    	customerSearch();
+			    }          
+			});
+
+			function customerSearch(){
+	        	var txtSearch = $("#searchField").val();
+	        	var company_id = company.value();
+				var transformer_id = transformer.value();
+				
+				var para = Array();
+
+				if(txtSearch!=""){
+					para.push({
+						field: "searchField", value: txtSearch					
+					});
+				}
+				
+				if(transformer_id!=""){
+					para.push({
+						field: "transformer_id", value: transformer_id					
+					});
+				}
+
+				if(para.length>0){
+					banhji.customer.viewModel.search(para);
+				}
+				
+				//Clear search
+				$("#searchField").val("");
+				company.value("");
+				transformer.value("");
+		    }			
 		}	
 	});	
 	
@@ -24064,16 +24094,119 @@
 	banhji.router.route("customer_balance", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.customerBalance);
 		kendo.fx($("#slide-form")).slideIn("down").play();
-				
-		var validator = $("#example").kendoValidator().data("kendoValidator");
+
+		var customerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/people_api/people_list",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			schema: {
+		        data: "customers", 
+		        total: "total" 
+		    },
+			serverPaging: true,
+			pageSize: 200,			
+			serverFiltering: true
+		});
+
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},	
+			serverFiltering: true
+		});
+
+		$("#grid").kendoGrid({
+		    dataSource: customerDS,
+		    groupable: true,
+		    autoBind: false,
+		    pageable: true,        
+		    columns: [ 
+		    		{ field: "number", title: "លេខកូដ" }, 
+		    		{ field: "name", title: "ឈ្មោះ" }, 
+		    		{ field: "currencies.code", title: "រូបិយ​ប័ណ្ណ" },    		
+		    		{ field: "people_types.name", title: "ប្រភេទ" },
+		    		{ field: "classes.name", title: "Class" },
+		    		{ field: "balance", title: "សមតុល្យចុងគ្រា", template: "#=kendo.toString(kendo.parseFloat(balance), 'c', 'sub_code')#", 
+		    			attributes: { style: "text-align: right;"} 
+		    		}        
+		    ]
+		});
+
+		var company = $("#company").kendoDropDownList({
+            optionLabel: "(--- រើស អាជ្ញាប័ណ្ណ ---)",
+            dataTextField: "abbr",
+            dataValueField: "id",
+            dataSource: {
+                transport: {
+					read: {
+						url: banhji.baseUrl + "api/companies/company",
+						type: "GET",
+						dataType: "json"
+					}
+				}
+            }
+        }).data("kendoDropDownList");
+
+        var transformer = $("#transformer").kendoDropDownList({
+            autoBind: false,
+            cascadeFrom: "company",
+            optionLabel: "(--- រើស តំបន់ ---)",
+            dataTextField: "transformer_number",
+            dataValueField: "id",
+            dataSource: {
+                transport: {
+					read: {
+						url: banhji.baseUrl + "api/electricities/transformer_cascading",
+						type: "GET",
+						dataType: "json"
+					}
+				},	
+				serverFiltering: true
+            }
+        }).data("kendoDropDownList");	
 
 		$("#search").click(function(e){
-			e.preventDefault();			
-						
-            if(validator.validate()){
-            	banhji.customerBalance.viewModel.search();	            
-	        }
-		});			
+			e.preventDefault();            
+            search();	        
+		});
+
+		function search(){			
+			if(company_id!=""){
+				var transformer_id = transformer.value();				
+				if(transformer_id!=null){
+					customerDS.filter({
+						filters: [
+							{ field: "transformer_id", value: transformer_id }
+						]
+					});
+				}else{
+					var company_id = company.value();
+					customerDS.filter({
+						filters: [
+							{ field: "company_id", value: company_id }
+						]
+					});
+				}			
+			}		
+		}			
 	});
 
 	banhji.router.route("aging_summary", function(){		
@@ -26011,12 +26144,12 @@
 		var companyDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: ARNY.baseUrl + "api/companies/company",
+					url: banhji.baseUrl + "api/companies/company",
 					type: "GET",
 					dataType: "json"
 				},
 				destroy: {
-					url : ARNY.baseUrl + "api/companies/company",
+					url : banhji.baseUrl + "api/companies/company",
 					type: "DELETE",
 					dataType: "json"
 				},
@@ -26810,9 +26943,9 @@
 	});
 
 	banhji.router.route("classes(/:id)", function(id){
-<<<<<<< HEAD
+
 		console.log("Classes");
-=======
+
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.cls);
 		var template = kendo.template($("#menu").html());
@@ -26877,7 +27010,7 @@
 			width: "400px",
 			height: "350px"
 		}).data("kendoWindow");
->>>>>>> 09dc7c6d6897055036839731011e0f7b234d0d52
+
 	});
 
 	//By Visal -----------------------------------
