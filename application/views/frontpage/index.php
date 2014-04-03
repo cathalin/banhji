@@ -5,7 +5,7 @@
 <!--[if gt IE 8]> <html class="animations front ie gt-ie8 fluid top-full menuh-top sticky-top"> <![endif]-->
 <!--[if !IE]><!--><html class="animations front fluid top-full menuh-top sticky-top"><!-- <![endif]-->
 <head>
-	<title>FLAT KIT Template (v1.2.0)</title>
+	<title>Banhji | online accounting</title>
 	
 	<!-- Meta -->
 	<meta charset="UTF-8" />
@@ -58,77 +58,16 @@
 		<div id="content">
 		
 		<!-- Top navbar (note: add class "navbar-hidden" to close the navbar by default) -->
-		<div class="navbar main hidden-print">
-			
-			<div class="secondary">
-				<div class="container-960">
-				
-					<!-- Menu Toggle Button -->
-					<button type="button" class="btn btn-navbar visible-phone pull-right">
-						<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-					</button>
-					<!-- // Menu Toggle Button END -->
-					
-					<ul class="topnav pull-left">
-						<li><a href="" class="glyphicons search single-icon"><i></i></a></li>
-											</ul>
-					
-					<ul class="topnav pull-right">
-						
-												<!-- Themer -->
-						<li class="hidden-phone"><a href="#themer" data-toggle="collapse" class="glyphicons eyedropper single-icon"><i></i></a></li>
-						<!-- // Themer END -->
-												
-						<li class="hidden-phone follow">
-							<span>Follow us</span> 
-							<a href="" class="icon-facebook"></a>
-							<a href="" class="icon-twitter"></a>
-							<a href="" class="icon-youtube"></a>
-							<a href="" class="icon-google-plus"></a>
-						</li>
-						<li class="inverse"><a href="<?php echo base_url(); ?>auth" class="glyphicons unlock no-ajaxify"><i></i> Sign in</a></li>
-						<li class="primary"><a href="signup.html?lang=en&amp;style=style-default-menus-dark" class="glyphicons user_add no-ajaxify"><i></i> Sign up</a></li>
-					</ul>
-					<div class="clearfix"></div>
-					
-				</div>
-			</div>
-			
+		<div class="navbar main hidden-print" style="background: #1f1f38">	
 			<div class="container-960">
 			
 			<!-- Brand -->
 			<a href="index_slider_fullwidth.html?lang=en&amp;style=style-default-menus-dark" class="appbrand pull-left"><img src="<?php echo base_url(); ?>/resources/img/Banji.png" width="150"></a>
 			
 			<ul class="topnav pull-right">
-				
-				<li class="dropdown dd-1 active">
-					<a href="" data-toggle="dropdown">Home pages <span class="caret"></span></a>
-					<ul class="dropdown-menu pull-left">
-						<li class=" active"><a href="index.html?lang=en&amp;style=style-default-menus-dark">Home page #1</a></li>
-						<li class=""><a href="index_2.html?lang=en&amp;style=style-default-menus-dark">Home page #2</a></li>
-						<li class=""><a href="index_slider.html?lang=en&amp;style=style-default-menus-dark">Revolution Slider Fixed</a></li>
-						<li class=""><a href="index_slider_fullwidth.html?lang=en&amp;style=style-default-menus-dark">Revolution Slider Wide</a></li>
-					</ul>
-				</li>
-				<li><a href="about.html?lang=en&amp;style=style-default-menus-dark">About</a></li>
-				<li><a href="pricing.html?lang=en&amp;style=style-default-menus-dark">Pricing</a></li>
-				<li class="dropdown dd-1">
-					<a href="" data-toggle="dropdown">Shop <span class="caret"></span></a>
-					<ul class="dropdown-menu pull-left">
-						<li class=""><a href="shop.html?lang=en&amp;style=style-default-menus-dark">Catalog</a></li>
-						<li class=""><a href="shop_product.html?lang=en&amp;style=style-default-menus-dark">Product page</a></li>
-						<li class=""><a href="shop_cart.html?lang=en&amp;style=style-default-menus-dark">Shopping Cart</a></li>
-					</ul>
-				</li>
-				<li class="dropdown dd-1">
-					<a href="" data-toggle="dropdown">Blog <span class="caret"></span></a>
-					<ul class="dropdown-menu pull-right">
-						<li class=""><a href="blog.html?lang=en&amp;style=style-default-menus-dark">Blog Posts</a></li>
-						<li class=""><a href="blog_timeline.html?lang=en&amp;style=style-default-menus-dark">Blog Timeline</a></li>
-					</ul>
-				</li>
-				<li><a href="contact.html?lang=en&amp;style=style-default-menus-dark">Contact</a></li>
-				
+				<li><a href="about.html?lang=en&amp;style=style-default-menus-dark">តាមប្រភេទធុរៈកិច្ច</a></li>
+				<li><a href="about.html?lang=en&amp;style=style-default-menus-dark">របៀបគ្រប់គ្រងធុរៈកិច្ច</a></li>
+				<li><a href="pricing.html?lang=en&amp;style=style-default-menus-dark">របាយកាណ៍</a></li>				
 			</ul>
 			<div class="clearfix"></div>
 			<!-- // Top Menu Right END -->
@@ -136,13 +75,35 @@
 			</div>
 			
 		</div>
-		<!-- Top navbar END --><div id="landing_2">
+		<!-- Top navbar END -->
+<div id="landing_2" style="margin-top:-30px;">
 	<div class="banner">
-		<div class="container-960">
-			<div class="banner-wrapper banner-1">
-				<img src="<?php echo base_url();?>resources/common/theme/images/front/front-home-banner.jpg" alt="Banner"  /> images<h3>ប្រព័ន្ធគ្រប់គ្រងគណនេយ្យ</h3> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam convallis vulputate nunc, fermentum blandit eros eleifend a. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut luctus, lorem nec molestie pharetra, felis mi vulputate sem, ac vehicula odio augue in odio. Quisque cursus dui</p>
-				<a href="" class="btn btn-large btn-icon btn-primary glyphicons chevron-right"><i></i>មានចំណាប់អារម្មណ៍</a>
-				<a href="" class="btn btn-icon-stacked btn-default glyphicons usd"><i></i><span>Buy it now!</span><span class="strong">Please contact us.</span></a>
+		<div class="container-960 innerLR">
+			<div class="row-fluid">
+				<div class="span6">fdf</div>
+				<div class="span6">
+					<div id="loginRegister" style="margin-top: 60px; padding: 30px 5px;">
+						<table style="padding: 0; margin: 0; cellspacing: 0">
+							<tr style="padding: 0; margin: 0;">
+								<td><p style="background: #9b1c08; padding: 5px; color: #fff; font-weight: bold;">អីុម៉េល</p></td>
+								<td><p style="background: #9b1c08; padding: 5px; color: #fff; font-weight: bold;">លេខសង្ងាត់</p></td>
+							</tr>
+							<tr>
+								<td><input type="text" class="block" placeholder="you@email.com" data-bind="value: email"></td>
+								<td><input type="password" class="block" placeholder="password" data-bind="value: password"></td>
+							</tr>
+							<tr>
+								<td><button class="btn btn-block btn-primary" data-bind="click: login" id="login"><i class="icon-key"></i> ចូល</button></td>
+								<td><button class="btn btn-block btn-inverse" data-bind="click: register"><i class="icon-edit"></i> ចះុឈ្មោះ</button></td>
+							</tr>
+							<tr>
+								<td colspan="2"	>
+									<div id="loginMessage"></div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -364,7 +325,7 @@
 	<!-- // Modal Gallery END -->
 	
 	<!-- JQuery -->
-	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script>window.jQuery || document.write('<script src="<?php echo base_url(JS."libs/jquery-1.8.2.min.js");?>"><\/script>')</script>
 	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	
 	<!-- Code Beautify -->
@@ -447,6 +408,108 @@
 
 	<!-- Common Demo Script -->
 	<script src="<?php echo base_url();?>resources/common/theme/scripts/demo/common.js?1374506533"></script>
+	<script src="<?php echo base_url(JS."kendo.web.min.js");?>"></script>
+	<script>
+		var banhji = banhji || {};
+		banhji.baseUrl = "<?php echo base_url();?>";
+		var cred = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/users/login/",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/users/register/",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/users/login/",
+					type: "PUT",
+					dataType: "json"
+				},
+				destroy: {
+					url: banhji.baseUrl + "api/users/login/",
+					type: "DELETE",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},
+			schema: {
+				model: {
+					id: "id"
+				},
+				data: "results"
+			},
+			serverFiltering: true
+		});
+		var viewModel = kendo.observable({
+			email 		: null,
+			password 	: null,
+			checkEmail 	: function(email) {
+				filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				if (filter.test(email)) {
+				  	return true;
+				} else {
+					return false;
+				}
+			},
+			login 		: function() {
+				// $("#loginMessage").addClass("alert alert-success");
+				// $("#loginMessage").text("កំពុងពិនិត្រ");
+				cred.filter([
+					{field: "username", value: this.get("email")},
+					{field: "password", value: this.get("password")}
+				]);
+				cred.bind('requestEnd', function(e){
+					if(e.response.error === "true") {
+						// dfd.reject(e.response.results);
+						$("#loginMessage")
+						.removeClass("alert-success")
+						.addClass("alert-primary")
+						.text("មិនអាចចូលបានទេ សូមពិនិត្រអីុម៉េលនិងលេខសំង្ងាត់ម្ដងទៀត។");
+					} else {
+						// redirect to app
+						window.location.href = banhji.baseUrl + "app";
+					}
+				});
+				// return dfd.promise();
+			},
+			register 	: function() {
+				if(this.checkEmail(this.get("email"))) {
+					cred.add({username: this.get("email"), password: this.get("password")});
+					cred.sync();
+
+					cred.bind('requestEnd', function(e){
+						if(e.response.error === "true") {
+							// dfd.reject(e.response.results);
+							var message = {existed:"អីុម៉េលត្រូវបានប្រើ​ សូមរើសអីុម៉េលផ្សេងវិញ។"};
+							$("#loginMessage")
+							.removeClass("alert-success")
+							.addClass("alert alert-primary")
+							.html("<i class='icon-warning-sign'></i> " + message[e.response.message]);								
+						} else {
+							// redirect to app
+							window.location.href = banhji.baseUrl + "app";
+						}
+					});
+				} else {
+					$("#loginMessage")
+					.removeClass("alert-success")
+					.addClass("alert alert-primary")
+					.html("<i class='icon-warning-sign'></i> សូមវាយអីុម៉េលដែលត្រឹមត្រូវ");
+				}
+			}
+		});
+
+		kendo.bind($("#loginRegister"), viewModel);
+	</script>
 	
 </body>
 </html>

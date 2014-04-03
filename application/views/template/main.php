@@ -1,10 +1,8 @@
-<div class="container-fluid menu-hidden sidebar-hidden-phone fluid menu-left">
 	<?php echo $basejs?>
 	<?php echo $header ?>
-	<div class="row-fluid" style="margin-top: 20px;">
-		<div class="innerLR">
-			<?php echo $content_body ?>
-		</div>
+<div>
+	<div style="margin-top: 20px;">
+		<?php echo $content_body ?>
 	</div>
 	</div><!-- Content End -->
 	<?php echo $footer ?>

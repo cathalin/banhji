@@ -9,7 +9,7 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="404">
-	<div class="container">
+	<div  class="container-fluid menu-hidden sidebar-hidden-phone fluid menu-left">
 		<div class="row">
 			<div class="span12">
 				<div>
@@ -8355,7 +8355,33 @@
 	banhji.vendor = (function(){
 		// get a copy of vendors datasource
 		var vendorDS = banhji.ds.vendors;
-
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: ARNY.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				},
+				destroy: {
+					url : ARNY.baseUrl + "api/companies/company",
+					type: "DELETE",
+					dataType: "json"
+				},
+				parameterMap: function(options, operation) {
+		            if (operation !== "read" && options.models) {
+		                return {models: kendo.stringify(options.models)};
+		            }				
+					return options;
+		        }			
+			},
+			schema: {
+				model: {
+					id: "id"
+				}
+			},
+			filter: { field: "id >", value: 0 },
+			serverFiltering: true
+		});
 		var viewModel = kendo.observable({
 			transactions: [],
 			currency: {KHR: "km-KH", USD:"en-US", THB:"th-TH", VND: "vi-VN"},
@@ -8418,7 +8444,7 @@
 					data: "results"
 				}
 			}),
-			classes: banhji.classes.ds,
+			classes: companyDS,
 			type_id: null,
 			class_id: null,
 			firstName: null,
