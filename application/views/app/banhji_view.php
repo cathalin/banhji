@@ -3644,36 +3644,63 @@
 <!-- Customer -->
 <script id="customer" type="text/x-kendo-template">
 	<div class="span12" id="header"></div>
-	<div id="content" class="row">		
-		<div class="span3" id="sidebar"></div>
-		<div class="span9">	
-			<div class="navbar" data-bind="visible: showMenu">
-				<div class="navbar-inner">					
-					<ul class="nav">
-						<li><a href="#" data-bind="click: goDashBoard">ប្រតិបត្តិការ</a></li>
-						<li><a href="#" data-bind="click: goDetail">ព័តមានលំអិតអថិជន</a></li>
-						<li><a href="#" data-bind="click: goStatement">បញ្ជីបំណុល</a></li>
-						<li><a href="#invoice">វិក្កយប័ត្រ</a></li>
-						<li><a href="#receipt">បង្កាន់ដៃលក់</a></li>				
-						<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្នែកអគ្គីសនី <i class="caret"></i></a>
-							<ul class="dropdown-menu">
-								<li><a href="#" data-bind="click: goEMeter">កុងទ័រ</a></li>
-							    <li><a href="#" data-bind="click: goEReadingSingle">អំនានកុងទ័រ</a></li>
-							    <li><a href="#" data-bind="click: goNotice">លិខិតរំលឹក</a></li>
-							</ul>
-						</li>
-						<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្សេងៗ <i class="caret"></i></a>
-							<ul class="dropdown-menu">
-								<li><a href="#so">បញ្ជាលក់</a></li>
-							    <li><a href="#estimate">សម្រង់តម្លៃ</a></li>
-							    <li><a href="#gdn">លិខិតដឹកជញ្ជូន</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
 
-			<div id="detail"></div>			
+	<div id="content" class="row">
+		<div class="widget widget-heading-simple widget-body-gray widget-employees">		
+			<div class="widget-body padding-none">	
+				<div class="row-fluid row-merge">
+					<div class="span3 listWrapper" style="height: 500px;">
+						<div class="innerAll">
+							<form autocomplete="off" class="form-inline">
+								<div class="widget-search separator bottom">
+									<button type="button" class="btn btn-default pull-right" id="search"><i class="icon-search"></i></button>
+									<div class="overflow-hidden">
+										<input id="searchField" name="searchField" type="search" value="" placeholder="ស្វែងរក អតិថិជន">
+									</div>
+								</div>
+								<div class="select2-container" style="width: 100%;">
+									<div class="overflow-hidden">
+										<input id="company" name="company" placeholder="អាជ្ញាបណ្ណ" style="width: 100%" tabindex="-1" />
+										<input id="transformer" name="transformer" placeholder="តំបន់" disabled="disabled" style="width: 100%" tabindex="-1" />										
+									</div>
+								</div>
+							</form>
+						</div>						
+						<div class="table table-condensed" id="sidebar" style="height: 605px;"></div>
+					</div>
+					<div class="span9 detailsWrapper">
+						<div class="innerLR">
+							<div class="navbar" data-bind="visible: showMenu">
+								<div class="navbar-inner">					
+									<ul class="nav">
+										<li><a href="#" data-bind="click: goDashBoard">ប្រតិបត្តិការ</a></li>
+										<li><a href="#" data-bind="click: goDetail">ព័តមានលំអិតអថិជន</a></li>
+										<li><a href="#" data-bind="click: goStatement">បញ្ជីបំណុល</a></li>
+										<li><a href="#invoice">វិក្កយប័ត្រ</a></li>
+										<li><a href="#receipt">បង្កាន់ដៃលក់</a></li>				
+										<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្នែកអគ្គីសនី <i class="caret"></i></a>
+											<ul class="dropdown-menu">
+												<li><a href="#" data-bind="click: goEMeter">កុងទ័រ</a></li>
+											    <li><a href="#" data-bind="click: goEReadingSingle">អំនានកុងទ័រ</a></li>
+											    <li><a href="#" data-bind="click: goNotice">លិខិតរំលឹក</a></li>
+											</ul>
+										</li>
+										<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្សេងៗ <i class="caret"></i></a>
+											<ul class="dropdown-menu">
+												<li><a href="#so">បញ្ជាលក់</a></li>
+											    <li><a href="#estimate">សម្រង់តម្លៃ</a></li>
+											    <li><a href="#gdn">លិខិតដឹកជញ្ជូន</a></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<div id="detail"></div>							
+						</div>					
+					</div>
+				</div>	
+			</div>
 		</div>
 	</div>
 </script>
@@ -3894,13 +3921,12 @@
 	                			required data-required-msg="ត្រូវការ ប្រភេទអតិថិជន"></select>
 					</div>
 					<div class="span3">
-						<label for="status">ស្ថានភាព <span style="color:red">*</span></label>
-			            <input id="status" name="status" data-role="dropdownlist"
-			            		data-text-field="name"
-           						data-value-field="id" 
-			            		data-bind="source: statusList, value: status"					            							            		
-			            		data-option-label="(--- ជ្រើសរើស ---)"
-			            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+						<label for="classes">Class <span style="color:red">*</span></label>
+			            <select id="classes" name="classes" data-role="dropdownlist" 
+	              				data-text-field="name" data-value-field="id" 
+	              				data-bind="source: classList, value: class_id"
+	              				data-option-label="(--- Class ---)"
+	              				required data-required-msg="ត្រូវការ Class"></select>
 					</div>					
 					<div class="span3">
 						<label for="registered_date">ថ្ងៃចុះឈ្មោះ <span style="color:red">*</span></label>
@@ -4004,29 +4030,36 @@
 					        <!-- //OTHER INFOMATION Tab content -->
 					        <div class="tab-pane active" id="tab1-4">
 				            	<table width="100%" cellpadding="5" cellspacing="5">						            	
+				            		<tr>
+						                <td>ស្ថានភាព <span style="color:red">*</span></td>
+						              	<td>
+						              		<input id="status" name="status" data-role="dropdownlist"
+							            		data-text-field="name"
+				           						data-value-field="id" 
+							            		data-bind="source: statusList, value: status"					            							            		
+							            		data-option-label="(--- ជ្រើសរើស ---)"
+							            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+						              	</td>
+						              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
+						              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>								            	
+						            </tr>
 						            <tr>
 						              	<td>ភេទ</td>
 						              	<td><select data-role="dropdownlist" data-bind="source: genders, value: gender"></select></td>
-						              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
-						              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>
+						              	<td>សមាជិកគ្រួសារ</td>
+						              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>
 						            </tr>
 						            <tr>
 						            	<td>ថ្ងៃកំណើត</td>
 						              	<td><input id="dob" data-role="datepicker" data-bind="value: dob" data-format="dd-MM-yyyy" placeholder="ថ្ងែ-ខែ-ឆ្នាំ" /></td>									              	
-						              	<td>សមាជិកគ្រួសារ</td>
-						              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>
-						            </tr>
-						            <tr valign="top">
-						              	<td>ទីកន្លែងកំណើត</td>
-						              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />
 						              	<td>មុខរបរ</td>
 						              	<td><input id="job" class="k-textbox" data-bind="value: job" placeholder="e.g. គ្រូបង្រៀន" /></td>
 						            </tr>
-						            <tr>
+						            <tr valign="top">
+						              	<td>ទីកន្លែងកំណើត</td>
+						              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />						            
 						            	<td>សំគាល់</td>
-						              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>									              	
-						              	<td></td>
-						              	<td></td>									              	
+						              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>									              							              									              	
 						            </tr>								            								            								            			            
 						        </table>
 				        	</div>
@@ -4223,14 +4256,13 @@
 			                			data-option-label="(--- ជ្រើសរើស ---)" 
 			                			required data-required-msg="ត្រូវការ ប្រភេទអតិថិជន"></select>
 							</div>
-							<div class="span3">
-								<label for="status">ស្ថានភាព <span style="color:red">*</span></label>
-					            <input id="status" name="status" data-role="dropdownlist"
-					            		data-text-field="name"
-		           						data-value-field="id" 
-					            		data-bind="source: statusList, value: status"					            							            		
-					            		data-option-label="(--- ជ្រើសរើស ---)"
-					            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+							<div class="span3">								
+								<label for="classes">Class <span style="color:red">*</span></label>
+					            <select id="classes" name="classes" data-role="dropdownlist" 
+			              				data-text-field="name" data-value-field="id" 
+			              				data-bind="source: classList, value: class_id"
+			              				data-option-label="(--- Class ---)"
+			              				required data-required-msg="ត្រូវការ Class"></select>
 							</div>					
 							<div class="span3">
 								<label for="registered_date">ថ្ងៃចុះឈ្មោះ <span style="color:red">*</span></label>
@@ -4333,30 +4365,37 @@
 
 							        <!-- //OTHER INFOMATION Tab content -->
 							        <div class="tab-pane active" id="tab1-4">
-						            	<table width="100%" cellpadding="5" cellspacing="5">						            	
+						            	<table width="100%" cellpadding="5" cellspacing="5">
+						            		<tr>
+								                <td>ស្ថានភាព <span style="color:red">*</span></td>
+								              	<td>
+								              		<input id="status" name="status" data-role="dropdownlist"
+									            		data-text-field="name"
+						           						data-value-field="id" 
+									            		data-bind="source: statusList, value: status"					            							            		
+									            		data-option-label="(--- ជ្រើសរើស ---)"
+									            		required data-required-msg="ត្រូវការ ស្ថានភាព" />
+								              	</td>
+								              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
+								              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>								            	
+								            </tr>						            	
 								            <tr>
 								              	<td>ភេទ</td>
-								              	<td><select data-role="dropdownlist" data-bind="source: genders, value: gender"></select></td>
-								              	<td>លេខអត្តសញ្ញាណប័ណ្ណ</td>
-								              	<td><input id="card_number" class="k-textbox" data-bind="value: card_number" placeholder="e.g. 123456789" /></td>
+								              	<td><select data-role="dropdownlist" data-bind="source: genders, value: gender"></select></td>								              	
+								            	<td>សមាជិកគ្រួសារ</td>
+								              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>								            	
 								            </tr>
 								            <tr>
 								            	<td>ថ្ងៃកំណើត</td>
 								              	<td><input id="dob" data-role="datepicker" data-bind="value: dob" data-format="dd-MM-yyyy" placeholder="ថ្ងែ-ខែ-ឆ្នាំ" /></td>									              	
-								              	<td>សមាជិកគ្រួសារ</td>
-								              	<td><input id="family_member" class="k-textbox" data-bind="value: family_member" placeholder="e.g. 3" /></td>
-								            </tr>
-								            <tr valign="top">
-								              	<td>ទីកន្លែងកំណើត</td>
-								              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />
 								              	<td>មុខរបរ</td>
 								              	<td><input id="job" class="k-textbox" data-bind="value: job" placeholder="e.g. គ្រូបង្រៀន" /></td>
 								            </tr>
-								            <tr>
+								            <tr valign="top">
+								              	<td>ទីកន្លែងកំណើត</td>
+								              	<td><input id="pob" class="k-textbox" data-bind="value: pob" placeholder="e.g. ផ្ទះ ផ្លូវ ភូមិ សង្កាត់ ខណ្ឌ" />								            
 								            	<td>សំគាល់</td>
-								              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>									              	
-								              	<td></td>
-								              	<td></td>									              	
+								              	<td><input class="k-textbox" data-bind="value: memo" placeholder="..." /></td>								              										              	
 								            </tr>								            								            								            			            
 								        </table>
 						        	</div>
@@ -5915,18 +5954,17 @@
 	<div class="row-fluid">
 		<div class="span12">			
 			<div class="widget widget-tabs widget-tabs-double widget-tabs-gray">			
-				//Tabs Heading
+				
 				<div class="widget-head">
 					<ul>
 						<li class="active"><a href="#tab1-2" class="glyphicons calculator" data-toggle="tab"><i></i><span class="strong">ជំហានទី ១</span><span>រកថាមពលមធ្យម</span></a></li>
 						<li><a href="#tab2-2" class="glyphicons notes" data-toggle="tab"><i></i><span class="strong">ជំហានទី ២</span><span>បង្កើតលិខិតរំលឹក</span></a></li>						
 					</ul>
-				</div>
-				// Tabs Heading END
+				</div>				
 				
 				<div class="widget-body">
 					<div class="tab-content">					
-						//Tab content 
+						 
 						<div class="tab-pane active" id="tab1-2">
 							<div>											
 								<select data-role="dropdownlist" data-text-field="meter_no" data-value-field="id"
@@ -5975,11 +6013,9 @@
 								</div>
 							</div>
 						</div>
-						//Tab content END 
 						
-						//Tab content
 						<div class="tab-pane" id="tab2-2">
-							<h4 align="center">លិខិតដឹកជញ្ជូន</h4>
+							<h4 align="center">លិខិតរំលឹក</h4>
 
 							<div class="row-fluid">
 								<div class="span8">
@@ -6056,7 +6092,7 @@
 							</div>
 
 						</div>
-						//Tab content END
+						
 						
 					</div>					
 				</div>
@@ -6627,6 +6663,7 @@
 				            { title: "ថ្ងៃបង់ប្រាក់" },				            
 				            { title: "ឈ្មោះ" },						                
 				            { title: "លេខវិក្កយបត្រ" },
+				            { title: "វិធីបង់ប្រាក់" },
 				            { title: "ទឹកប្រាក់" },	                    	                     
 				            { title: "ប្រាក់ទទួលបាន" }	                    	                    
 				            ]'>
@@ -6656,7 +6693,8 @@
 	<tr>					
 		<td>#:kendo.toString(new Date(payment_date), "dd-MM-yyyy")#</td>
 		<td>#:customers.number# #:customers.surname# #:customers.name#</td>		
-		<td>#:invoices.number#</td>				
+		<td>#:invoices.number#</td>
+		<td>#:payment_methods.name#</td>				
 		<td align="right">#:kendo.toString(kendo.parseFloat(invoices.amount), "c")#</td>
 		<td align="right">#:kendo.toString(kendo.parseFloat(amount_paid), "c")#</td>				
     </tr>   
@@ -6843,10 +6881,6 @@
 		<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">
-					<div align="right">			        				        	
-			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
-					</div>
-
 					<h3 align="center">បញ្ជីអតិថិជន</h3>	
 
 					<div id="top" align="right">
@@ -6854,30 +6888,12 @@
 					</div>
 
 					<div>
-					    <select id="company" name="company" data-role="dropdownlist" 
-					    		data-text-field="abbr" data-value-field="id"		          				
-		          				data-bind="source: companyList, value: company_id"  
-		          				data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>
-
-					    <select id="transformer" name="transformer" data-role="dropdownlist" 
-					    		data-text-field="transformer_number" data-value-field="id"					    		
-		          				data-cascade-from="company" data-auto-bind="false"
-		          				data-bind="source: transformerList, value: transformer_id"  
-		          				data-option-label="(--- រើស ត្រង់ស្វូ ---)"></select>	
-
+						<input id="company" name="company" placeholder="អាជ្ញាបណ្ណ" />
+						<input id="transformer" name="transformer" placeholder="តំបន់" disabled="disabled" />					    
 						<button id="search" type="button" class="btn btn-default"><i class="icon-search"></i></button>						
 					</div>
 
-					<div data-role="grid" data-bind="source: customerList"
-						data-pageable="true"
-				        data-auto-bind="false" data-row-template="customerListRowTemplate"                  
-				        data-columns='[	                
-				            { title: "លេខកូដ" },				            
-				            { title: "ឈ្មោះ" },						                
-				            { title: "ប្រភេទ" },				                            	                     
-				            { title: "សមតុល្យចុងគ្រា" }	                    	                    
-				            ]'>
-					</div>			
+					<div id="grid"></div>	
 
 					<br>
 
@@ -6888,14 +6904,6 @@
 			</div><!-- //End div span12-->
 		</div><!-- //End div row-fluid-->
 	</div>	
-</script>
-<script id="customerListRowTemplate" type="text/x-kendo-tmpl">		
-	<tr>				
-		<td>#:number#</td>		
-		<td>#:surname# #:name#</td>
-		<td>#:people_types.name#</td>		
-		<td align="right">#:kendo.toString(kendo.parseFloat(balance),'c', currencies.sub_code)#</td>					
-    </tr>   
 </script>
 <script id="agingSummary" type="text/x-kendo-template">
 	<div id="slide-form">
@@ -6910,7 +6918,7 @@
 						<select id="transformer" name="transformer" data-role="dropdownlist" 
 								data-text-field="transformer_number" data-value-field="id"
 		          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
-		          				data-auto-bind="false" data-option-label="(--- ត្រង់ស្វូ ---)"></select>
+		          				data-auto-bind="false" data-option-label="(--- តំបន់ ---)"></select>
 						<input data-role="datepicker" data-bind="value: issued_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
 						<button id="search" type="button" class="btn btn-default"><i class="icon-eye-open"></i></button>				
 					</div>
@@ -6973,7 +6981,7 @@
 						<select id="transformer" name="transformer" data-role="dropdownlist" 
 								data-text-field="transformer_number" data-value-field="id"
 		          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
-		          				data-auto-bind="false" data-option-label="(--- ត្រង់ស្វូ ---)"></select>
+		          				data-auto-bind="false" data-option-label="(--- តំបន់ ---)"></select>
 						<input data-role="datepicker" data-bind="value: issued_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
 						<button id="search" type="button" class="btn btn-default"><i class="icon-eye-open"></i></button>				
 					</div>
@@ -7015,8 +7023,22 @@
     	#for (var i=0;i<invoices.length;i++) {#
     		#total += kendo.parseFloat(invoices[i].amount)/kendo.parseFloat(invoices[i].rate)#    	
 	    	<tr>	    		
-	    		<td align="right">#:invoices[i].type#</td>
-				<td>#:invoices[i].number#</td>		
+	    		<td align="right">
+	    			#if(invoices[i].type==="eInvoice"){#								
+						វិក្កយបត្រអគ្គីសនី
+					#}else if(invoices[i].type==="Notice"){#
+						លិខិតរំលឹក
+		        	#}else{#
+		        		វិក្កយបត្រ
+		        	#}#	    			
+	    		</td>
+				<td>
+					#if(invoices[i].type==="Invoice"){#								
+						<a href="\#invoice/#=invoices[i].id#"><i></i> #=invoices[i].number#</a>					
+		        	#}else{#
+		        		#=invoices[i].number#
+		        	#}#					
+				</td>		
 				<td>#:kendo.toString(new Date(invoices[i].issued_date), "dd-MM-yyyy")#</td>
 				<td>#:kendo.toString(new Date(invoices[i].due_date), "dd-MM-yyyy")#</td>
 				<td>
@@ -7046,18 +7068,119 @@
 	    </tr>
     #}#   
 </script>
+<script id="lowConsumption" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">														
+				<div>
+					<select id="company" name="company" data-role="dropdownlist" data-text-field="abbr" data-value-field="id" 
+				            data-bind="source: companyList, value: company_id" data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>
+
+				    <select id="transformer" name="transformer" data-role="dropdownlist" data-text-field="transformer_number" data-value-field="id"
+	          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" data-auto-bind="false" 
+	          				data-option-label="(--- រើស ត្រង់ស្វូ ---)"></select>
+					
+					<input data-role="datepicker" data-bind="value: reading_date" data-format="dd-MM-yyyy" placeHolder="កាលបរិច្ឆេទ" />
+					<input data-role="numerictextbox" data-format="<= # kw" data-min="0" data-bind="value: usage" placeHolder="ថាមពល">
+					<button type="button" class="btn btn-default" data-bind="click: search"><i class="icon-eye-open"></i></button>				
+				</div>
+
+				<br>
+
+				<div id="divConsumption">
+					<div align="center">
+						<h3>អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</h3>
+						គិតត្រឹម
+						<span data-bind="text: reading_date_text"></span>
+					</div>
+					
+					<div data-role="grid" data-bind="source: consumptionList"
+				        data-auto-bind="false" data-row-template="lowConsumptionRowTemplate"
+				        data-pageable="true"                  
+				        data-columns='[			            
+				            { title: "លេខកូដ" },
+				            { title: "ឈ្មោះ" },
+				            { title: "កុងទ័រ" },
+				            { title: "៣ ខែមុន" }	,
+				            { title: "២ ខែមុន" },
+				            { title: "១ ខែមុន" },
+				            { title: "បច្ចុប្បន្ន" }			            		                             	                    
+				        ]'>
+					</div>
+				</div>					
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->	
+</script>
+<script id="lowConsumptionRowTemplate" type="text/x-kendo-tmpl">		
+	<tr>		
+		<td>#:customers.number#</td>
+		<td>#:customers.surname# #:customers.name#</td>	
+		<td>#:meter#</td>	
+		<td align="right">#:month3#</td>		
+		<td align="right">#:month2#</td>
+		<td align="right">#:month1#</td>
+		<td align="right">#:current#</td>							
+    </tr>   
+</script>
+<script id="disconnectList" type="text/x-kendo-template">
+	<div>				
+		<select id="company" name="company" data-role="dropdownlist" data-text-field="abbr" data-value-field="id" 
+	            data-bind="source: companyList, value: company_id" data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>	
+		<input data-role="numerictextbox" data-format=">= # ថ្ងៃ" data-min="1" data-bind="value: over_due_day" placeHolder="ចំនួនថ្ងៃផុតកំណត់">
+		<button type="button" class="btn btn-default" data-bind="click: search"><i class="icon-eye-open"></i></button>				
+	</div>
+
+	<div align="center">
+		<h3>តារាងផ្ដាច់ចរន្ត</h3>
+		ចំនួនថ្ងៃផុតកំណត់លើសចាប់ពី  
+		<span data-bind="text: over_due_day"></span> ថ្ងៃ
+	</div>
+	
+	<div data-role="grid" data-bind="source: disconnectList"
+        data-auto-bind="false" data-row-template="disconnectListRowTemplate"
+        data-pageable="true"                  
+        data-columns='[        				            
+            { title: "លេខកូដ" },
+            { title: "ឈ្មោះ" },
+            { title: "#វិក្កយបត្រ", width: 110 },								            	                     
+            { title: "ថ្ងៃចេញវិក្កយបត្រ" },
+            { title: "ថ្ងៃផុតកំណត់" },
+            { title: "ចំនួនថ្ងលើស" },
+            { title: "ទឹកប្រាក់" },
+            { title: "ប្រាក់បង់រូច" },
+            { title: "សមតុល្យ" }			                              	                    
+        ]'>
+	</div>	
+</script>
+<script id="disconnectListRowTemplate" type="text/x-kendo-tmpl">		
+	<tr>		
+		<td>#:people.number#</td>
+		<td>#:people.surname# #:people.name#</td>
+		<td>#:number#</td>				
+		<td>#:kendo.toString(new Date(issued_date), 'dd-MM-yyyy')#</td>
+		<td>#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>
+		<td align="right">#:over_due_day# ថ្ងៃ</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(total_amount), 'c0')#</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(total_paid), 'c0')#</td>
+		<td align="right">#:kendo.toString(kendo.parseFloat(total), 'c0')#</td>							
+    </tr>   
+</script>
 
 <script id="eInvoicePreview" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
 			<div id="example" class="k-content">
 				<div class="hidden-print">								
-					<select id="company" name="company" data-role="dropdownlist" data-text-field="abbr" data-value-field="id" 
-				            	data-bind="source: companyList, value: company_id" data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>
-				    <select id="transformer" name="transformer" data-role="dropdownlist" data-text-field="transformer_number" data-value-field="id"
-	          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" data-auto-bind="false" 
-	          				data-option-label="(--- រើស ត្រង់ស្វូ ---)"></select>	
-					<input id="mof" data-role="datepicker" data-bind="value: month_of" data-start="year" data-depth="year" 
+					<select id="company" name="company" data-role="dropdownlist" 
+							data-text-field="abbr" data-value-field="id" 
+				            data-bind="source: companyList, value: company_id" data-option-label="(--- រើស អាជ្ញាប័ណ្ណ ---)"></select>
+				    <select id="transformer" name="transformer" data-role="dropdownlist" 
+				    		data-text-field="transformer_number" data-value-field="id"
+	          				data-cascade-from="company" data-bind="source: transformerList, value: transformer_id" 
+	          				data-auto-bind="false" data-option-label="(--- រើស ត្រង់ស្វូ ---)"></select>	
+					<input id="mof" name="mof" data-role="datepicker" 
+							data-bind="value: month_of" data-start="year" data-depth="year" 
 							data-format="MM-yyyy" placeHolder="ប្រចាំខែ" />
 					<input type="text" data-bind="value: invoice_no" style="width:100px" placeholder="លេខវិក្កយបត្រ">
 					<button type="button" class="btn btn-default" data-bind="click: search"><i class="icon-search"></i></button>
@@ -7073,203 +7196,212 @@
 	</div><!-- //End div row-fluid-->	
 </script>
 <script type="text/x-kendo-tmpl" id="eInvoicePreviewTemplate">	
-	  	<div class="print">
-	  		<table width="100%">
-		    	<tr>
-		    		<td valign="top" align="left" width="250">
-		    			<img src="/production/#:companys.image_url#" height="200" width="300" >
-		    		</td>
-		    		<td style="float:left;">
-		    			<div class="center">
-			    			<h4>#:companys.name#</h4>
-							<p>
-								#:companys.address# <br>
-								#:companys.phone# /
-								#:companys.mobile#							
-							</p>
-						</div>
-		    		</td>
-		    	</tr>
-		    </table>							
-		
-			<table width="100%" class="table table-condensed" style="margin-top: 15px">
-				<tr>
-					<td valign="top" rowspan="6">
-						<span class="#:number#"></span>
-						#:customers.number# #:customers.surname# #:customers.name# <br>
-						#:address#
-					</td>
-					<td class="hiddenPrint">លេខវិក្កយបត្រ INVOICE NO</td>
-					<td>#:number#</td>							
-				</tr>
-				<tr>
-					<td class="hiddenPrint">វិក្កយបត្រ INVOICE DATE</td>
-					<td>#:kendo.toString(new Date(issued_date), "dd-MM-yyyy")#</td>											
-				</tr>
-				<tr>
-					<td class="hiddenPrint" width="150px">តំបន់ AREA</td>
-					<td width="150px">#:transformers.transformer_number#</td>							
-				</tr>
-				<tr>
-					<td class="hiddenPrint" width="150px">លេខប្រអប់ BOX NO</td>
-					<td width="150px">#:box_no#</td>				
-				</tr>
-				<tr>
-					<td class="hiddenPrint">គិតចាប់ពីថ្ងៃទី FROM</td>
-					<td>#:kendo.toString(new Date(date_read_from), "dd-MM-yyyy")#</td>							
-				</tr>
-				<tr>
-					<td class="hiddenPrint">ដល់ថ្ងៃទី TO</td>
-					<td>#:kendo.toString(new Date(date_read_to), "dd-MM-yyyy")#</td>
-				</tr>
-			</table>															
-		
-			<table class="hiddenPrint" border="1" width="100%">
-				<tr>
-					<td align="center" width="100">លេខកុងទ័រ <br> METER</td>
-					<td align="center" width="80">អំនានចាស់ <br> PREVIOUS</td>
-					<td align="center" width="80">អំនានថ្មី <br> CURRENT</td>
-					<td align="center" width="70">មេគុណ <br> <span style="font-size:x-small">MULTIPLICATION</span></td>
-					<td align="center" width="100">ប្រើប្រាស់ <br> CONSUMPTION</td>
-					<td align="center" width="80">តំលៃឯកត្តា <br> RATE</td>
-					<td align="center" width="100">តំលៃសរុប <br> AMOUNT</td>	
-				</tr>
-			</table>
-									
-			<table align="right">
-				<tr>
-					<td>ប្រាក់ជំពាក់ខែមុន</td>
-					<td width="150px" align="right">#:kendo.toString(kendo.parseFloat(tdebt), 'c0')#</td>
-				</tr>
-				<tr>
-					<td>ប្រាក់សងខែមុន</td>
-					<td align="right">#:kendo.toString(kendo.parseFloat(tpayment), 'c0')#</td>
-				</tr>
-				<tr>
-					<td>ប្រាក់នៅជំពាក់</td>
-					<td align="right">#:kendo.toString(kendo.parseFloat(tremain), 'c0')#</td>
-				</tr>
-			</table>
-			
-			<div style="height:350px">
-				<table width="100%">
-					#for(var i=0; i < invoice_items.length; i++) {#
-						<tr>
-							<td width="100">#:invoice_items[i].meter_no#</td>
-							<td align="right" width="80">#:invoice_items[i].prev_reading#</td>
-							<td align="right" width="80">#:invoice_items[i].new_reading#</td>
-							<td align="center" width="70">#:invoice_items[i].multiplier#</td>
-							<td align="right" width="100">#:kendo.toString(kendo.parseInt(invoice_items[i].quantity), 'n0')#</td>
-							<td align="right" width="80">#:kendo.toString(kendo.parseFloat(invoice_items[i].unit_price), 'c0')#</td>
-							<td align="right" width="100">#:kendo.toString(kendo.parseFloat(invoice_items[i].amount), 'c0')#</td>
-						</tr>
-					# } #
-				</table>
-
-				<p>#:memo#</p>
-			</div>		
-
-	        <table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
-	        	<tr>
-	        		<td rowspan="5" style="font-size:smaller">
-	        			#=companys.term_of_condition#
-	        		</td>
-	        		<td width="200">
-	        			<div style="float:left;text-align:left;">បំណុលសរុបខែនេះ</div>
-	  					<div style="float:right;text-align:right;">TOTAL BALANCE</div>
-	        		</td>
-	        		<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(total), 'c0')#</td>
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
-	  					<div style="float:right;text-align:right;">TOTAL DUE</div>
-	        		</td>
-	        		<td align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue), 'c0')#</td>        		
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">DUE DATE</div>
-	        		</td>
-	        		<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>        		
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">PAY DATE</div>
-	        		</td>
-	        		<td></td>        		
-	        	</tr>
-	        	<tr>
-	        		<td>
-	        			<div style="float:left;text-align:left;">ចំនួនទឹកប្រាក់បានបង់</div>
-	  					<div style="float:right;text-align:right;">PAY AMOUNT</div>
-	        		</td>
-	        		<td></td>        		
-	        	</tr>
-	        </table>			
-
-			<div class="hiddenPrint" style="border-top: 1px dashed black; margin: 7px 5px 5px 5px;"></div>
-
-			<table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
-				<tr>							
-					<td rowspan="4">
-						<table width="100%">
-							<tr>
-								<td></td>
-								<td style="visibility:visible;">
-									<span class="#:number#"></span>
-								</td>							
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>វិក្កយបត្រ</td>
-								<td>#:number#</td>
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>អតិថិជន</td>
-								<td>#:customers.number# #:customers.surname# #:customers.name#</td>
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>អាសយដ្ឋាន</td>
-								<td>#:address#</td>
-							</tr>
-							<tr valign="top" style="visibility:visible;">
-								<td>ទីតាំងចរន្ត</td>
-								<td>#:transformers.transformer_number#, #:box_no#</td>
-							</tr>
-						</table>
-					</td>				
-					<td width="200">
-						<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
-	  					<div style="float:right;text-align:right;">TOTAL DUE</div>
-					</td>
-					<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue), 'c0')#</td>
-				</tr>
-				<tr>			    
-					<td>
-						<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">DUE DATE</div>
-					</td>
-					<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>
-				</tr>
-				<tr>			    
-					<td>
-						<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
-	  					<div style="float:right;text-align:right;">PAY DATE</div>
-					</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>
-						<div style="float:left;text-align:left;">អ្នកទទួលប្រាក់</div>
-	  					<div style="float:right;text-align:right;">CASHIER</div>
-					</td>
-					<td></td>
-				</tr>
-			</table>
-		</div>
+  	<div class="print">
+  		<table width="100%">
+	    	<tr>
+	    		<td valign="top" align="left" width="250">
+	    			<img src="/banhji/#:companys.image_url#" height="200" width="300" >
+	    		</td>
+	    		<td style="float:left;">
+	    			<div class="center">
+		    			<h4>#:companys.name#</h4>
+						<p>
+							#:companys.address# <br>
+							#:companys.phone# /
+							#:companys.mobile#							
+						</p>
+					</div>
+	    		</td>
+	    	</tr>
+	    </table>							
 	
+		<table width="100%" class="table table-condensed" style="margin-top: 15px">
+			<tr>
+				<td valign="top" rowspan="6">
+					<span class="#:number#"></span>
+					#:customers.number# #:customers.surname# #:customers.name# <br>
+					#:address#
+				</td>
+				<td class="hiddenPrint">លេខវិក្កយបត្រ INVOICE NO</td>
+				<td>#:number#</td>							
+			</tr>
+			<tr>
+				<td class="hiddenPrint">វិក្កយបត្រ INVOICE DATE</td>
+				<td>#:kendo.toString(new Date(issued_date), "dd-MM-yyyy")#</td>											
+			</tr>
+			<tr>
+				<td class="hiddenPrint" width="150px">តំបន់ AREA</td>
+				<td width="150px">#:transformers.transformer_number#</td>							
+			</tr>
+			<tr>
+				<td class="hiddenPrint" width="150px">លេខប្រអប់ BOX NO</td>
+				<td width="150px">#:box_no#</td>				
+			</tr>
+			<tr>
+				<td class="hiddenPrint">គិតចាប់ពីថ្ងៃទី FROM</td>
+				<td>#:kendo.toString(new Date(date_read_from), "dd-MM-yyyy")#</td>							
+			</tr>
+			<tr>
+				<td class="hiddenPrint">ដល់ថ្ងៃទី TO</td>
+				<td>#:kendo.toString(new Date(date_read_to), "dd-MM-yyyy")#</td>
+			</tr>
+		</table>															
+	
+		<table class="hiddenPrint" border="1" width="100%">
+			<tr>
+				<td align="center" width="100">លេខកុងទ័រ <br> METER</td>
+				<td align="center" width="80">អំនានចាស់ <br> PREVIOUS</td>
+				<td align="center" width="80">អំនានថ្មី <br> CURRENT</td>
+				<td align="center" width="70">មេគុណ <br> <span style="font-size:x-small">MULTIPLICATION</span></td>
+				<td align="center" width="100">ប្រើប្រាស់ <br> CONSUMPTION</td>
+				<td align="center" width="80">តំលៃឯកត្តា <br> RATE</td>
+				<td align="center" width="100">តំលៃសរុប <br> AMOUNT</td>	
+			</tr>
+		</table>
+							
+		<table align="right">
+			<tr>
+				<td>ប្រាក់ជំពាក់ខែមុន</td>
+				<td width="150px" align="right">#:kendo.toString(kendo.parseFloat(tdebt)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+			<tr>
+				<td>ប្រាក់សងខែមុន</td>
+				<td align="right">#:kendo.toString(kendo.parseFloat(tpayment)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+			<tr>
+				<td>ប្រាក់នៅជំពាក់</td>
+				<td align="right">#:kendo.toString(kendo.parseFloat(tremain)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+		</table>
+		
+		<div style="height:350px">
+			<table width="100%">
+				#for(var i=0; i < invoice_items.length; i++) {#
+					<tr>
+						<td width="100">#:invoice_items[i].meter_no#</td>
+						<td align="right" width="80">#:invoice_items[i].prev_reading#</td>
+						<td align="right" width="80">#:invoice_items[i].new_reading#</td>
+						<td align="center" width="70">#:invoice_items[i].multiplier#</td>
+						<td align="right" width="100">#:kendo.toString(kendo.parseInt(invoice_items[i].quantity), 'n0')#</td>
+						<td align="right" width="80">#:kendo.toString(kendo.parseFloat(invoice_items[i].unit_price)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+						<td align="right" width="100">#:kendo.toString(kendo.parseFloat(invoice_items[i].amount)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+					</tr>
+				# } #
+			</table>
+
+			<p>#:memo#</p>
+		</div>		
+
+        <table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
+        	<tr>
+        		<td rowspan="5" style="font-size:smaller">
+        			#=companys.term_of_condition#
+        		</td>
+        		<td width="200">
+        			<div style="float:left;text-align:left;">បំណុលសរុបខែនេះ</div>
+  					<div style="float:right;text-align:right;">TOTAL BALANCE</div>
+        		</td>
+        		<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(total)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
+  					<div style="float:right;text-align:right;">TOTAL DUE</div>
+        		</td>
+        		<td align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue)/kendo.parseFloat(rate), 'c', sub_code)#</td>        		
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">DUE DATE</div>
+        		</td>
+        		<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>        		
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">PAY DATE</div>
+        		</td>
+        		<td></td>        		
+        	</tr>
+        	<tr>
+        		<td>
+        			<div style="float:left;text-align:left;">ចំនួនទឹកប្រាក់បានបង់</div>
+  					<div style="float:right;text-align:right;">PAY AMOUNT</div>
+        		</td>
+        		<td></td>        		
+        	</tr>
+        </table>			
+
+		<div class="hiddenPrint" style="border-top: 1px dashed black; margin: 7px 5px 5px 5px;"></div>
+
+		<table class="hiddenPrint" width="100%" border="1" cellpadding="5" cellspacing="5">
+			<tr>							
+				<td rowspan="4">
+					<table width="100%">
+						<tr>
+							<td></td>
+							<td style="visibility:visible;">
+								<span class="#:number#"></span>
+							</td>							
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>វិក្កយបត្រ</td>
+							<td>#:number#</td>
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>អតិថិជន</td>
+							<td>#:customers.number# #:customers.surname# #:customers.name#</td>
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>អាសយដ្ឋាន</td>
+							<td>#:address#</td>
+						</tr>
+						<tr valign="top" style="visibility:visible;">
+							<td>ទីតាំងចរន្ត</td>
+							<td>#:transformers.transformer_number#, #:box_no#</td>
+						</tr>
+					</table>
+				</td>				
+				<td width="200">
+					<div style="float:left;text-align:left;">ទឹកប្រាក់ត្រូវបង់</div>
+  					<div style="float:right;text-align:right;">TOTAL DUE</div>
+				</td>
+				<td width="110" align="right" style="visibility:visible;">#:kendo.toString(kendo.parseFloat(tdue)/kendo.parseFloat(rate), 'c', sub_code)#</td>
+			</tr>
+			<tr>			    
+				<td>
+					<div style="float:left;text-align:left;">ថ្ងៃផុតកំណត់បង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">DUE DATE</div>
+				</td>
+				<td align="right" style="visibility:visible;">#:kendo.toString(new Date(due_date), 'dd-MM-yyyy')#</td>
+			</tr>
+			<tr>			    
+				<td>
+					<div style="float:left;text-align:left;">ថ្ងៃបង់ប្រាក់</div>
+  					<div style="float:right;text-align:right;">PAY DATE</div>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<div style="float:left;text-align:left;">អ្នកទទួលប្រាក់</div>
+  					<div style="float:right;text-align:right;">CASHIER</div>
+				</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+</script>
+
+<script id="newCompany" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->	
 </script>
 <!-- END OF DAWINE -->
 
@@ -11777,16 +11909,19 @@
                     		type : { defaultValue: {type:"class", name: "កែចំណាត់ថ្នាក់"} },
                     	}
                     }      
+
             },
             serverFiltering: true,
             serverSorting: true
         });
 
         var classVM = kendo.observable({
+
         	dataSource 	: classCollection,
         	setCurrent 	: function(model) {
         		this.set("current", model);
         	},
+
         	query 		: function(query) {},
         	getById 	: function(id) {
         		var dfd = $.Deferred();
@@ -11797,7 +11932,8 @@
     			return dfd.promise();
         	},
         	getBy 		: function(criteria) {},
-        	cancel 		: function() {
+	       	cancel 		: function() {
+
         		classCollection.cancelChanges();
         	},
         	addNew 		: function() {
@@ -11810,6 +11946,7 @@
         	},
         	save 		: function() {
         		classCollection.sync();
+
         	},
         	update 		: function(id, data) {
         		var dfd = $.Deferred();
@@ -11835,6 +11972,7 @@
         });
         return classVM;
 	}());
+
 
 	//By Visal ----------------------------------
 	banhji.inventory = (function(){
@@ -13600,13 +13738,11 @@
 			},
 			serverFiltering: true,
 			serverPaging: true,
-			pageSize: 10,
+			pageSize: 200,			
 			schema: {
 				model: {
 					id: "id"
-				},
-				data: "customers",
-				total: "count"
+				}
 			}
 		});
 
@@ -13738,6 +13874,18 @@
 			serverFiltering: true
 		});
 
+		var classDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/classes/class",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter: { field: "type", value: "Class" },
+			serverFiltering: true
+		});
+
 		var provinceDS = new kendo.data.DataSource({
 			transport: {
 				read: {
@@ -13809,6 +13957,7 @@
 
 			company_id 		: 0,
 			transformer_id 	: 0,
+			class_id 		: 0,
 						
 			ampere_id 		: 0,
 			phase_id 		: 0,
@@ -13857,6 +14006,7 @@
 			
 			companyList		: companyDS,
 			transformerList : transformerDS,
+			classList 		: classDS,
 			
 			currencyList 	: currencyDS,
 			accountList 	: accountReceiveablDS,
@@ -13971,6 +14121,9 @@
 				}				
 			},
 
+			search 			: function(para){
+				customerDS.filter(para);
+			},
 			setCurrent		: function(id) {
 				var cus = customerDS.get(id);
 				this.set("customer", cus);
@@ -14002,6 +14155,7 @@
 				this.set("address3", cus.address3);
 				this.set("address4", cus.address4);
 				
+				this.set("class_id", cus.class_id);
 				this.set("transformer_id", cus.transformer_id);						
 				this.set("province_id", cus.province_id);
 				this.set("district_id", cus.district_id);
@@ -14372,6 +14526,7 @@
 				cus.set("account_receiveable_id", this.get("account_receiveable_id"));
 				cus.set("revenue_account_id", this.get("revenue_account_id"));			
 
+				cus.set("class_id", this.get("class_id"));
 				cus.set("company_id", this.get("company_id"));
 
 				//Electricity Customer				
@@ -14406,6 +14561,7 @@
 
 			company_id 		: 0,
 			transformer_id 	: 0,
+			class_id 		: 0,
 						
 			ampere_id 		: 0,
 			phase_id 		: 0,
@@ -14442,6 +14598,7 @@
 			
 			companyList		: companyDS,
 			transformerList : transformerDS,
+			classList 		: classDS,
 			
 			currencyList 	: currencyDS,
 			accountList 	: accountReceiveablDS,
@@ -14561,7 +14718,8 @@
 					address2		: this.get("address2"),
 					address3		: this.get("address3"),
 					address4		: this.get("address4"),
-														
+					
+					class_id 		: this.get("class_id"),									
 					transformer_id	: this.get("transformer_id"),	
 					province_id		: this.get("province_id"),	
 					district_id		: this.get("district_id"),	
@@ -15033,6 +15191,7 @@
 					  	self.set("address", d.address);					  						  	
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -16089,6 +16248,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -17056,6 +17216,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -17645,6 +17806,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -18189,6 +18351,7 @@
 					  	self.set("address", d.address);
 					  	self.set("sub_code", d.currencies.sub_code);
 					  	self.set("company_code", d.companies.based_currency);
+					  	self.set("class_id", d.class_id);
 					  	self.setRate();
 
 					  	if(invoiceItemDS.data().length<1){
@@ -19955,6 +20118,7 @@
 
 				var cus = banhji.customer.viewModel.get("customer");
 				this.set("customer_id", cus.id);
+				this.set("class_id", cus.class_id);
 				//this.set("address", cus.address);
 				this.set("noticeItemList", []);
 
@@ -21471,114 +21635,6 @@
 		};
 	}());
 
-	banhji.eInvoicePreview = (function(){
-		var invoiceDS = new kendo.data.DataSource({
-		  	transport: {	  
-			  	read: {
-				  	url : banhji.baseUrl + "api/invoices/print_batch",
-				  	type: "GET",
-				  	dataType: "json"		  
-			  	}
-		  	},	 	
-		  	serverFiltering: true,
-		  	requestEnd: function(e) {
-		  		if(e.type === "read") {  			
-		  			viewModel.set("invoiceList", e.response);
-		  			viewModel.barcod();
-		  		}
-		  		
-		  	}
-		});
-
-		var companyDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/companies/company",
-					type: "GET",
-					dataType: "json"
-				}
-			}		
-		});
-
-		var transformerDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/electricities/transformer_cascading",
-					type: "GET",
-					dataType: "json"
-				}
-			},	
-			serverFiltering: true
-		});
-		
-		var viewModel = kendo.observable({
-			invoice_no 			: "",	
-			company_id 			: 0,
-			month_of 			: new Date(),	
-			isVisible 			: true,
-			
-			invoiceList 		: [],
-			companyList 		: companyDS,	
-			transformerList 	: transformerDS,
-
-			pageLoad 			: function(number){				
-				this.set("invoice_no", number);
-				this.search();				
-			},
-			search 				: function(){
-				var para = new Array();
-				var transformer = this.get("transformer_id");
-				var monthOf = new Date(this.get("month_of"));		
-				monthOf.setDate(1);
-				monthOf = kendo.toString(monthOf, "yyyy-MM-dd");
-
-				var invoice_no = this.get("invoice_no");		
-				if(invoice_no!=""){
-					para.push({field: "number", value: invoice_no});
-				}
-				
-				if(transformer!=null && monthOf!=""){
-					para.push({ field: "transformer_id", value: transformer.id },
-							{ field: "month_of", value: monthOf }
-					);
-				}
-				if(para.length>0){
-					invoiceDS.filter(para);
-				}			
-			},	
-			barcod 				: function(){			
-				var data = this.invoiceList;
-				for (var i=0;i<data.length;i++) {
-					var d = data[i];
-					var id = d.customers.number;
-
-					$("."+d.number).kendoBarcode({
-					  	value: id,
-					  	width: 200,
-						height: 30,
-						text:{
-						    visible: false
-						}				
-					});
-				}		
-			},
-			print 				: function(e) {
-				var printBtn = e.target;
-				if(printBtn.checked) {
-					$(".hiddenPrint").css("visibility", "hidden");
-				} else {
-					$(".hiddenPrint").css("visibility", "visible");
-				}
-			},
-			printInvoice : function(){
-				javascript:window.print();
-			}
-		});
-		return {
-			viewModel 	: viewModel
-		};
-	}());
-
 	banhji.cashier = (function(){		
 		var customerDS = new kendo.data.DataSource({
 			transport: {
@@ -22361,6 +22417,12 @@
 			today 				: new Date(),
 			payment_date_from	: new Date(),
 			payment_date_to  	: "",
+
+			cashier 			: banhji.config.userData.userId,
+			cashier_name 		: banhji.config.userData.username,
+			totalPaid			: kendo.toString(0, 'c'),
+
+			paymentList 		: paymentDS,
 			
 			payment_date_from_str	: function(){
 				var strDate = "";
@@ -22381,13 +22443,7 @@
 			closeX 				: function(){
 				kendo.fx($("#slide-form")).slideIn("up").play();				
 				window.history.go(-1);
-			},
-			cashier 			: banhji.config.userData.userId,
-			cashier_name 		: banhji.config.userData.username,
-			totalPaid			: kendo.toString(0, 'c'),			
-			
-			paymentList 		: paymentDS,
-				
+			},				
 			searchPayment 		: function(){
 				var self = this;
 				var paymentDateFrom = kendo.toString(new Date(this.get("payment_date_from")), "yyyy-MM-dd");		
@@ -22815,82 +22871,6 @@
 		};
 	}());
 
-	banhji.customerBalance = (function(){		
-		var customerDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/people_api/people_list",
-					type: "GET",
-					dataType: "json"
-				}
-			},
-			schema: {
-		        data: "customers", 
-		        total: "total" 
-		    },
-			serverPaging: true,
-			pageSize: 200,			
-			serverFiltering: true
-		});
-
-		var companyDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/companies/company",
-					type: "GET",
-					dataType: "json"
-				}
-			}		
-		});
-
-		var transformerDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: banhji.baseUrl + "api/electricities/transformer_cascading",
-					type: "GET",
-					dataType: "json"
-				}
-			},	
-			serverFiltering: true
-		});
-
-		var viewModel = kendo.observable({
-			company_id 		: 0,
-
-			companyList 	: companyDS,
-			transformerList : transformerDS,
-			customerList 	: customerDS,
-			
-			closeX 				: function(){
-				kendo.fx($("#slide-form")).slideIn("up").play();				
-				window.history.go(-1);
-			},
-			search	: function(){				
-				var company_id = this.get("company_id");
-				if(company_id>0){
-					var transformer_id = this.get("transformer_id");
-					
-					if(transformer_id!=null){
-						customerDS.filter({
-							filters: [
-								{ field: "transformer_id", value: transformer_id.id }
-							]
-						});
-					}else{
-						customerDS.filter({
-							filters: [
-								{ field: "company_id", value: company_id }
-							]
-						});
-					}			
-				}		
-			}	
-		});
-		return {
-			viewModel 		: viewModel
-		};
-	}());
-
 	banhji.agingSummary = (function(){		
 		var companyDS = new kendo.data.DataSource({
 			transport: {
@@ -22905,7 +22885,7 @@
 		var transformerDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: ARNY.baseUrl + "api/electricities/transformer_cascading",
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
 					type: "GET",
 					dataType: "json"
 				}
@@ -22995,7 +22975,7 @@
 		var transformerDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: ARNY.baseUrl + "api/electricities/transformer_cascading",
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
 					type: "GET",
 					dataType: "json"
 				}
@@ -23069,7 +23049,232 @@
 		return {
 			viewModel 	: viewModel
 		};
-	}());	
+	}());
+
+	banhji.lowConsumption = (function(){
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},	
+			serverFiltering: true
+		});
+
+		var consumptionDS = new kendo.data.DataSource({
+		  	transport: {	  
+			  	read: {
+				  	url : banhji.baseUrl + "api/meter_records/low_consumption",
+				  	type: "GET",
+				  	dataType: "json"		  
+			  	}
+		  	},  		  	
+		  	serverFiltering: true  		
+		});
+					
+		var viewModel = kendo.observable({
+			company_id 		: 0,
+			transformer_id 	: 0,
+			reading_date 	: new Date(),
+
+			usage 			: 5,
+
+			companyList 		: companyDS,
+			transformerList : transformerDS,
+			consumptionList : consumptionDS,
+
+			reading_date_text : function(){
+				return kendo.toString(this.get("reading_date"), "dd-MM-yyyy");
+			},	
+			search 			: function(){
+				var readingDate = this.get("reading_date");
+				if(readingDate==null){
+					this.set("reading_date", new Date());
+				}
+
+				var transformer_id = this.get("transformer_id");
+				if(transformer_id>0){
+					consumptionDS.filter({
+						filters: [
+							{ field: "reading_date", value: kendo.toString(this.get("reading_date"), "yyyy-MM-dd") },
+							{ field: "usage", value: this.get("usage") },				
+							{ field: "transformer_id", value: this.get("transformer_id") }
+						]
+					});
+				}
+			}	
+		});
+		return {
+			viewModel 	: viewModel
+		};
+	}());
+
+	banhji.disconnectList = (function(){
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var disconnectDS = new kendo.data.DataSource({
+		  	transport: {	  
+			  	read: {
+				  	url : banhji.baseUrl + "api/invoices/disconnect_list",
+				  	type: "GET",
+				  	dataType: "json"		  
+			  	}
+		  	},  	
+		  	serverFiltering: true  		
+		});
+		
+		var viewModel = kendo.observable({
+			company_id 		: 0,
+			over_due_day 	: null,
+
+			companyList 	: companyDS,
+			disconnectList 	: disconnectDS,
+				
+			search 			: function(){
+				var company_id = this.get("company_id");
+				var over_due_day = this.get("over_due_day");								
+				if(company_id>0 && over_due_day!=null){
+					disconnectDS.filter({
+						filters: [
+							{ field: "over_due_day", value: this.get("over_due_day") },
+							{ field: "company_id", value: this.get("company_id") }
+						]
+					});
+				}					
+			}	
+		});
+		return {
+			viewModel 	: viewModel
+		};
+	}());
+
+	banhji.eInvoicePreview = (function(){
+		var invoiceDS = new kendo.data.DataSource({
+		  	transport: {	  
+			  	read: {
+				  	url : banhji.baseUrl + "api/invoices/print_batch",
+				  	type: "GET",
+				  	dataType: "json"		  
+			  	}
+		  	},	 	
+		  	serverFiltering: true,
+		  	requestEnd: function(e) {
+		  		if(e.type === "read") {  			
+		  			viewModel.set("invoiceList", e.response);
+		  			viewModel.barcod();
+		  		}
+		  		
+		  	}
+		});
+
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},	
+			serverFiltering: true
+		});
+		
+		var viewModel = kendo.observable({
+			invoice_no 			: "",	
+			company_id 			: 0,
+			month_of 			: new Date(),	
+			isVisible 			: true,
+			
+			invoiceList 		: [],
+			companyList 		: companyDS,	
+			transformerList 	: transformerDS,
+
+			pageLoad 			: function(number){				
+				this.set("invoice_no", number);
+				this.search();				
+			},
+			search 				: function(){
+				var para = new Array();
+				var transformer = this.get("transformer_id");
+				var monthOf = new Date(this.get("month_of"));		
+				monthOf.setDate(1);
+				monthOf = kendo.toString(monthOf, "yyyy-MM-dd");
+
+				var invoice_no = this.get("invoice_no");		
+				if(invoice_no!=""){
+					para.push({field: "number", value: invoice_no});
+				}
+				
+				if(transformer!=null && monthOf!=""){
+					para.push({ field: "transformer_id", value: transformer.id },
+							{ field: "month_of", value: monthOf }
+					);
+				}
+				if(para.length>0){
+					invoiceDS.filter(para);
+				}			
+			},	
+			barcod 				: function(){			
+				var data = this.invoiceList;
+				for (var i=0;i<data.length;i++) {
+					var d = data[i];
+					var id = d.customers.number;
+
+					$("."+d.number).kendoBarcode({
+					  	value: id,
+					  	width: 200,
+						height: 30,
+						text:{
+						    visible: false
+						}				
+					});
+				}		
+			},
+			print 				: function(e) {
+				var printBtn = e.target;
+				if(printBtn.checked) {
+					$(".hiddenPrint").css("visibility", "hidden");
+				} else {
+					$(".hiddenPrint").css("visibility", "visible");
+				}
+			},
+			printInvoice : function(){
+				javascript:window.print();
+			}
+		});
+		return {
+			viewModel 	: viewModel
+		};
+	}());
 	//END OF DAWINE ----------------
 
 	
@@ -23128,7 +23333,10 @@
 		var electricity = new kendo.Layout("#transformer");
 		var electricityReport = new kendo.Layout("#electricityReport");
 		var po = new kendo.View("#po", {model: banhji.po.viewModel});
+
+
 		var cls= new kendo.View("#clsTmpl", {model: banhji.class});
+
 
 		//By Visal
 		var inventory = new kendo.View("#inventory");
@@ -23165,16 +23373,18 @@
 		var eInvoice = new kendo.View("#eInvoice", {model: banhji.eInvoice.viewModel});
 		var notice = new kendo.View("#notice", {model: banhji.eMeter.noticeModel});
 
-		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.noticeModel});
-
 		var cashier = new kendo.View("#cashier", {model: banhji.cashier.viewModel});
 		var cashierSingle = new kendo.View("#cashierSingle", {model: banhji.cashier.singleModel});
 		var dailyPayment = new kendo.View("#dailyPayment", {model: banhji.dailyPayment.viewModel});
 		var reconcile = new kendo.View("#reconcile", {model: banhji.reconcile.viewModel});
 
-		var customerBalance = new kendo.View("#customerBalance", {model: banhji.customerBalance.viewModel});
+		var customerBalance = new kendo.View("#customerBalance");
 		var agingSummary = new kendo.View("#agingSummary", {model: banhji.agingSummary.viewModel});
 		var agingDetail = new kendo.View("#agingDetail", {model: banhji.agingDetail.viewModel});
+		var lowConsumption = new kendo.View("#lowConsumption", {model: banhji.lowConsumption.viewModel});
+		var disconnectList = new kendo.View("#disconnectList", {model: banhji.disconnectList.viewModel});
+
+		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.viewModel});
 		//END OF DAWINE
 
 		return {
@@ -23219,7 +23429,7 @@
 			acCreate: accreate,
 			poTracker: poTracker,
 			po: po,
-			cls: cls,
+			cls: cls,			
 			
 			//Visal
 			inventory: inventory,
@@ -23255,8 +23465,6 @@
 			eInvoice 		: eInvoice,
 			notice 			: notice,
 
-			eInvoicePreview : eInvoicePreview,
-
 			cashier 		: cashier,
 			cashierSingle 	: cashierSingle,
 			dailyPayment 	: dailyPayment,
@@ -23264,7 +23472,11 @@
 
 			customerBalance : customerBalance,
 			agingSummary 	: agingSummary,
-			agingDetail 	: agingDetail		
+			agingDetail 	: agingDetail,
+			lowConsumption 	: lowConsumption,
+			disconnectList 	: disconnectList,
+
+			eInvoicePreview : eInvoicePreview		
 		};
 	}());	
 
@@ -23299,20 +23511,20 @@
 			}
 			$("#header").html(template(menu));
 			$("#home-menu").text("Banhji | អតិថិជន");
-			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
+			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li><li><a href='\#eInvoice_preview'>បោះពុម្ពវិក្កយបត្រអគ្គីសនី</a></li><li><a href='\#disconnect_list'>តារាងផ្ដាច់ចរន្ត</a></li><li><a href='\#low_consumption'>អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
 
 			banhji.customer.viewModel.set("showMenu", false);
 			
 			var grid = $("#sidebar").kendoGrid({
-				dataSource: banhji.customer.viewModel.customerList,
+				dataSource: banhji.customer.viewModel.customerList,							
 				selectable: true,
 				columns: [
-					{ title: "&nbsp;"}
+					{ title: ""}
 				],
 				height: "400px",
 				rowTemplate: kendo.template($("#customerListTmpl").html()),
 				change: function(){
-					var selected = this.select();
+					var selected = this.select();					
 					var data = this.dataItem(selected);
 
 					banhji.customer.viewModel.set("showMenu", true);
@@ -23344,7 +23556,81 @@
 					  
 					}											
 				}
-			}).data("kendoGrid");			
+			}).data("kendoGrid");
+
+			var company = $("#company").kendoDropDownList({
+                optionLabel: "(--- រើស អាជ្ញាប័ណ្ណ ---)",
+                dataTextField: "abbr",
+                dataValueField: "id",
+                dataSource: {
+                    transport: {
+						read: {
+							url: banhji.baseUrl + "api/companies/company",
+							type: "GET",
+							dataType: "json"
+						}
+					}
+                }
+            }).data("kendoDropDownList");
+
+            var transformer = $("#transformer").kendoDropDownList({
+                autoBind: false,
+                cascadeFrom: "company",
+                optionLabel: "(--- រើស តំបន់ ---)",
+                dataTextField: "transformer_number",
+                dataValueField: "id",
+                dataSource: {
+                    transport: {
+						read: {
+							url: banhji.baseUrl + "api/electricities/transformer_cascading",
+							type: "GET",
+							dataType: "json"
+						}
+					},	
+					serverFiltering: true
+                }
+            }).data("kendoDropDownList");
+
+            $("#search").on('click', function() {
+				customerSearch();				
+			});
+
+			$("#searchField").keyup(function(e) {
+				var keycode = e.keyCode ? e.keyCode : e.which;
+				//Press Enter
+			   	if(keycode === 13) {    
+			    	customerSearch();
+			    }          
+			});
+
+			function customerSearch(){
+	        	var txtSearch = $("#searchField").val();
+	        	var company_id = company.value();
+				var transformer_id = transformer.value();
+				
+				var para = Array();
+
+				if(txtSearch!=""){
+					para.push({
+						field: "searchField", value: txtSearch					
+					});
+				}
+				
+				if(transformer_id!=""){
+					para.push({
+						field: "transformer_id", value: transformer_id					
+					});
+				}
+
+				if(para.length>0){
+					banhji.customer.viewModel.search(para);
+				}
+				
+				//Clear search
+				$("#searchField").val("");
+				company.value("");
+				transformer.value("");
+		    }			
 		}	
 	});	
 	
@@ -23633,35 +23919,7 @@
 		            .addClass("alert alert-error");
 	        }
 		});
-	});
-
-	banhji.router.route("eInvoice_preview(/:number)", function(number){
-		banhji.view.layout.showIn("#layout-view", banhji.view.eInvoicePreview);				
-		kendo.fx($("#slide-form")).slideIn("down").play();
-
-		if(id!==undefined){
-			banhji.eInvoicePreview.viewModel.pageLoad(number);
-		}
-								
-		var validator = $("#example").kendoValidator().data("kendoValidator"),
-			status = $("#status");
-
-		$("#save").click(function(e){
-			e.preventDefault();
-						
-            if(validator.validate()){
-            	           	
-
-	            status.text("កត់ត្រាបានសំរេច")
-		            .removeClass("alert alert-error")
-		            .addClass("alert alert-success");
-	        }else{		        	
-	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
-	                .removeClass("alert alert-success")
-		            .addClass("alert alert-error");
-	        }
-		});		
-	});
+	});	
 
 	banhji.router.route("cashier", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.cashier);		
@@ -23790,16 +24048,118 @@
 	banhji.router.route("customer_balance", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.customerBalance);
 		kendo.fx($("#slide-form")).slideIn("down").play();
-				
-		var validator = $("#example").kendoValidator().data("kendoValidator");
+
+		var customerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/people_api/people_list",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			schema: {
+		        data: "customers", 
+		        total: "total" 
+		    },
+			serverPaging: true,
+			pageSize: 200,			
+			serverFiltering: true
+		});
+
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},	
+			serverFiltering: true
+		});
+
+		$("#grid").kendoGrid({
+		    dataSource: customerDS,
+		    groupable: true,
+		    autoBind: false,
+		    pageable: true,        
+		    columns: [ 
+		    		{ field: "number", title: "លេខកូដ" }, 
+		    		{ field: "name", title: "ឈ្មោះ", template: "#=surname# #=name#" }, 
+		    		{ field: "currencies.code", title: "រូបិយ​ប័ណ្ណ" },    		
+		    		{ field: "people_types.name", title: "ប្រភេទ" },
+		    		{ field: "classes.name", title: "Class" },
+		    		{ field: "balance", title: "សមតុល្យចុងគ្រា", template: "#=kendo.toString(kendo.parseFloat(balance), 'c', currencies.sub_code)#", 
+		    			attributes: { style: "text-align: right;"} 
+		    		}        
+		    ]
+		});
+
+		var company = $("#company").kendoDropDownList({
+            optionLabel: "(--- រើស អាជ្ញាប័ណ្ណ ---)",
+            dataTextField: "abbr",
+            dataValueField: "id",
+            dataSource: {
+                transport: {
+					read: {
+						url: banhji.baseUrl + "api/companies/company",
+						type: "GET",
+						dataType: "json"
+					}
+				}
+            }
+        }).data("kendoDropDownList");
+
+        var transformer = $("#transformer").kendoDropDownList({
+            autoBind: false,
+            cascadeFrom: "company",
+            optionLabel: "(--- រើស តំបន់ ---)",
+            dataTextField: "transformer_number",
+            dataValueField: "id",
+            dataSource: {
+                transport: {
+					read: {
+						url: banhji.baseUrl + "api/electricities/transformer_cascading",
+						type: "GET",
+						dataType: "json"
+					}
+				},	
+				serverFiltering: true
+            }
+        }).data("kendoDropDownList");	
 
 		$("#search").click(function(e){
-			e.preventDefault();			
-						
-            if(validator.validate()){
-            	banhji.customerBalance.viewModel.search();	            
-	        }
-		});			
+			e.preventDefault();            
+            searchCustomer();	        
+		});
+
+		function searchCustomer(){
+			var transformer_id = transformer.value();
+
+			if(transformer_id!=""){
+				customerDS.filter({
+					filters: [
+						{ field: "transformer_id", value: transformer_id }
+					]
+				});
+			}else{
+				var company_id = company.value();
+				customerDS.filter({
+					filters: [
+						{ field: "company_id", value: company_id }
+					]
+				});
+			}					
+		}			
 	});
 
 	banhji.router.route("aging_summary", function(){		
@@ -23830,6 +24190,25 @@
             	banhji.agingDetail.viewModel.search();	            
 	        }
 		});			
+	});
+
+	banhji.router.route("low_consumption", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.lowConsumption);				
+		kendo.fx($("#slide-form")).slideIn("down").play();						
+	});
+
+	banhji.router.route("disconnect_list", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.disconnectList);				
+		kendo.fx($("#slide-form")).slideIn("down").play();
+	});
+
+	banhji.router.route("eInvoice_preview(/:number)", function(number){
+		banhji.view.layout.showIn("#layout-view", banhji.view.eInvoicePreview);				
+		kendo.fx($("#slide-form")).slideIn("down").play();
+
+		if(number!==undefined){
+			banhji.eInvoicePreview.viewModel.pageLoad(number);
+		}					
 	});
 	//END OF DAWINE
 
@@ -25718,12 +26097,12 @@
 		var companyDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: ARNY.baseUrl + "api/companies/company",
+					url: banhji.baseUrl + "api/companies/company",
 					type: "GET",
 					dataType: "json"
 				},
 				destroy: {
-					url : ARNY.baseUrl + "api/companies/company",
+					url : banhji.baseUrl + "api/companies/company",
 					type: "DELETE",
 					dataType: "json"
 				},
@@ -26517,6 +26896,9 @@
 	});
 
 	banhji.router.route("classes(/:id)", function(id){
+
+		console.log("Classes");
+
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.cls);
 		var template = kendo.template($("#menu").html());
@@ -26581,6 +26963,7 @@
 			width: "400px",
 			height: "350px"
 		}).data("kendoWindow");
+
 	});
 
 	//By Visal -----------------------------------
