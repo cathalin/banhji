@@ -4238,7 +4238,6 @@
 					<h3 class="heading glyphicons user_add"><i></i>ចុះឈ្មោះអតិថិជនថ្មី</h3>
 
 					<div>
-
 						<div class="row-fluid">
 							<div class="span3">
 								<label for="company">អាជ្ញាបណ្ណ <span style="color:red">*</span></label>									 
@@ -7483,71 +7482,43 @@
 					</div>
 					<div class="span8">						
 						<div class="row-fluid">
-							<div class="span4">
-								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
-									<div class="widget widget-heading-simple widget-body-white">
-										<div class="widget-body">
-											<div class="innerL">
-												
-												<div class="separator bottom"></div>
-												<div class="glyphicons glyphicon-large group">
-													<i></i>
-													<h4>Large Left Icons</h4>
-													<p>aaaa</p>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-								</div>								
+							<div class="widget widget-heading-simple widget-body-white">
+							    <div class="widget-body">
+							        <div class="innerL">
+							            <div class="separator bottom"></div>
+							            <div class="glyphicons glyphicon-large group">
+						                	<i></i>
+						                	<h4>Multi-Company</h4>
+							                <p>AAAAA</p>
+							            </div>
+							        </div>
+							    </div>
 							</div>
-							<div class="span4">
-								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
-									<div class="innerTB">
-										<div class="separator bottom"></div>
-										<div class="glyphicons glyphicon-large iphone">
-											<i></i>
-											<h4>No Background</h4>
-											<p>bbbb</p>
-										</div>
-										<div class="separator bottom"></div>
-									</div>
-								</div>
-							</div>							
-						</div>
-						<div class="row-fluid">
-							<div class="span4">
-								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
-									<div class="widget widget-heading-simple widget-body-white">
-										<div class="widget-body">
-											<div class="innerL">
-												
-												<div class="separator bottom"></div>
-												<div class="glyphicons glyphicon-large group">
-													<i></i>
-													<h4>Large Left Icons</h4>
-													<p>aaaa</p>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-								</div>								
+							<div class="widget widget-heading-simple widget-body-white">
+							    <div class="widget-body">
+							        <div class="innerL">
+							            <div class="separator bottom"></div>
+							            <div class="glyphicons glyphicon-large phone">
+						                	<i></i>
+						                	<h4>No Installation</h4>
+							                <p>BBBBB</p>
+							            </div>
+							        </div>
+							    </div>
 							</div>
-							<div class="span4">
-								<div data-toggle="source-code" class="relativeWrap" style="overflow: visible;">
-									<div class="innerTB">
-										<div class="separator bottom"></div>
-										<div class="glyphicons glyphicon-large iphone">
-											<i></i>
-											<h4>No Background</h4>
-											<p>bbbb</p>
-										</div>
-										<div class="separator bottom"></div>
-									</div>
-								</div>
-							</div>							
-						</div>
+							<div class="widget widget-heading-simple widget-body-white">
+							    <div class="widget-body">
+							        <div class="innerL">
+							            <div class="separator bottom"></div>
+							            <div class="glyphicons glyphicon-large display">
+						                	<i></i>
+						                	<h4>Free</h4>
+							                <p>BBBBB</p>
+							            </div>
+							        </div>
+							    </div>
+							</div>
+						</div>						
 					</div>
 				</div>
 				
@@ -7555,6 +7526,8 @@
 				
 				<h5 class="heading glyphicons warning_sign" style="background-color: Orange;color: Black;">
 						<i></i>សូមចុចប៊ូតុងខាងក្រោម, ដើម្បីយល់ព្រមជាមួយនឹងលក្ខខណ្ឌរបស់ក្រុមហ៊ុនយើងខ្ញុំ។</h5>
+
+				<br><br>
 					           
 				<div id="status"></div>
 				
