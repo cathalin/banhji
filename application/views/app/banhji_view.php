@@ -7538,6 +7538,59 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->	
 </script>
+
+<script id="useElectricity" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<div class="row-fluid">			
+					<div class="span6 offset3 well">
+						<div align="center">
+							<h1>ប្រើប្រាស់សេវាកម្មចែកចាយអគ្គីសនី?</h1>
+							<br><br>
+							<p>
+								Description
+							</p>
+							<br><br>
+							<a href="#eSetting" class="btn btn-primary btn-large btn-icon glyphicons ok_2"><i></i> ប្រើប្រាស់</a>	
+							<a href="#finish_register" class="btn btn-danger btn-large btn-icon glyphicons remove_2"><i></i> គិតមើលសិន</a>										
+						</div>										
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#new_company" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#finish_register" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> រំលង</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->	
+</script>
+
+<script id="finishRegister" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">			
+				<div class="span8 offset2 well">
+					<div align="center">
+						<h1>ការចុះឈ្មោះជាមួយ BANHJI បានជោគជ័យហើយ...!</h1>
+						<br><br>
+						<p>
+							អបអសាទរ ចំពោះការជ្រើសរើសដ៏ឈ្លាសវៃរបស់លោកអ្នក។ ក្រុមហ៊ុនយើងខ្ញុំប្ដេជ្ញាថា 
+							នឹងព្យាយាមឱ្យអស់ពីសមត្ថភាព​ ដើមម្បីផ្ដល់សេវាកម្មដ៏ល្អហើយ 
+							និងផ្ដល់ទំនុកចិត្តទៅកាន់អតិថិជន។
+						</p>
+						<br><br>						 
+						<a href="#" class="btn btn-primary btn-large btn-icon glyphicons share"><i></i>ចូលទៅកាន់គេហទំព័រ</a>																
+					</div>
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->	
+</script>
 <!-- END OF DAWINE -->
 
 
@@ -23668,6 +23721,8 @@
 		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.viewModel});
 
 		var newCompany = new kendo.View("#newCompany", {model: banhji.newCompany.viewModel});
+		var useElectricity = new kendo.View("#useElectricity", {model: banhji.newCompany.viewModel});
+		var finishRegister = new kendo.View("#finishRegister", {model: banhji.newCompany.viewModel});
 		//END OF DAWINE
 
 		return {
@@ -23761,7 +23816,9 @@
 
 			eInvoicePreview : eInvoicePreview,
 
-			newCompany 		: newCompany		
+			newCompany 		: newCompany,
+			useElectricity  : useElectricity,
+			finishRegister 	: finishRegister		
 		};
 	}());	
 
@@ -24542,6 +24599,14 @@
 		            .addClass("alert alert-error");
 	        }
 		});			
+	});
+
+	banhji.router.route("use_electricity", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.useElectricity);		
+	});
+
+	banhji.router.route("finish_register", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.finishRegister);		
 	});
 	//END OF DAWINE
 
