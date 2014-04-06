@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/banhji';
+$config['base_url']	= 'https://localhost/banhji';
 
 /*
 |--------------------------------------------------------------------------
