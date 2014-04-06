@@ -9,6 +9,7 @@ class Payments extends REST_Controller {
 	function __construct() {
 		parent::__construct();		
 		$this->load->model('accounting/payment_model', 'payment');
+		$this->load->model('accounting/payment_method_model', 'payment_method');
 		$this->load->model('accounting/invoice_model', 'invoice');
 		$this->load->model('accounting/invoice_item_model', 'invoice_item');
 		$this->load->model("people/people_model", "people");
@@ -31,7 +32,8 @@ class Payments extends REST_Controller {
 				foreach($arr as $row) {										
 					//Add extra fields
 					$extra = array('customers' 			=> $this->people->get($row->customer_id),									
-									'invoices'			=> $this->invoice->get($row->invoice_id)								   	
+									'invoices'			=> $this->invoice->get($row->invoice_id),
+									'payment_methods'	=> $this->payment_method->get($row->payment_method_id)								   	
 							  );
 
 					//Cast object to array
