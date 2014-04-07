@@ -73,7 +73,7 @@ class Companies extends REST_Controller {
 	//By the great mighty Dawine
 	//GET 
 	function company_get() {
-		$filter = $this->get("filter");
+		$filter = $this->get("filter");		
 		if(!empty($filter) && isset($filter)){				
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
@@ -82,10 +82,12 @@ class Companies extends REST_Controller {
 			$arr = $this->company->get_many_by($para);
 
 			if(count($arr) >0){
-				foreach($arr as $row) {
+				foreach($arr as $row) {					
+
 					//Add extra fields
 					$extra = array('based_currencies' 	=> $this->currency->get_by("code",$row->based_currency),
-									'parents'			=> $this->company->get($row->parent_id)						   	
+									'parents'			=> $this->company->get($row->parent_id),
+									'company_types' 	=> $this->get_company_types($row->company_type_id)						   	
 							  );
 
 					//Cast object to array
@@ -101,15 +103,14 @@ class Companies extends REST_Controller {
 		}else{
 			$data = $this->company->get_all();
 			$this->response($data, 200);
-		}			
+		}				
 	}
 	
 	//POST
 	function company_post() {
 		$data = array('name' 	=> $this->post('name'),
 			'abbr'		 		=> $this->post('abbr'),			
-			'year_founded'    	=> $this->post('year_founded'),
-			'image_url' 		=> $this->post('image_url'),
+			'year_founded'    	=> $this->post('year_founded'),			
 			'operation_license' => $this->post('operation_license'),
 			'mobile' 			=> $this->post('mobile'),
 			'phone' 			=> $this->post('phone'),
@@ -121,6 +122,8 @@ class Companies extends REST_Controller {
 			'vat_no' 			=> $this->post('vat_no'),
 			'based_currency'  	=> $this->post('based_currency'),
 			'use_generator' 	=> $this->post('use_generator'),
+			'image_url' 		=> $this->post('image_url'),
+			'company_type_id' 	=> $this->post('company_type_id'),
 			'parent_id' 		=> $this->post('parent_id')					
 		);	
 		$id = $this->company->insert($data);
@@ -131,8 +134,7 @@ class Companies extends REST_Controller {
 	function company_put() {
 		$data = array('name' 	=> $this->put('name'),
 			'abbr'		 		=> $this->put('abbr'),			
-			'year_founded'    	=> $this->put('year_founded'),
-			'image_url' 		=> $this->put('image_url'),
+			'year_founded'    	=> $this->put('year_founded'),			
 			'operation_license' => $this->put('operation_license'),
 			'mobile' 			=> $this->put('mobile'),
 			'phone' 			=> $this->put('phone'),
@@ -144,6 +146,8 @@ class Companies extends REST_Controller {
 			'vat_no' 			=> $this->put('vat_no'),
 			'based_currency'  	=> $this->put('based_currency'),
 			'use_generator' 	=> $this->put('use_generator'),
+			'image_url' 		=> $this->put('image_url'),
+			'company_type_id' 	=> $this->put('company_type_id'),
 			'parent_id' 		=> $this->put('parent_id')					
 		);
  		$result = $this->company->update($this->put('id'), $data);
@@ -155,6 +159,55 @@ class Companies extends REST_Controller {
 		//$this->response(array("status"=>$this->delete('id')), 200);
 		$result = $this->company->delete($this->delete('id'));
 		$this->response($result, 200);
+	}
+
+	//COMPANY TYPE
+	function company_type_get() {
+		$data = $this->get_company_types();
+		$this->response($data, 200);
+	}
+
+	Private function get_company_types($id=0){
+		$typeList = array(
+			array(
+				"id"	=> 1,
+				"name"	=> "Sole proprietor"
+			),
+			array(
+				"id"	=> 2,
+				"name"	=> "Partnership"
+			),
+			array(
+				"id"	=> 3,
+				"name"	=> "Private company with limited liability"
+			),
+			array(
+				"id"	=> 4,
+				"name"	=> "Corporation or co-operative"
+			),
+			array(
+				"id"	=> 5,
+				"name"	=> "Charity or association"
+			),
+			array(
+				"id"	=> 6,
+				"name"	=> "Limited liability partnership"
+			)
+		);
+
+		$data = array();
+		if($id>0){
+			foreach ($typeList as $row){
+				if($id==$row["id"]){
+					$data = $row;
+					break;
+				}
+			}
+		}else{
+			$data = $typeList;
+		}
+		
+		return $data;
 	}
 	
 }

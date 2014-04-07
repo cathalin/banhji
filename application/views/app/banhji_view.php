@@ -7422,6 +7422,16 @@
 					<div class="span4">
 						<table>
 							<tr>
+								<td>ប្រភេទក្រុមហ៊ុន</td>
+								<td>
+									<select id="companyType" name="companyType" data-role="dropdownlist" 
+										data-text-field="name" data-value-field="id" 
+		              					data-bind="source: companyTypeList, value: company_type_id"
+		              					data-option-label="(--- ជ្រើសរើស ---)"	              					
+		              					required data-required-msg="ត្រូវការ ប្រភេទក្រុមហ៊ុន"></select>
+								</td>
+							</tr>
+							<tr>
 								<td>ឈ្មោះក្រុមហ៊ុន</td>
 								<td>
 									<input id="name" name="name" class="k-textbox" data-bind="value: name" required data-required-msg="ត្រូវការ ឈ្មោះក្រុមហ៊ុន" />
@@ -7484,15 +7494,32 @@
 								</td>						
 							</tr>
 							<tr>
+								<td>រូបិយ​ប័ណ្ណ</td>
+								<td>
+									<input id="currencyCBB" name="currencyCBB" 
+											data-bind="value: based_currency" 
+					            			required data-required-msg="ត្រូវការ រូបិយ​ប័ណ្ណ"/>
+								</td>
+							</tr>
+							<tr>
 								<td>VAT NO.</td>
 								<td>
 									<input id="vatNo" name="vatNo" class="k-textbox" data-bind="value: vat_no" />
 								</td>						
 							</tr>
 							<tr>
+								<td>ក្រុមហ៊ុនមេ</td>
+								<td>
+									<select id="parents" name="parents" data-role="dropdownlist" data-text-field="name" data-value-field="id" 
+				                			data-bind="source: parentList, value: parent_id" data-option-label="(--- ជ្រើសរើស ---)"></select>
+							    </td>
+							    <td></td>
+							</tr>
+							<tr>
 								<td>Logo</td>
 								<td>
 									<input name="userfile" id="userfile" type="file" />
+									ទំហំតូចជាង 1MB | 1024*768 pixels
 								</td>
 							</tr>
 						</table>
@@ -7556,6 +7583,90 @@
 	</div><!-- //End div row-fluid-->	
 </script>
 
+<script id="users" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>អ្នកប្រើប្រាស់</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#currency_rates" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="currencyRates" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>អត្រាប្ដូរប្រាក់</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#users" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#customer_types" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="customerTypes" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>ប្រភេទអតិថិជន</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#currency_rates" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#classes" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="classes" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>Class</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#customer_type" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#use_electricity" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
 <script id="useElectricity" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7576,15 +7687,187 @@
 				</div>
 				<div class="row-fluid">
 					<div class="span2">
-						<a href="#new_company" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+						<a href="#classes" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
 					</div>
 					<div class="span2 offset8" align="right">
-						<a href="#finish_register" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> រំលង</a>
+						<a href="#finish_register" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
 					</div>						
 				</div>
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->	
+</script>
+
+<script id="eSetting" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>កំណត់ផ្នែកអគ្គីសនី</h3>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#use_electricity" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#amperes" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+	
+	<script>
+	$(document).ready(function() {
+	
+	});//End Document Ready
+	</script>
+</script>
+
+<script id="amperes" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>អាំងតង់សុីតេ</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#eSetting" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#voltages" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="voltages" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>តុងស្យុង</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#amperes" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#electricity_boxes" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="electricityBoxes" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>ប្រអប់កុងទ័រ</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#voltages" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#tariff_plans" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="tariffPlans" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>ផែនការតំលៃលក់</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#electricity_boxes" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#tariffs" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="tariffs" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>តំលៃលក់</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#tariff_plans" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#exemptions" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="exemptions" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>លើកលែង</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#tariffs" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#maintenances" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
+</script>
+
+<script id="maintenances" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="example" class="k-content">
+				<h3>ថ្លៃថែទាំ</h3>
+
+				<div id="grid" class="span6"></div>
+
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="#exemptions" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
+					</div>
+					<div class="span2 offset8" align="right">
+						<a href="#finish_register" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+					</div>						
+				</div>
+			</div><!-- //End div example-->
+		</div><!-- //End div span12-->
+	</div><!-- //End div row-fluid-->
 </script>
 
 <script id="finishRegister" type="text/x-kendo-template">
@@ -7594,10 +7877,16 @@
 				<div class="span8 offset2 well">
 					<div align="center">
 						<h1>ការចុះឈ្មោះជាមួយ BANHJI បានជោគជ័យហើយ...!</h1>
-						<br><br>
+						
+						<br>
+
+						<div class="glyphicons glyphicon-xlarge glyphicon-top ok glyphicon-primary">
+							<i></i>
+						</div>
+
 						<p>
 							អបអសាទរ ចំពោះការជ្រើសរើសដ៏ឈ្លាសវៃរបស់លោកអ្នក។ ក្រុមហ៊ុនយើងខ្ញុំប្ដេជ្ញាថា 
-							នឹងព្យាយាមឱ្យអស់ពីសមត្ថភាព​ ដើមម្បីផ្ដល់សេវាកម្មដ៏ល្អហើយ 
+							នឹងព្យាយាមឱ្យអស់ពីសមត្ថភាព​ ដើម្បីផ្ដល់សេវាកម្មដ៏ល្អហើយ 
 							និងផ្ដល់ទំនុកចិត្តទៅកាន់អតិថិជន។
 						</p>
 						<br><br>						 
@@ -23168,9 +23457,18 @@
 				model: {
 					id: "id"            
 				}
-			},		
-			filter: { field: "id", value: 1 },
+			},			
 			serverFiltering: true
+		});
+
+		var companyTypeDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company_type",
+					type: "GET",
+					dataType: "json"
+				}
+			}
 		});
 
 		var parentDS = new kendo.data.DataSource({
@@ -23179,20 +23477,9 @@
 					url: banhji.baseUrl + "api/companies/company",
 					type: "GET",
 					dataType: "json"
-				},				
-				parameterMap : function(options, operation) {
-					if( operation !== "read" && options.models ) {
-						return { models: kendo.stringigy(options.models) };
-					}
-					return options;
 				}
-			},			
-			schema: {
-				model: {
-					id: "id"            
-				}
-			},		
-			filter: { field: "parent_id", value: 0 },
+			},
+			filter: { field: "parent_id", value: 0 },			
 			serverFiltering: true
 		});
 
@@ -23208,37 +23495,33 @@
 		
 		var viewModel = kendo.observable({
 			id 				: 0,		
-			// name 			: "",
-			parent_id 		: 0,
-			// year_founded    : "",
-			// image_url 		: "",
-			// operation_license : "",
-			// mobile 			: "",
-			// phone 			: "",
-			// email			: "",
-			// address 		: "",
-			// representative  : "",
-			// fiscal_year 	: "",
-			based_currency  : null,
-			//use_generator 	: "គ្មាន",		
+			name 			: "",			
+			year_founded    : "",			
+			operation_license : "",
+			mobile 			: "",
+			phone 			: "",
+			email			: "",
+			address 		: "",
+			term_of_condition : "",
+			representative  : "",
+			fiscal_year 	: "",
+			based_currency  : "",
+			use_generator 	: "គ្មាន",
+			image_url 		: "",
+			company_type_id	: 0,
+			parent_id 		: 0,		
 			
 			useGenerators  	: [{id:0,name:"គ្មាន"},{id:1,name:"មាន"}],
+
+			companyTypeList : companyTypeDS,
 			currencyList 	: currencyDS,
 			parentList 		: parentDS,
 						
-			addCompany 	: function(){
-				var fiscalYear = kendo.toString(this.get("fiscal_year"),"yyyy-MM-dd");
-				// var parents = this.get("parent_id");
-				// var parentId = 0;
-				// if(parents!=null){
-				// 	parentId = parents.id;
-				// }
-
+			add 			: function(){				
 				companyDS.add({				
 					name 			: this.get("name"),
 					abbr 			: this.get("abbr"),				
-					year_founded	: this.get("year_founded"),
-					image_url		: this.get("image_url"),
+					year_founded	: this.get("year_founded"),					
 					operation_license: this.get("operation_license"),
 					mobile			: this.get("mobile"),
 					phone			: this.get("phone"),
@@ -23246,25 +23529,23 @@
 					address			: this.get("address"),
 					term_of_condition : this.get("term_of_condition"),
 					representative	: this.get("representative"),				
-					fiscal_year		: fiscalYear,
+					fiscal_year		: kendo.toString(this.get("fiscal_year"),"yyyy-MM-dd"),
 					vat_no 			: this.get("vat_no"),
-					based_currency	: this.get("based_currency").code,
+					based_currency	: this.get("based_currency"),
 					use_generator	: this.get("use_generator"),
+					image_url		: this.get("image_url"),
+					company_type_id : this.get("company_type_id"),
 					parent_id		: this.get("parent_id")
 				});		
 
 				companyDS.sync();
 			},
-			updateCompany 	: function(){
-				var id = this.get("id");
+			update 	: function(id){				
 				var com = companyDS.get(id);
-
-				var fiscalYear = kendo.toString(this.get("fiscal_year"),"yyyy-MM-dd");
-
+			
 				com.set("name",this.get("name"));
 				com.set("abbr",this.get("abbr"));			
-				com.set("year_founded",this.get("year_founded"));
-				com.set("image_url",this.get("image_url"));
+				com.set("year_founded",this.get("year_founded"));				
 				com.set("operation_license",this.get("operation_license"));
 				com.set("mobile",this.get("mobile"));
 				com.set("phone",this.get("phone"));
@@ -23272,10 +23553,12 @@
 				com.set("address",this.get("address"));
 				com.set("term_of_condition",this.get("term_of_condition"));
 				com.set("representative",this.get("representative"));
-				com.set("fiscal_year",fiscalYear);
+				com.set("fiscal_year", kendo.toString(this.get("fiscal_year"),"yyyy-MM-dd"));
 				com.set("vat_no", this.get("vat_no"));
-				com.set("based_currency",this.get("based_currency").code);
+				com.set("based_currency",this.get("based_currency"));
 				com.set("use_generator",this.get("use_generator"));
+				com.set("image_url",this.get("image_url"));
+				com.set("company_type_id",this.get("company_type_id"));
 				com.set("parent_id",this.get("parent_id"));
 
 				companyDS.sync();
@@ -23401,8 +23684,23 @@
 		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.viewModel});
 
 		var newCompany = new kendo.View("#newCompany", {model: banhji.newCompany.viewModel});
-		var useElectricity = new kendo.View("#useElectricity", {model: banhji.newCompany.viewModel});
-		var finishRegister = new kendo.View("#finishRegister", {model: banhji.newCompany.viewModel});
+		var users = new kendo.View("#users");
+		var currencyRates = new kendo.View("#currencyRates");
+		var customerTypes = new kendo.View("#customerTypes");
+		var classes = new kendo.View("#classes");
+		
+		var eSetting = new kendo.View("#eSetting");
+		var useElectricity = new kendo.View("#useElectricity");
+		var amperes = new kendo.View("#amperes");
+		var voltages = new kendo.View("#voltages");
+		var electricityBoxes = new kendo.View("#electricityBoxes");
+		
+		var tariffPlans = new kendo.View("#tariffPlans");
+		var tariffs = new kendo.View("#tariffs");		
+		var exemptions = new kendo.View("#exemptions");
+		var maintenances = new kendo.View("#maintenances");
+
+		var finishRegister = new kendo.View("#finishRegister");
 		//END OF DAWINE
 
 		return {
@@ -23499,7 +23797,22 @@
 			eInvoicePreview : eInvoicePreview,
 
 			newCompany 		: newCompany,
-			useElectricity  : useElectricity,
+			users 			: users,
+			currencyRates 	: currencyRates,
+			customerTypes 	: customerTypes,
+			classes 		: classes,
+			
+			useElectricity 	: useElectricity,
+			eSetting 		: eSetting,
+			amperes  		: amperes,
+			voltages 		: voltages,
+			electricityBoxes: electricityBoxes,
+			
+			tariffPlans 	: tariffPlans,
+			tariffs 		: tariffs,	
+			exemptions 		: exemptions,
+			maintenances 	: maintenances,
+			
 			finishRegister 	: finishRegister		
 		};
 	}());	
@@ -24237,6 +24550,14 @@
 
 	banhji.router.route("new_company", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.newCompany);
+
+		var currencyCBB = $("#currencyCBB").kendoComboBox({
+			dataTextField: "code",
+			dataValueField: "code",	
+			template: '<span class="span1">${code}</span> <span class="span2">${country_currency}</span>',
+			dataSource: banhji.customer.viewModel.currencyList,
+		}).data("kendoComboBox");
+		currencyCBB.list.width(300);
 		
 		//Upload file
 		$("#userfile").kendoUpload({
@@ -24259,8 +24580,8 @@
 				var name, path;
 				$.each(files, function(index, value){
 					path = "./uploads/logo/" + value.name;
-					viewModel.set("image_url", path);
-				});
+					banhji.newCompany.viewModel.set("image_url", path);
+				});				
 			} 
 	    });
 		
@@ -24271,10 +24592,12 @@
 			e.preventDefault();			
 						
             if(validator.validate()){            	   	
-            	
-	            status.text("កត់ត្រាបានសំរេច")
-		            .removeClass("alert alert-error")
-		            .addClass("alert alert-success");
+            	banhji.newCompany.viewModel.add();
+
+            	banhji.view.layout.showIn("#layout-view", banhji.view.useElectricity);
+	            // status.text("កត់ត្រាបានសំរេច")
+		           //  .removeClass("alert alert-error")
+		           //  .addClass("alert alert-success");
 	        }else{		        	
 	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
 	                .removeClass("alert alert-success")
@@ -24283,10 +24606,55 @@
 		});			
 	});
 
+	banhji.router.route("users", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.users);		
+	});
+
+	banhji.router.route("currency_rates", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.currencyRates);		
+	});
+
+	banhji.router.route("customer_types", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.customerTypes);		
+	});	
+
+	banhji.router.route("classes", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.classes);		
+	});
+
 	banhji.router.route("use_electricity", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.useElectricity);		
 	});
 
+	banhji.router.route("eSetting", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.eSetting);		
+	});
+
+	banhji.router.route("amperes", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.amperes);		
+	});
+
+	banhji.router.route("voltages", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.voltages);		
+	});
+
+	banhji.router.route("electricity_boxes", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.electricityBoxes);		
+	});
+
+	banhji.router.route("tariff_plans", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.tariffPlans);		
+	});
+	banhji.router.route("tariffs", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.tariffs);		
+	});
+	banhji.router.route("exemptions", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.exemptions);		
+	});
+	banhji.router.route("maintenances", function(){
+		banhji.view.layout.showIn("#layout-view", banhji.view.maintenances);		
+	});
+	
 	banhji.router.route("finish_register", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.finishRegister);		
 	});
