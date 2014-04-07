@@ -85,7 +85,7 @@
 					<div id="loginRegister" style="margin-top: 60px; padding: 30px 5px;">
 						<table style="padding: 0; margin: 0; cellspacing: 0">
 							<tr style="padding: 0; margin: 0;">
-								<td><p style="background: #9b1c08; padding: 5px; color: #fff; font-weight: bold;">អីុម៉េល</p></td>
+								<td><p style="background: #9b1c08; padding: 5px; color: #fff; font-weight: bold;">ឈ្មោះចូល</p></td>
 								<td><p style="background: #9b1c08; padding: 5px; color: #fff; font-weight: bold;">លេខសង្ងាត់</p></td>
 							</tr>
 							<tr>
@@ -326,7 +326,7 @@
 	
 	<!-- JQuery -->
 	<script>window.jQuery || document.write('<script src="<?php echo base_url(JS."libs/jquery-1.8.2.min.js");?>"><\/script>')</script>
-	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	
 	<!-- Code Beautify -->
 	<script src="<?php echo base_url();?>resources/common/theme/scripts/plugins/other/js-beautify/beautify.js"></script>
@@ -359,10 +359,10 @@
 	<script src="<?php echo base_url();?>resources/common/theme/scripts/demo/megamenu.js?1374506533"></script>
 	
 	<!-- jQuery ScrollTo Plugin -->
-	<!--[if gt IE 8]><!--><script src="http://balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script><!--<![endif]-->
+	<!--[if gt IE 8]><!--><script src="https://balupton.github.io/jquery-scrollto/lib/jquery-scrollto.js"></script><!--<![endif]-->
 	
 	<!-- History.js -->
-	<!--[if gt IE 8]><!--><script src="http://browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script><!--<![endif]-->
+	<!--[if gt IE 8]><!--><script src="https://browserstate.github.io/history.js/scripts/bundled/html4+html5/jquery.history.js"></script><!--<![endif]-->
 	
 	<!-- jQuery Ajaxify -->
 	<!--[if gt IE 8]><!--><script src="<?php echo base_url();?>resources/common/theme/scripts/plugins/system/jquery-ajaxify/ajaxify-html5.js"></script><!--<![endif]-->
