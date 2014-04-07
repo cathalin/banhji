@@ -47,10 +47,10 @@
 
 <!-- extra fonts-->
 <?php foreach($fonts as $f):?>
-<link href="http://fonts.googleapis.com/css?family=<?php echo $f?>"
+<link href="https://fonts.googleapis.com/css?family=<?php echo $f?>"
 	rel="stylesheet" type="text/css">
 <?php endforeach;?>
-<link rel="stylesheet" href="<?php echo base_url(); ?>resources/fonts/stylesheet.css" type="text/css" charset="utf-8" />
+
 
 <script src="<?php echo base_url(JS."libs/modernizr-2.6.1-respond-1.1.0.min.js");?>"></script>
 
@@ -103,7 +103,6 @@
 <!-- Main Theme Stylesheet :: CSS -->
 <link href="<?php echo base_url();?>resources/common/theme/css/style-default-menus-dark.css?1374506511" rel="stylesheet" type="text/css" />
 <link href="<?php echo base_url();?>resources/common/theme/skins/css/blue-gray.css" rel="stylesheet" type="text/css" />
-
 <style>
 	#module-image {
 		list-style: none;

@@ -1,8 +1,9 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,700);
+@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,700);
 
-@import url(http://fonts.googleapis.com/css?family=Roboto:400,700,300,100);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,300,100);
 
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,800,700,600&subset=latin,latin-ext);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,800,700,600&subset=latin,latin-ext);
+@import url(https://fonts.googleapis.com/css?family=Battambang);
 /*!
  * FLAT KIT v1.2.0
  *
@@ -12,7 +13,7 @@
  * Designed and built exclusively for sale @Envato Marketplaces.
  */
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Battambang', Roboto, sans-serif;
   background: #ffffff;
   font-size: 13px;
   color: #7c7c7c;
