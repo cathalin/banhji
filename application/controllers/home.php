@@ -4,11 +4,11 @@ class Home extends CI_Controller {
 	
 	function __construct() {
 		parent::__construct();
-		// if(!$this->session->userdata('logged_in')) {
-		// 	redirect('auth');
-		// } else {
-		// 	redirect('staff');
-		// }
+		if(!$this->session->userdata('logged_in')) {
+			// redirect('/');
+		} else {
+			redirect('app');
+		}
 	}
 	
 	public function index() {	

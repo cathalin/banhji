@@ -91,7 +91,7 @@
 			        	</ul>
 			        </li>
 				</ul>
-				<ul class="nav" id="secondary-menu">
+				<ul class="nav pull-right" id="secondary-menu">
 				</ul>
 			</div>
 		</div>
@@ -12107,6 +12107,7 @@
 		var itemModel = kendo.observable({
 			reportData 			: [],
 			items 				: [{
+				company_id: banhji.config.userData['company'],
 				sku 	: null,
 				name 	: null,
 				cost 	: null,
@@ -12264,8 +12265,15 @@
 				this.get("dataStore").cancelChanges();
 			},
 			record 				: function() {
+				var self = this;
 				if(this.get("dataStore").hasChanges() && this.get("current").dirty) {
 					this.get("dataStore").sync();
+					this.get("dataStore").bind('requestEnd', function(e){
+						if(e.response.id) {
+							self.closeX();
+						}
+						
+					});
 				}
 			},
 			inSO 				: function(itemId) {
@@ -27362,7 +27370,9 @@
 		var clssGrid = $("#clsGrid").kendoGrid({
 			dataSource: banhji.class.get('dataSource'),
 			editable: "popup",
-			toolbar: ["create", "cancel"],
+			toolbar: [
+				{ template: '<a class="k-button" href="\\#" onclick="return toolbar_click()">Command</a>'}
+			],
 			columns: [
 				{ title: "ឈ្មោះ", field: "name"},
 				{ title: "ពណ៌នា", field: "description"},
@@ -27685,5 +27695,8 @@
 	$(function(){
 		$("title").text(banhji.config.title);
 		banhji.router.start();
+		if(banhji.config.userData['company']==="") {
+			window.location.href="<?php echo base_url();?>app#new_company";
+		}
 	});
 </script>
