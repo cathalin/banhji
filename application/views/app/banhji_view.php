@@ -3757,14 +3757,14 @@
 					</div>
 
 					<div class="span3" data-bind="click: loadOpenInvoice" style="color: white; font-size: 20px; background-color:Orange; border:0px solid black; padding: 10px;">
-						វិក្កយប័ត្រ
+						វិក្កយបត្រ
 						<br><br>
 						<span data-bind="text: totalOpenInvoice" ></span>
 						<span style="font-size: 14px">មិនទាន់ទូទាត់</span>
 					</div>
 
 					<div class="span3" data-bind="click: loadOverDueInvoice" style="color: white; font-size: 20px; background-color:Crimson; border:0px solid black; padding: 10px;">
-						វិក្កយប័ត្រ
+						វិក្កយបត្រ
 						<br><br>
 						<span data-bind="text: totalOverDue" ></span>
 						<span style="font-size: 14px">ហួសកំណត់</span>
@@ -3826,7 +3826,7 @@
 			        data-columns="[{ title: 'កាលបរិច្ឆេទ' }, 
 			            { title: 'ប្រភេទ' },	                     
 			            { title: 'លេខកូដ' },	                                      
-			            { title: 'ទឹិកប្រាក់' },
+			            { title: 'ទឹកប្រាក់' },
 			            { title: 'ស្ថានភាព' },
 			            { title: 'ធ្វើការ'}                    
 			            ]">
@@ -7702,7 +7702,13 @@
 	<div class="row-fluid">
 		<div class="span12">
 			<div id="example" class="k-content">
-				<h3>កំណត់ផ្នែកអគ្គីសនី</h3>
+				<div class="row-fluid">
+					<h3>កំណត់ផ្នែកអគ្គីសនី</h3>
+
+					<a href="#amperes" class="heading pull-left"><i class="icon-bar-chart icon-fixed-width text-primary"></i> អាំងតង់សុីតេ</a>
+					<br>
+					<a href="#voltages" class="heading pull-left"><i class="icon-bar-chart icon-fixed-width text-primary"></i> តុងស្យុង</a>
+				</div>
 
 				<div class="row-fluid">
 					<div class="span2">
@@ -7714,13 +7720,7 @@
 				</div>
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
-	</div><!-- //End div row-fluid-->
-	
-	<script>
-	$(document).ready(function() {
-	
-	});//End Document Ready
-	</script>
+	</div><!-- //End div row-fluid-->	
 </script>
 
 <script id="amperes" type="text/x-kendo-template">
@@ -7729,16 +7729,7 @@
 			<div id="example" class="k-content">
 				<h3>អាំងតង់សុីតេ</h3>
 
-				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#eSetting" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#voltages" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
+				<div id="grid" class="span6"></div>				
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
@@ -7750,16 +7741,7 @@
 			<div id="example" class="k-content">
 				<h3>តុងស្យុង</h3>
 
-				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#amperes" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#electricity_boxes" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
+				<div id="grid" class="span6"></div>				
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
@@ -7772,15 +7754,6 @@
 				<h3>ប្រអប់កុងទ័រ</h3>
 
 				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#voltages" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#tariff_plans" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
@@ -7792,16 +7765,7 @@
 			<div id="example" class="k-content">
 				<h3>ផែនការតំលៃលក់</h3>
 
-				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#electricity_boxes" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#tariffs" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
+				<div id="grid" class="span6"></div>				
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
@@ -7813,16 +7777,7 @@
 			<div id="example" class="k-content">
 				<h3>តំលៃលក់</h3>
 
-				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#tariff_plans" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#exemptions" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
+				<div id="grid" class="span6"></div>				
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
@@ -7835,15 +7790,6 @@
 				<h3>លើកលែង</h3>
 
 				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#tariffs" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#maintenances" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
@@ -7855,16 +7801,7 @@
 			<div id="example" class="k-content">
 				<h3>ថ្លៃថែទាំ</h3>
 
-				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="#exemptions" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#finish_register" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
+				<div id="grid" class="span6"></div>				
 			</div><!-- //End div example-->
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
