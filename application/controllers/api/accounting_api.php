@@ -27,8 +27,6 @@ class Accounting_api extends REST_Controller {
 		$this->load->library('session');
 	}
 	
-	
-	
 	/* --- ACCOUNT --- */
 	
 	//GET 

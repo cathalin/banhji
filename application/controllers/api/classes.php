@@ -36,15 +36,8 @@ class Classes extends REST_Controller {
 				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
 			}	
 		}else{
-			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);	
-				$this->response($query, 200);
-			} else {
-				$this->response(array('Error'=>true), 404);
-			}		
-		}else{
-			$query = $this->classes->get_all();	
-			$this->response($query, 200);
-		}				
+			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);		
+		}			
 	}
 	
 	//POST
@@ -54,8 +47,12 @@ class Classes extends REST_Controller {
 		$postedData['description'] = $this->post('description');
 		$postedData['type'] = $this->post('type');
 
-		$id = $this->classes->insert($postedData);
-		$this->response($id, 200);		
+		if($this->_check_class_name($this->post('company_id'), $this->post('name'))=== FALSE) {
+			$id = $this->classes->insert($postedData);
+			$this->response($id, 200);
+		} else {
+			$this->response(array("status"=>"failed","error"=>TRUE,"msg"=>"Class already existed."), 200);
+		}		
 	}
 	
 	//PUT
@@ -70,6 +67,14 @@ class Classes extends REST_Controller {
 		$result = $this->classes->delete($this->delete('id'));
 		$this->response($result, 200);
 	}
-		
+	
+	private function _check_class_name($company_id, $className) {
+		$query = $this->classes->get_by(array("company_id"=>$company_id, "name"=>$className));
+		if(count($query)>0) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
 	
 }//End Of Class
