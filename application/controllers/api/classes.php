@@ -20,7 +20,7 @@ class Classes extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$query = $this->classes->get_many_by($para);
+			$query = $this->classes->get_many_by($para);			
 			if(count($query)>0) {
 				foreach($query as $row) {
 					$data[] = array(
@@ -30,13 +30,17 @@ class Classes extends REST_Controller {
 						"type" => $row->type,
 						"description" => $row->description
 					);
-				}
+				}				
 				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
-			} else {
+			} else {				
 				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
 			}	
 		}else{
+<<<<<<< HEAD
+			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);				
+=======
 			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);		
+>>>>>>> 063774c8c55f1f165ce516530f5850434bd576b2
 		}			
 	}
 	

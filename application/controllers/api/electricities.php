@@ -331,6 +331,21 @@ class Electricities extends REST_Controller {
 		$this->response($data, 200);
 	}
 
+	function transformer_get() {
+		$filter = $this->get("filter");		
+		if(!empty($filter) && isset($filter)){			
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}			
+			$data = $this->transformer->get_many_by($para);			
+			$this->response($data, 200);			
+		}else{
+			$data = $this->transformer->get_all();
+			$this->response($data, 200);
+		}		
+	}
+
 	public function transformers_get() {
 		$transformers = $this->transformer->get_all();
 		if($transformers) {
