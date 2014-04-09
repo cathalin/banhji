@@ -27,11 +27,11 @@ class Users extends REST_Controller {
 						"id"	   => $q->id,
 						"username" => $this->login->get($q->login_id)->username,
 						"userData" => array(
-										"first_name" => $q->first_name,
-										"last_name"  => $q->last_name,
-										"email"		 => $q->email,
-										"phone"		 => $q->phone,
-										"image"		 => $q->image_url,
+										"first_name" => $q->first_name ? $q->first_name : "",
+										"last_name"  => $q->last_name ? $q->last_name : "",
+										"email"		 => $q->email ? $q->email : "",
+										"phone"		 => $q->phone ? $q->phone : "",
+										"image"		 => $q->image_url ? $q->image_url : "",
 										"report_to"	 => array(),
 										"allowedModules" => $q->allowedModules
 									  )

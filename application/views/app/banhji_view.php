@@ -1,3 +1,20 @@
+<div class="container-fluid menu-hidden sidebar-hidden-phone fluid menu-left">
+	<div class="navbar main" id="main-menu">
+		<ul class="topnav">
+			<li class="dropdown dd-1">
+				<a href="\#" class="dropdown-toggle" data-toggle="dropdown" id="home-menu">Banhji</a>
+				<ul class="dropdown-menu" id="dropdownMenu">
+	        	</ul>
+	        </li>
+		</ul>
+		<ul class="topnav pull-right">
+			<li><a href="\#"><?php echo $this->session->userdata('username'); ?></a></li>
+			<li><a href="<?php echo base_url(); ?>auth/logout" class="glyphicons power"><i></i>ចាក់ចេញ</a></li>
+		</ul>
+		<ul class="topnav" id="secondary-menu">
+		</ul>
+	</div>
+</div>
 <div id="wrapper"></div>
 <script src="<?php echo base_url();?>resources/js/locale.js"></script>
 <script src="<?php echo base_url();?>resources/js/cultures/kendo.culture.km-KH.min.js"></script>
@@ -21,7 +38,7 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="index">
-	<div id="header"></div>
+	
 	<div class="row-fluid">
 		<div class="innerLR">
 			<div class="span12">
@@ -31,7 +48,7 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="welcome">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6">
 				<ul id="module-image">
@@ -78,24 +95,9 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="menu">
-	<div class="navbar navbar-fixed-top navbar-inverse" id="main-menu">
-		<div class="navbar-inner">
-			<div class="container">
-				<ul class="nav">
-					<li class="dropdown span2">
-						<a href="\#" class="dropdown-toggle" data-toggle="dropdown" id="home-menu">Banhji</a>
-						<ul class="dropdown-menu">
-							#for(var i=0;i<data.length;i++) {#
-					            <li><a href="\\##=data[i].menu#">#=data[i].locale#</a></li>
-					        #}#
-			        	</ul>
-			        </li>
-				</ul>
-				<ul class="nav pull-right" id="secondary-menu">
-				</ul>
-			</div>
-		</div>
-	</div>
+	#for(var i=0;i<data.length;i++) {#
+        <li><a href="\\##=data[i].menu#" class="glyphicons #=data[i].icon#"><i></i>#=data[i].locale#</a></li>
+    #}#
 </script>
 
 <script type="text/x-kendo-template" id="vendor">
@@ -139,81 +141,94 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="vendorNew">
-	<div id="vendor-form">
-		<button class="btn btn-primary pull-right" data-bind="click: closeX">X</button>
-		<ul class="nav nav-tabs">
-			<li class="active"><a href="#company" data-toggle="tab">ព័ត៌មានទូទៅ</a></li>
-			<li><a href="#contact" data-toggle="tab">ព័ត៌មានទំនាគ់ទំនង</a></li>
-		</ul>
-		<div id="myVendorTab" class="tab-content">
-			<div class="tab-pane active" id="company">
-				<table class="table">
-					<tbody>
-						<tr>
-							<td width="100">ឈ្មោះ</td>
-							<td><input type="text" data-bind="value: company"></td>
-						</tr>
-						<tr>
-							<td>ប្រភេទ</td>
-							<td><input type="text" data-role="combobox" 
-												   data-bind="source: types, value: type_id" 
-												   data-value-field="id" 
-												   data-text-field="name"></td>
-						</tr>
-						<tr>
-							<td>សំរាប់ក្រុមហ៊ុន</td>
-							<td><input type="text" data-role="combobox" 
-												   data-bind="source: classes, value: class_id" 
-												   data-value-field="id" 
-												   data-text-field="name"></td>
-						</tr>
-						<tr>
-							<td>Lat</td>
-							<td><input type="text" data-bind="value: lat"></td>
-						</tr>
-						<tr>
-							<td>Long</td>
-							<td><input type="text" data-bind="value: long"></td>
-						</tr>
-						<tr>
-							<td>រូបិយ​ប័ណ្ណ</td>
-							<td><input type="text" data-role="combobox" 
-												   data-bind="source: currencyVM.ds, value: currency"
-												   data-value-field="code"
-												   data-text-field="name"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="tab-pane" id="contact">
-				<table class="table">
-					<tbody>
-						<tr>
-							<td width="100">នាមត្រកូល</td>
-							<td><input type="text" data-bind="value: lastName"></td>
-						</tr>
-						<tr>
-							<td>ឈ្មោះ</td>
-							<td><input type="text" data-bind="value: firstName"></td>
-						</tr>
-						<tr>
-							<td>Email</td>
-							<td><input type="text" data-bind="value: email"></td>
-						</tr>
-						<tr>
-							<td>Phone</td>
-							<td><input type="text" data-bind="value: phone"></td>
-						</tr>
-						<tr>
-							<td>អាសយដ្ឋាន</td>
-							<td><input type="text" data-bind="value: address"></td>
-						</tr>
-					</tbody>
-				</table>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span8 offset2">
+				<div class="widget">
+				    <div class="widget-head">
+				        <h4 class="heading">បង្កើតអតិថិជនថ្មី</h4>
+				        <button class="btn btn-primary pull-right" data-bind="click: closeX">X</button>
+				    </div>
+				    <div class="widget-body">
+				        <div id="vendor-form">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#company" data-toggle="tab">ព័ត៌មានទូទៅ</a></li>
+								<li><a href="#contact" data-toggle="tab">ព័ត៌មានទំនាគ់ទំនង</a></li>
+							</ul>
+							<div id="myVendorTab" class="tab-content">
+								<div class="tab-pane active" id="company">
+									<table class="table">
+										<tbody>
+											<tr>
+												<td width="100">ឈ្មោះ</td>
+												<td><input type="text" data-bind="value: company"></td>
+											</tr>
+											<tr>
+												<td>ប្រភេទ</td>
+												<td><input type="text" data-role="combobox" 
+																	   data-bind="source: types, value: type_id" 
+																	   data-value-field="id" 
+																	   data-text-field="name"></td>
+											</tr>
+											<tr>
+												<td>សំរាប់ក្រុមហ៊ុន</td>
+												<td><input type="text" data-role="combobox" 
+																	   data-bind="source: classes, value: class_id" 
+																	   data-value-field="id" 
+																	   data-text-field="name"></td>
+											</tr>
+											<tr>
+												<td>Lat</td>
+												<td><input type="text" data-bind="value: lat"></td>
+											</tr>
+											<tr>
+												<td>Long</td>
+												<td><input type="text" data-bind="value: long"></td>
+											</tr>
+											<tr>
+												<td>រូបិយ​ប័ណ្ណ</td>
+												<td><input type="text" data-role="combobox" 
+																	   data-bind="source: currencyVM.ds, value: currency"
+																	   data-value-field="code"
+																	   data-text-field="name"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane" id="contact">
+									<table class="table">
+										<tbody>
+											<tr>
+												<td width="100">នាមត្រកូល</td>
+												<td><input type="text" data-bind="value: lastName"></td>
+											</tr>
+											<tr>
+												<td>ឈ្មោះ</td>
+												<td><input type="text" data-bind="value: firstName"></td>
+											</tr>
+											<tr>
+												<td>Email</td>
+												<td><input type="text" data-bind="value: email"></td>
+											</tr>
+											<tr>
+												<td>Phone</td>
+												<td><input type="text" data-bind="value: phone"></td>
+											</tr>
+											<tr>
+												<td>អាសយដ្ឋាន</td>
+												<td><input type="text" data-bind="value: address"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<button class="btn btn-primary" data-bind="click: addVendor">កត្រា</button> 
+						</div>
+				    </div>
+				</div>
 			</div>
 		</div>
-		<button class="btn btn-primary" data-bind="click: addVendor">កត្រា</button> 
-	</div>
+	</div>		
 </script>
 <script type="text/x-kendo-template" id="vendorInfo">
 	<div class="span12">
@@ -276,6 +291,11 @@
 			</span>			
 		</div>
 	</td></tr>
+</script>
+<script id="vendorLists" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div id="vendorPopup" class="table table-condensed span8 offset2" style="border-radius: 0, 2px, #ccc;"></div>
+	</div>
 </script>
 <script type="text/x-kendo-template" id="vendorSingle">
 	<div class="span12">
@@ -721,7 +741,7 @@
 				<table class="table">
 					<tbody>
 						<tr>
-							<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a></td>
+							<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#vendorLists" class="btn">អ្នកផ្គត់ផ្គង់</a></td>
 						</tr>
 						<tr>
 							<td>គណនីសាច់ប្រាក់</td>
@@ -770,7 +790,7 @@
 				<table class="table">
 					<tbody>
 						<tr>
-							<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a></td>
+							<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#vendorLists" class="btn">អ្នកផ្គត់ផ្គង់</a></td>
 						</tr>
 						<tr>	
 							<td>គណនីជំពាក់</td>
@@ -903,10 +923,7 @@
 				<tbody>
 					<tr>
 						<td>អ្នកផ្គត់ផ្គង់ៈ</td>
-						<td colspan="3">
-							<input type="text" data-bind="value: vendorVM.current.company">
-							<a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a>
-						</td>
+						<td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#vendorLists" class="btn">អ្នកផ្គត់ផ្គង់</a></td>
 					</tr>
 					<tr>
 						<td>គណនីសាច់ប្រាក់</td>
@@ -940,7 +957,7 @@
 			<table class="table">
 				<tbody>
 					<tr>
-						<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a></td>
+						<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#vendorLists" class="btn">អ្នកផ្គត់ផ្គង់</a></td>
 					</tr>
 					<tr>
 						<td>គណនីជំពាក់</td>
@@ -3682,63 +3699,65 @@
 <!-- BY DAWINE ================================================== -->
 <!-- Customer -->
 <script id="customer" type="text/x-kendo-template">
-	<div class="span12" id="header"></div>
+	<div class="container-fluid">
+		<div class="span12" id="header"></div>
 
-	<div id="content" class="row">
-		<div class="widget widget-heading-simple widget-body-gray widget-employees">		
-			<div class="widget-body padding-none">	
-				<div class="row-fluid row-merge">
-					<div class="span3 listWrapper" style="height: 500px;">
-						<div class="innerAll">
-							<form autocomplete="off" class="form-inline">
-								<div class="widget-search separator bottom">
-									<button type="button" class="btn btn-default pull-right" id="search"><i class="icon-search"></i></button>
-									<div class="overflow-hidden">
-										<input id="searchField" name="searchField" type="search" value="" placeholder="ស្វែងរក អតិថិជន">
+		<div id="content" class="row">
+			<div class="widget widget-heading-simple widget-body-gray widget-employees">		
+				<div class="widget-body padding-none">	
+					<div class="row-fluid row-merge">
+						<div class="span3 listWrapper" style="height: 500px;">
+							<div class="innerAll">
+								<form autocomplete="off" class="form-inline">
+									<div class="widget-search separator bottom">
+										<button type="button" class="btn btn-default pull-right" id="search"><i class="icon-search"></i></button>
+										<div class="overflow-hidden">
+											<input id="searchField" name="searchField" type="search" value="" placeholder="ស្វែងរក អតិថិជន">
+										</div>
+									</div>
+									<div class="select2-container" style="width: 100%;">
+										<div class="overflow-hidden">
+											<input id="company" name="company" placeholder="អាជ្ញាបណ្ណ" style="width: 100%" tabindex="-1" />
+											<input id="transformer" name="transformer" placeholder="តំបន់" disabled="disabled" style="width: 100%" tabindex="-1" />										
+										</div>
+									</div>
+								</form>
+							</div>						
+							<div class="table table-condensed" id="sidebar" style="height: 605px;"></div>
+						</div>
+						<div class="span9 detailsWrapper">
+							<div class="innerLR">
+								<div class="navbar" data-bind="visible: showMenu">
+									<div class="navbar-inner">					
+										<ul class="nav">
+											<li><a href="#" data-bind="click: goDashBoard">ប្រតិបត្តិការ</a></li>
+											<li><a href="#" data-bind="click: goDetail">ព័តមានលំអិតអថិជន</a></li>
+											<li><a href="#" data-bind="click: goStatement">បញ្ជីបំណុល</a></li>
+											<li><a href="#invoice">វិក្កយប័ត្រ</a></li>
+											<li><a href="#receipt">បង្កាន់ដៃលក់</a></li>				
+											<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្នែកអគ្គីសនី <i class="caret"></i></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-bind="click: goEMeter">កុងទ័រ</a></li>
+												    <li><a href="#" data-bind="click: goEReadingSingle">អំនានកុងទ័រ</a></li>
+												    <li><a href="#" data-bind="click: goNotice">លិខិតរំលឹក</a></li>
+												</ul>
+											</li>
+											<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្សេងៗ <i class="caret"></i></a>
+												<ul class="dropdown-menu">
+													<li><a href="#so">បញ្ជាលក់</a></li>
+												    <li><a href="#estimate">សម្រង់តម្លៃ</a></li>
+												    <li><a href="#gdn">លិខិតដឹកជញ្ជូន</a></li>
+												</ul>
+											</li>
+										</ul>
 									</div>
 								</div>
-								<div class="select2-container" style="width: 100%;">
-									<div class="overflow-hidden">
-										<input id="company" name="company" placeholder="អាជ្ញាបណ្ណ" style="width: 100%" tabindex="-1" />
-										<input id="transformer" name="transformer" placeholder="តំបន់" disabled="disabled" style="width: 100%" tabindex="-1" />										
-									</div>
-								</div>
-							</form>
-						</div>						
-						<div class="table table-condensed" id="sidebar" style="height: 605px;"></div>
-					</div>
-					<div class="span9 detailsWrapper">
-						<div class="innerLR">
-							<div class="navbar" data-bind="visible: showMenu">
-								<div class="navbar-inner">					
-									<ul class="nav">
-										<li><a href="#" data-bind="click: goDashBoard">ប្រតិបត្តិការ</a></li>
-										<li><a href="#" data-bind="click: goDetail">ព័តមានលំអិតអថិជន</a></li>
-										<li><a href="#" data-bind="click: goStatement">បញ្ជីបំណុល</a></li>
-										<li><a href="#invoice">វិក្កយប័ត្រ</a></li>
-										<li><a href="#receipt">បង្កាន់ដៃលក់</a></li>				
-										<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្នែកអគ្គីសនី <i class="caret"></i></a>
-											<ul class="dropdown-menu">
-												<li><a href="#" data-bind="click: goEMeter">កុងទ័រ</a></li>
-											    <li><a href="#" data-bind="click: goEReadingSingle">អំនានកុងទ័រ</a></li>
-											    <li><a href="#" data-bind="click: goNotice">លិខិតរំលឹក</a></li>
-											</ul>
-										</li>
-										<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown">ផ្សេងៗ <i class="caret"></i></a>
-											<ul class="dropdown-menu">
-												<li><a href="#so">បញ្ជាលក់</a></li>
-											    <li><a href="#estimate">សម្រង់តម្លៃ</a></li>
-											    <li><a href="#gdn">លិខិតដឹកជញ្ជូន</a></li>
-											</ul>
-										</li>
-									</ul>
-								</div>
-							</div>
 
-							<div id="detail"></div>							
-						</div>					
-					</div>
-				</div>	
+								<div id="detail"></div>							
+							</div>					
+						</div>
+					</div>	
+				</div>
 			</div>
 		</div>
 	</div>
@@ -6275,224 +6294,226 @@
 
 <!-- Cashier -->
 <script id="cashier" type="text/x-kendo-template">
-	<div class="row-fluid">
-		<div class="span12">			
-			<div id="example">
-				<div class="span3">				
-			      	<div class="innerAll">
-						<form autocomplete="off" class="form-inline">
-							<div class="widget-search separator bottom">
-								<button id="btnSearch" type="button" class="btn btn-default pull-right" data-bind="click: customerSearch"><i class="icon-search"></i></button>
-								<div class="overflow-hidden">
-									<input id="txtSearch" type="text" placeholder="លេខកូដអតិថិជន..." data-bind="value: searchField">
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12">			
+				<div id="example">
+					<div class="span3">				
+				      	<div class="innerAll">
+							<form autocomplete="off" class="form-inline">
+								<div class="widget-search separator bottom">
+									<button id="btnSearch" type="button" class="btn btn-default pull-right" data-bind="click: customerSearch"><i class="icon-search"></i></button>
+									<div class="overflow-hidden">
+										<input id="txtSearch" type="text" placeholder="លេខកូដអតិថិជន..." data-bind="value: searchField">
+									</div>
+								</div>						
+							</form>
+						</div>							
+				      					
+						<h5><i class="icon-info-sign"></i> ពត៌មានសង្ខេបអតិថិជន</h5>				
+						<table width="100%" style="background-color:Silver; color:black;">
+							<tr>
+								<td colspan="2">
+									<i class="icon-user icon-li icon-fixed-width"></i> 
+									<span data-bind="text: customer.number"></span>
+									<span data-bind="text: customer.surname"></span> 
+									<span data-bind="text: customer.name"></span>
+								</td>																			
+							</tr>
+							<tr>
+								<td colspan="2">								
+									សមតុល្យ: <span data-bind="text: balance"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									ប្រាក់កក់: <span data-bind="text: deposit_amount"></span>
+								</td>							
+							</tr>
+							<tr>
+								<td>
+									<i class="icon-group icon-li icon-fixed-width"></i> <span data-bind="text: customer.people_types.name"></span>
+								</td>
+								<td>
+									<i class="icon-phone icon-li icon-fixed-width"></i> <span data-bind="text: customer.phone"></span>
+								</td>
+							</tr>											
+							<tr>
+								<td colspan="2">
+									<i class="icon-home icon-li icon-fixed-width"></i> <span data-bind="text: customer.address"></span>
+								</td>						
+							</tr>
+						</table>
+
+						<br>			
+						
+						<h5><i class="icon-list"></i> ប្រតិបត្តិការ</h5>
+						
+						<div id="transactionGrid" data-role="grid" data-bind="source: statementCollectionList"
+				            data-row-template="transactionRowTemplate" data-auto-bind="false"                  
+				            data-columns='[{ title: "កាលបរិច្ឆេទ", width: 75 }, 
+				                { title: "ប្រភេទ", width: 60 },	                     
+				                { title: "ទឹិកប្រាក់" }	                    
+				                ]'>
+						</div>
+					
+					</div> <!-- //End span3 -->
+
+					<div class="span9">
+						<div class="row-fluid">
+							<div class="span4">
+								<div class="innerAll padding-bottom-none-phone">
+									<a href="javascript:void(0)" class="widget-stats widget-stats-gray widget-stats-4"> 
+										<span class="txt">អតិថិជន</span>
+										<span class="count" data-bind="text: total_customer"></span>
+										<span class="glyphicons user"><i></i></span>
+										<div class="clearfix"></div>
+										<i class="icon-play-circle"></i> 
+									</a>
 								</div>
-							</div>						
-						</form>
-					</div>							
-			      					
-					<h5><i class="icon-info-sign"></i> ពត៌មានសង្ខេបអតិថិជន</h5>				
-					<table width="100%" style="background-color:Silver; color:black;">
-						<tr>
-							<td colspan="2">
-								<i class="icon-user icon-li icon-fixed-width"></i> 
-								<span data-bind="text: customer.number"></span>
-								<span data-bind="text: customer.surname"></span> 
-								<span data-bind="text: customer.name"></span>
-							</td>																			
-						</tr>
-						<tr>
-							<td colspan="2">								
-								សមតុល្យ: <span data-bind="text: balance"></span>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								ប្រាក់កក់: <span data-bind="text: deposit_amount"></span>
-							</td>							
-						</tr>
-						<tr>
-							<td>
-								<i class="icon-group icon-li icon-fixed-width"></i> <span data-bind="text: customer.people_types.name"></span>
-							</td>
-							<td>
-								<i class="icon-phone icon-li icon-fixed-width"></i> <span data-bind="text: customer.phone"></span>
-							</td>
-						</tr>											
-						<tr>
-							<td colspan="2">
-								<i class="icon-home icon-li icon-fixed-width"></i> <span data-bind="text: customer.address"></span>
-							</td>						
-						</tr>
-					</table>
+							</div>
 
-					<br>			
-					
-					<h5><i class="icon-list"></i> ប្រតិបត្តិការ</h5>
-					
-					<div id="transactionGrid" data-role="grid" data-bind="source: statementCollectionList"
-			            data-row-template="transactionRowTemplate" data-auto-bind="false"                  
-			            data-columns='[{ title: "កាលបរិច្ឆេទ", width: 75 }, 
-			                { title: "ប្រភេទ", width: 60 },	                     
-			                { title: "ទឹិកប្រាក់" }	                    
-			                ]'>
-					</div>
-				
-				</div> <!-- //End span3 -->
+							<div class="span4">
+								<div class="innerAll padding-bottom-none-phone">
+									<a href="#daily_payment" class="widget-stats widget-stats-primary widget-stats-4">
+										<span class="txt">បង់ប្រាក់ប្រចាំថ្ងៃ</span>
+										<span class="count"><span data-bind="text: total_payment" style="font-size: 35px;"></span></span>
+										<span class="glyphicons coins"><i></i></span>
+										<div class="clearfix"></div>
+										<i class="icon-play-circle"></i>
+									</a>
+								</div>
+							</div>
 
-				<div class="span9">
-					<div class="row-fluid">
-						<div class="span4">
-							<div class="innerAll padding-bottom-none-phone">
-								<a href="javascript:void(0)" class="widget-stats widget-stats-gray widget-stats-4"> 
-									<span class="txt">អតិថិជន</span>
-									<span class="count" data-bind="text: total_customer"></span>
-									<span class="glyphicons user"><i></i></span>
-									<div class="clearfix"></div>
-									<i class="icon-play-circle"></i> 
-								</a>
+							<div class="span4">
+								<div class="innerAll padding-bottom-none-phone">
+									<a href="#reconcile" class="widget-stats widget-stats-inverse widget-stats-5">
+										<span class="glyphicons refresh"><i></i></span>
+										<span class="txt">ផ្ទៀងផ្ទាត់ &<br><br> ផ្ទេរសាច់ប្រាក់</span>
+										<div class="clearfix"></div>
+									</a>
+								</div>
+							</div>				
+
+						</div> <!-- //End row-fluid -->
+						
+						<br>
+
+						<div class="row-fluid">
+							<div class="span4">						
+								<table>								
+									<tr>
+						                <td>Class</td>
+						              	<td><select id="classes" name="classes" data-role="combobox" 
+						              				data-text-field="name" data-value-field="id" 
+						              				data-bind="source: classList, value: class_id"
+						              				required data-required-msg="ត្រូវការ Class"></select>
+						              	</td>
+						            </tr>
+									<tr>
+					                    <td>វីធីបង់ប្រាក់</td>
+					                  	<td>
+					                  		<select id="paymentMethod" name="paymentMethod" data-role="combobox"
+					                  				data-text-field="name" data-value-field="id" 
+					                  				data-bind="source: paymentMethodList, value: payment_method_id"
+					                  				required data-required-msg="ត្រូវការ វីធីបង់ប្រាក់"></select>
+					                  	</td>
+					                <tr>
+									<tr>
+						                <td>លេខកូដសែក</td>
+						                <td><input id="check_no" class="k-textbox" data-bind="value: check_no" /></td>
+						            <tr>
+						            <tr>
+										<td>គណនីសាច់ប្រាក់</td>
+										<td>
+											<select id="cashAccount" name="cashAccount" data-role="combobox" 
+													data-text-field="name" data-value-field="id" 
+													data-bind="source: cashAccountList, value: cash_account_id"
+													required data-required-msg="ត្រូវការ គណនីសាច់ប្រាក់"></select>
+										</td>
+									</tr>
+								</table>							
+							</div>
+							<div class="span4">
+
+							</div>
+							<div class="span4">
+								<p>
+					              	ថ្ងៃទទួលប្រាក់
+					              	<input id="paymentDate" name="paymentDate" data-role="datepicker" 
+					              			data-bind="value: payment_date" data-format="dd-MM-yyyy"
+					              			required data-required-msg="ត្រូវការ ថ្ងៃទទួលប្រាក់" />
+					              	<br>
+						          	ប្រាក់ត្រូវបង់
+					          	</p>		          	
+
+					          	<div align="right">		          		
+					          		<span style="color: white; font-size: 30px; background-color:maroon; border:0px solid black; padding: 5px;" data-bind="text: total"></span>		          			          		
+					          	</div>
 							</div>
 						</div>
+						
+						<br>
 
-						<div class="span4">
-							<div class="innerAll padding-bottom-none-phone">
-								<a href="#daily_payment" class="widget-stats widget-stats-primary widget-stats-4">
-									<span class="txt">បង់ប្រាក់ប្រចាំថ្ងៃ</span>
-									<span class="count"><span data-bind="text: total_payment" style="font-size: 35px;"></span></span>
-									<span class="glyphicons coins"><i></i></span>
-									<div class="clearfix"></div>
-									<i class="icon-play-circle"></i>
-								</a>
+						<div data-role="grid" data-bind="source: invoiceList"
+				            data-auto-bind="false" data-row-template="invoiceCashierRowTemplate"                  
+				            data-columns='[{ title: "", width: 25 },	                 	
+				                { title: "ល.រ", width: 40 },
+				                { title: "កាលបរិច្ឆេទ", width:80 },	                     
+				                { title: "ឈ្មោះ" },
+				                { title: "# វិក្កយបត្រ" },
+				                { title: "ទឹកប្រាក់" },	                    	                     
+				                { title: "ទទួលប្រាក់" }	                    	                    
+				                ]'>
+						</div>
+						
+						<br>
+
+						<div id="status"></div>
+
+						<div class="row-fluid">
+							<div class="span6">
+								<div class="innerAll padding-bottom-none-phone">
+									<a id="save" name="save" class="widget-stats widget-stats-info widget-stats-4">
+										<span class="txt">ទឹកប្រាក់ទទួលបាន</span>
+										<span class="count" style="font-size: 35px;" data-bind="text: pay_amount"></span>
+										<span class="glyphicons cart_in"><i></i></span>
+										<div class="clearfix"></div>
+										<i class="icon-play-circle"></i>
+									</a>
+								</div>
+							</div>
+							<div class="span2">
+
+							</div>
+							<div class="span4">
+								<table>
+									<tr>
+										<td>ទឹកប្រាក់ត្រូវបង់:</td>
+										<td align="right"><span data-bind="text: total"></span></td>
+									</tr>
+									<tr>
+										<td>បញ្ចុះតំលៃ:</td>
+										<td><input data-role="numerictextbox" data-format="c0" data-bind="value: discount, events: {change : change}" /></td>
+									</tr>
+									<tr>
+										<td>ទឹកប្រាក់ពិន័យ:</td>							
+										<td><input data-role="numerictextbox" data-format="c0" data-bind="value: fine, events: {change : change}" /></td>
+									</tr>
+									<tr>
+										<td>ទឹកប្រាក់ទទួលបាន:</td>
+										<td align="right"><span data-bind="text: pay_amount"></span></td>
+									</tr>
+									<tr>
+										<td>នៅសល់:</td>
+										<td align="right"><span data-bind="text: remain"></span></td>
+									</tr>
+								</table>
 							</div>
 						</div>
-
-						<div class="span4">
-							<div class="innerAll padding-bottom-none-phone">
-								<a href="#reconcile" class="widget-stats widget-stats-inverse widget-stats-5">
-									<span class="glyphicons refresh"><i></i></span>
-									<span class="txt">ផ្ទៀងផ្ទាត់ &<br><br> ផ្ទេរសាច់ប្រាក់</span>
-									<div class="clearfix"></div>
-								</a>
-							</div>
-						</div>				
-
-					</div> <!-- //End row-fluid -->
-					
-					<br>
-
-					<div class="row-fluid">
-						<div class="span4">						
-							<table>								
-								<tr>
-					                <td>Class</td>
-					              	<td><select id="classes" name="classes" data-role="combobox" 
-					              				data-text-field="name" data-value-field="id" 
-					              				data-bind="source: classList, value: class_id"
-					              				required data-required-msg="ត្រូវការ Class"></select>
-					              	</td>
-					            </tr>
-								<tr>
-				                    <td>វីធីបង់ប្រាក់</td>
-				                  	<td>
-				                  		<select id="paymentMethod" name="paymentMethod" data-role="combobox"
-				                  				data-text-field="name" data-value-field="id" 
-				                  				data-bind="source: paymentMethodList, value: payment_method_id"
-				                  				required data-required-msg="ត្រូវការ វីធីបង់ប្រាក់"></select>
-				                  	</td>
-				                <tr>
-								<tr>
-					                <td>លេខកូដសែក</td>
-					                <td><input id="check_no" class="k-textbox" data-bind="value: check_no" /></td>
-					            <tr>
-					            <tr>
-									<td>គណនីសាច់ប្រាក់</td>
-									<td>
-										<select id="cashAccount" name="cashAccount" data-role="combobox" 
-												data-text-field="name" data-value-field="id" 
-												data-bind="source: cashAccountList, value: cash_account_id"
-												required data-required-msg="ត្រូវការ គណនីសាច់ប្រាក់"></select>
-									</td>
-								</tr>
-							</table>							
-						</div>
-						<div class="span4">
-
-						</div>
-						<div class="span4">
-							<p>
-				              	ថ្ងៃទទួលប្រាក់
-				              	<input id="paymentDate" name="paymentDate" data-role="datepicker" 
-				              			data-bind="value: payment_date" data-format="dd-MM-yyyy"
-				              			required data-required-msg="ត្រូវការ ថ្ងៃទទួលប្រាក់" />
-				              	<br>
-					          	ប្រាក់ត្រូវបង់
-				          	</p>		          	
-
-				          	<div align="right">		          		
-				          		<span style="color: white; font-size: 30px; background-color:maroon; border:0px solid black; padding: 5px;" data-bind="text: total"></span>		          			          		
-				          	</div>
-						</div>
-					</div>
-					
-					<br>
-
-					<div data-role="grid" data-bind="source: invoiceList"
-			            data-auto-bind="false" data-row-template="invoiceCashierRowTemplate"                  
-			            data-columns='[{ title: "", width: 25 },	                 	
-			                { title: "ល.រ", width: 40 },
-			                { title: "កាលបរិច្ឆេទ", width:80 },	                     
-			                { title: "ឈ្មោះ" },
-			                { title: "# វិក្កយបត្រ" },
-			                { title: "ទឹកប្រាក់" },	                    	                     
-			                { title: "ទទួលប្រាក់" }	                    	                    
-			                ]'>
-					</div>
-					
-					<br>
-
-					<div id="status"></div>
-
-					<div class="row-fluid">
-						<div class="span6">
-							<div class="innerAll padding-bottom-none-phone">
-								<a id="save" name="save" class="widget-stats widget-stats-info widget-stats-4">
-									<span class="txt">ទឹកប្រាក់ទទួលបាន</span>
-									<span class="count" style="font-size: 35px;" data-bind="text: pay_amount"></span>
-									<span class="glyphicons cart_in"><i></i></span>
-									<div class="clearfix"></div>
-									<i class="icon-play-circle"></i>
-								</a>
-							</div>
-						</div>
-						<div class="span2">
-
-						</div>
-						<div class="span4">
-							<table>
-								<tr>
-									<td>ទឹកប្រាក់ត្រូវបង់:</td>
-									<td align="right"><span data-bind="text: total"></span></td>
-								</tr>
-								<tr>
-									<td>បញ្ចុះតំលៃ:</td>
-									<td><input data-role="numerictextbox" data-format="c0" data-bind="value: discount, events: {change : change}" /></td>
-								</tr>
-								<tr>
-									<td>ទឹកប្រាក់ពិន័យ:</td>							
-									<td><input data-role="numerictextbox" data-format="c0" data-bind="value: fine, events: {change : change}" /></td>
-								</tr>
-								<tr>
-									<td>ទឹកប្រាក់ទទួលបាន:</td>
-									<td align="right"><span data-bind="text: pay_amount"></span></td>
-								</tr>
-								<tr>
-									<td>នៅសល់:</td>
-									<td align="right"><span data-bind="text: remain"></span></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div> <!-- //End span9 -->
-			</div> <!-- //End example -->
+					</div> <!-- //End span9 -->
+				</div> <!-- //End example -->
+			</div>
 		</div>
 	</div>
 </script>
@@ -9698,7 +9719,7 @@
 			payments 		: [],
 			cashAccounts 	: banhji.ds.cashAccounts,
 			cashAccount 	: null,
-			classes 		: banhji.classes.ds,
+			classes 		: banhji.class.get("dataSource"),
 			class_id 		: "",
 			paymentMethod 	: [
 				{ id: 1, method: "Cash"},
@@ -23838,6 +23859,8 @@
 
 	banhji.router.route("/", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.welcome);
+		$("#home-menu").text("Banhji | Home");
+		$("#secondary-menu").html("");
 	});
 
 	//BY DAWINE ----------------------------------	
@@ -23847,17 +23870,8 @@
 		if(banhji.customer.viewModel.get("customer") === null){		
 			banhji.view.customer.showIn("#detail", banhji.view.customerDashboard);
 
-			var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 			$("#home-menu").text("Banhji | អតិថិជន");
-			$("#secondary-menu").html("<li><a href='\#customers'>គេហទំព័រ</a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li><li><a href='\#eInvoice_preview'>បោះពុម្ពវិក្កយបត្រអគ្គីសនី</a></li><li><a href='\#disconnect_list'>តារាងផ្ដាច់ចរន្ត</a></li><li><a href='\#low_consumption'>អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
+			$("#secondary-menu").html("<li><a href='\#customers' class='glyphicons home'><i></i></a></li><li><a href='\#new_customer'>អតិថិជនថ្មី</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span><i class='icon-lightbulb'></i> ផ្នែកអគ្គីសនី</span><span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#eReading'>អំនានកុងទ័រ</a></li><li><a href='\#eInvoice'>រៀបចំវិក្កយបត្រ</a></li><li><a href='\#eInvoice_preview'>បោះពុម្ពវិក្កយបត្រអគ្គីសនី</a></li><li><a href='\#disconnect_list'>តារាងផ្ដាច់ចរន្ត</a></li><li><a href='\#low_consumption'>អតិថិជនប្រើប្រាស់ថាមពលជាអប្បបរិមា</a></li></ul></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>របាយការណ៍<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='\#customer_balance'>បញ្ជីអតិថិជន</a></li><li><a href='\#aging_summary'>បំណុលអតិថិជនសង្ខេប</a></li><li><a href='\#aging_detail'>បំណុលអតិថិជនលំអិត</a></li></ul></li>");			
 
 			banhji.customer.viewModel.set("showMenu", false);
 			
@@ -24270,15 +24284,6 @@
 	banhji.router.route("cashier", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.cashier);		
 
-		var template = kendo.template($("#menu").html());
-		var menu = [];
-		for(var i=0;i<banhji.km.length; i++) {
-			var current = banhji.km[i];
-			if(banhji.config.userData.allowedModules[i]) {
-				menu.push(current);
-			}
-		}
-		$("#header").html(template(menu));
 		$("#home-menu").text("Banhji | បេឡាករ");
 				
 		banhji.cashier.viewModel.pageLoad();
@@ -24672,15 +24677,6 @@
 		if(banhji.vendor.get("current").id === null){
 			banhji.view.vendor.showIn("#vendorDetail", banhji.view.vendorInfo);
 		}
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#home-menu").text("Banhji | អ្នកផ្គត់ផ្កង់");
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		var vendorGrid = $("#sidebar").kendoGrid({
@@ -24923,6 +24919,24 @@
 		banhji.vendor.reset();
 		kendo.fx($("#vendor-form")).slideIn("down").play();
 	});
+	banhji.router.route("vendorLists", function(){
+		var vendorLists = new kendo.View("#vendorLists");
+		banhji.view.layout.showIn("#layout-view", vendorLists);
+		$("#vendorPopup").kendoGrid({
+					dataSource: banhji.vendor.vendorsList,
+					columns: [
+						{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
+					],
+					height: "266px",
+					selectable: true,
+					change: function(e) {
+						var selected = this.select();
+						var vendor = this.dataItem(selected);
+						banhji.vendor.setCurrent(vendor.id);
+						window.history.go(-1);
+					}
+				});
+	});
 
 	// Bills Section
 	banhji.router.route("bills", function(){
@@ -25075,16 +25089,7 @@
 	banhji.router.route("purchases(/:action)", function(action){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		// banhji.view.index.showIn("#content", banhji.view.vendor);
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
-		$("#secondary-menu").html("<li><a href='\#purchases/monitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#report/purchase'>របាយការណ៍</a></li>");
+
 		if(banhji.vendor.get("current").id === null){
 			banhji.view.vendor.showIn("#vendorDetail", banhji.view.vendorInfo);
 		}
@@ -25108,30 +25113,11 @@
 		if(banhji.vendor.get("current").id === null){
 			banhji.view.vendor.showIn("#vendorDetail", banhji.view.vendorInfo);
 		}
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-		$("#header").html(template(menu));
 		$("#home-menu").text("Banhji | របាយការណ៍");
 	});
 
 	banhji.router.route("pomonitoring", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.poTracker);
 		banhji.ds.po.filter([
@@ -25350,15 +25336,6 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		var self = this;
 		var journalData = [];
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.journal);
 		
@@ -25430,16 +25407,6 @@
 
 	banhji.router.route("journal", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.glReport);
 		var start = $("#startDate").kendoDatePicker({
@@ -25886,16 +25853,6 @@
 		var createView = new kendo.View("#createView", {model: transformerModel});
 		var blankView = new kendo.View("#blank");
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#Electricity'>អគ្គីសនី</a></li><li><a href='\#Electricity/report'>រៀបចំរបាយការណ៍</a></li>");
 
 		banhji.view.index.showIn("#content", banhji.view.electricity);
@@ -25969,16 +25926,6 @@
 
 	banhji.router.route("Electricity/report", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#Electricity'>អគ្គីសនី</a></li><li><a href='\#Electricity/report'>រៀបចំរបាយការណ៍</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.electricityReport);
 
@@ -26536,15 +26483,6 @@
 	banhji.router.route("company", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#company'>ក្រុមហ៊ុន</a></li><li><a href='\#users'>User</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.company);
 		var companyDS = new kendo.data.DataSource({
@@ -26601,16 +26539,6 @@
 
 	banhji.router.route("users", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
 		$("#secondary-menu").html("<li><a href='\#company'>ក្រុមហ៊ុន</a></li><li><a href='\#users'>User</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.users);
 		var credDS = new kendo.data.DataSource({
@@ -26803,18 +26731,8 @@
 
 	banhji.router.route("accounting", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-		$("#header").html(template(menu));
 		$("#home-menu").text("Banhji | គណនេយ្យ");
-		$("#secondary-menu").html("<li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
+		$("#secondary-menu").html("<li><a href='\#accounting' class='glyphicons home'><i></i></a></li><li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.accounting);
 
 		var $acGrid = $("#acctGrid").kendoGrid({
@@ -26842,17 +26760,7 @@
 
 	banhji.router.route("gl(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
-
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-		$("#header").html(template(menu));
-		$("#secondary-menu").html("<li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
+		$("#secondary-menu").html("<li><a href='\#accounting' class='glyphicons home'><i></i></a></li><li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.accountingJournal);
 		var items = [];
 		//datasource
@@ -27073,16 +26981,6 @@
 	banhji.router.route("accounting/items", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 
-		var template = kendo.template($("#menu").html());
-		var menu = [];
-		for(var i=0;i<banhji.km.length; i++) {
-			var current = banhji.km[i];
-			if(banhji.config.userData.allowedModules[i]) {
-				menu.push(current);
-			}
-		}
-		$("#header").html(template(menu));
-
 		$("#secondary-menu").html("<li><a href='\#accounting/items'>Items</a></li><li><a href='\#accounting/journal'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.accountingItems);
 		var itemBaseUri = ARNY.baseUrl +"api/inventory_api/item";
@@ -27130,17 +27028,8 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.items);
 		var transTmpl = kendo.template($("#itemsRecordView").html());
-		var template = kendo.template($("#menu").html());
-		var menu = [];
-		for(var i=0;i<banhji.km.length; i++) {
-			var current = banhji.km[i];
-			if(banhji.config.userData.allowedModules[i]) {
-				menu.push(current);
-			}
-		}
-		$("#header").html(template(menu));
 		$("#home-menu").text("Banhji | គណនេយ្យ");
-		$("#secondary-menu").html("<li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
+		$("#secondary-menu").html("<li><a href='\#accounting' class='glyphicons home'><i></i></a></li><li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 
 		var $search = $("#searchField");
 		var type = $("#searchOptions").kendoDropDownList({
@@ -27377,17 +27266,8 @@
 
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.cls);
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-		$("#header").html(template(menu));
 		$("#home-menu").text("Banhji | គណនេយ្យ");
-		$("#secondary-menu").html("<li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
+		$("#secondary-menu").html("<li><a href='\#accounting' class='glyphicons home'><i></i></a></li><li><a href='\#items'>Items</a></li><li><a href='\#classes'>Classes</a></li><li><a href='\#gl'>កត់ត្រាទិន្នានុប្បវត្តិ</a></li>");
 		var data = [
 				{ type: "Class", name: "ថ្នាក់"},
 				{ type: "Donor", name: "ម្ចាស់គំរោង"},
@@ -27688,6 +27568,15 @@
 
 	$(function(){
 		$("title").text(banhji.config.title);
+		var template = kendo.template($("#menu").html());
+		var menu = [];
+		for(var i=0;i<banhji.km.length; i++) {
+			var current = banhji.km[i];
+			if(banhji.config.userData.allowedModules[i]) {
+				menu.push(current);
+			}
+		}
+		$("#dropdownMenu").html(template(menu));
 		banhji.router.start();
 		if(banhji.config.userData['company']==="") {
 			window.location.href="<?php echo base_url();?>app#new_company";
