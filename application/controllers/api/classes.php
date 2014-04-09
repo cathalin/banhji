@@ -20,34 +20,24 @@ class Classes extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$query = $this->classes->get_many_by($para);
-			$this->response($query, 200);
-			// if(count($query)>0) {
-			// 	foreach($query as $row) {
-			// 		$data[] = array(
-			// 			"id" => $row->id,
-			// 			"company" => $this->company->get($row->company_id),
-			// 			"name" => $row->name,
-			// 			"type" => $row->type,
-			// 			"description" => $row->description
-			// 		);
-			// 	}
-			// 	$this->response($data, 200);
-			// 	//$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
-			// } else {
-			// 	$this->response(array(), 200);
-			// 	//$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
-			// }	
-		// }else{
-		// 	$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);	
-		// 		$this->response($query, 200);
-		// 	} else {
-		// 		$this->response(array('Error'=>true), 404);
-		// 	}		
+			$query = $this->classes->get_many_by($para);			
+			if(count($query)>0) {
+				foreach($query as $row) {
+					$data[] = array(
+						"id" => $row->id,
+						"company" => $this->company->get($row->company_id),
+						"name" => $row->name,
+						"type" => $row->type,
+						"description" => $row->description
+					);
+				}				
+				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
+			} else {				
+				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
+			}	
 		}else{
-			$query = $this->classes->get_all();	
-			$this->response($query, 200);
-		}				
+			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);				
+		}			
 	}
 	
 	//POST
