@@ -450,4 +450,13 @@ class Items extends REST_Controller {
 		}	
 		return $data;
 	}
+
+	private function _check_class_name($company_id, $className) {
+		$query = $this->item->get_by(array("company_id"=>$company_id, "name"=>$className));
+		if(count($query)>0) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
 }

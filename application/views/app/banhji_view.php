@@ -721,6 +721,9 @@
 				<table class="table">
 					<tbody>
 						<tr>
+							<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a></td>
+						</tr>
+						<tr>
 							<td>គណនីសាច់ប្រាក់</td>
 							<td><input type="text" placeholder="គណនីសាច់ប្រាក់" 
 												   data-bind="source: cashAccts, value: cashAcct" 
@@ -766,6 +769,9 @@
 			<div id="creditPayment" data-bind="invisible: paidCash" class="well">
 				<table class="table">
 					<tbody>
+						<tr>
+							<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a></td>
+						</tr>
 						<tr>	
 							<td>គណនីជំពាក់</td>
 							<td><input type="text" placeholder="គណនីអ្នកផ្គត់ផ្គង់" 
@@ -896,6 +902,13 @@
 			<table class="table">
 				<tbody>
 					<tr>
+						<td>អ្នកផ្គត់ផ្គង់ៈ</td>
+						<td colspan="3">
+							<input type="text" data-bind="value: vendorVM.current.company">
+							<a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a>
+						</td>
+					</tr>
+					<tr>
 						<td>គណនីសាច់ប្រាក់</td>
 						<td><input type="text" placeholder="គណនីសាច់ប្រាក់" data-bind="source: cashAccts, value: cashAcct" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 220px;"></td>
 						<td>កាលបរិច្ឆេទកត់ត្រា</td>
@@ -926,6 +939,9 @@
 		<div id="creditPayment" data-bind="invisible: paidCash" class="well">
 			<table class="table">
 				<tbody>
+					<tr>
+						<td>អ្នកផ្គត់ផ្គង់ៈ</td><td colspan="3"><input type="text" data-bind="value: vendorVM.current.company"><a href="#" class="btn" data-bind="click: vendorVM.popupVendor">អ្នកផ្គត់ផ្គង់</a></td>
+					</tr>
 					<tr>
 						<td>គណនីជំពាក់</td>
 						<td><input type="text" placeholder="គណនីជំពាក់" data-bind="source: creditAccts, value: creditAcct" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 220px;"></td>
@@ -8190,7 +8206,110 @@
 
 		return viewModel;
 	}());
-	
+	banhji.class = (function(){
+		var classCollection = new kendo.data.DataSource({
+	        transport: {
+	            read: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "GET",
+                    dataType: "json",
+                },
+                create: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "POST",
+                    dataType: "json"
+                },
+                update: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "PUT",
+                    dataType: "json"
+                },  
+                destroy: {
+                    url : banhji.baseUrl +"api/classes/class",
+                    type: "DELETE",
+                    dataType: "json"
+                },   
+                parameterMap: function(data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models: kendo.stringify(data.models)};
+                    }   
+                    return data;
+               	}
+	        },
+            schema: {
+                    model: {
+                    	id : "id",
+                    	fields: {
+                    		"name": {type:"string"},
+                    		"description": {type: "string"},
+                    		"type": { type: "string"}
+                    	}
+                    },
+                    data: "results"
+            },
+            filter: {field: "company_id", value: banhji.config.userData['company']},
+            serverFiltering: true,
+            serverSorting: true
+        });
+
+        var classVM = kendo.observable({
+        	dataSource 	: classCollection,
+        	setDataSource: function(dataSource) {
+        		this.set("dataSurce", dataSource);
+        	},
+        	dataSource 	: classCollection,
+        	setCurrent 	: function(model) {
+        		this.set("current", model);
+        	},
+        	query 		: function(query) {},
+        	getById 	: function(id) {
+        		var dfd = $.Deferred();
+        		classCollection.filter({field: "id", value: id});
+    			classCollection.bind('requestEnd', function(e){
+    				dfd.resolve(e.response);
+    			});
+    			return dfd.promise();
+        	},
+        	getBy 		: function(criteria) {},
+	       	cancel 		: function() {
+
+        		classCollection.cancelChanges();
+        	},
+        	addNew 		: function() {
+        		classCollection.insert(0, {
+        			company_id: banhji.config.userData['company'],
+        			name: "ឈ្មោះ",
+        			type: "class",
+        			description: "ពណ៌នា"
+        		});
+        	},
+        	save 		: function() {
+        		classCollection.sync();
+        	},
+        	update 		: function(id, data) {
+        		var dfd = $.Deferred();
+        		if(classCollection.data()>0) {
+        			var model = classCollection.get(id);
+        			$.each(data, function(i, v){
+        				model.set(i,v);
+        			});
+        		} else {
+        			this.getById(id).then(
+        				function(res) {
+        					var model = classCollection.get(id);
+        					$.each(data, function(i, v){
+        						// model.set(i, v);
+        					});
+        				}
+        			)
+        			
+        		}
+        		
+        	},
+        	remove 		: function() {}
+        });
+        return classVM;
+	}());
 	banhji.ds = (function(){
 		var vendors = new kendo.data.DataSource({
 			transport: {
@@ -8960,6 +9079,34 @@
 			doNothing: function(e) {
 				e.preventDefault();
 			},
+			popupVendor: function(e) {
+				e.preventDefault();
+				var parent = $("#wrapper").parent().append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
+				var wnd = $("#popupVendor").kendoWindow({
+					title: "Vendor",
+					width: "400px",
+					height: "300px",
+					modal: true,
+					close: function(e) {
+						parent.remove();
+					}
+				}).data("kendoWindow");
+				wnd.center().open();
+				$("#vendorListItem1").kendoGrid({
+					dataSource: banhji.vendor.vendorsList,
+					columns: [
+						{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
+					],
+					height: "266px",
+					selectable: true,
+					change: function(e) {
+						var selected = this.select();
+						var vendor = this.dataItem(selected);
+						banhji.vendor.setCurrent(vendor.id);
+						wnd.close();
+					}
+				});
+			},
 			current: {id: null},
 			currencyVM: banhji.currency,
 			vendorsList: banhji.ds.vendors,
@@ -9003,7 +9150,7 @@
 					data: "results"
 				}
 			}),
-			classes: companyDS,
+			classes: banhji.class.get("dataSource"),
 			type_id: null,
 			class_id: null,
 			firstName: null,
@@ -9825,7 +9972,7 @@
 			paymentTerms 	: PaymentTermDS,
 			transformerDS 	: [],
 			transformerHist : transformerRecordDS,
-			classes 		: banhji.classes.ds,
+			classes 		: banhji.class.get("dataSource"),
 			transformers 	: [{
 				transformer_id: null, new_reading: 0, prev_reading: 0, multiplier: 1, tariff: 0, vendor_id: null
 			}],
@@ -10025,6 +10172,7 @@
 			currencyVM: banhji.currency,
 			grn 	: null,
 			current_id: null,
+			vendorVM: banhji.vendor,
 			showRecordBtn: function() {
 				if(this.get("current_id") ===null) {
 					return true;
@@ -10039,19 +10187,13 @@
 				//kendo.fx($("#purchase-form")).slideIn("up").play();
 				window.history.go(-1);
 			},
-			getVendor 	: function() {
-				if(this.get("vendor")==="") {
-					return true;
-				} else {
-					return false;
-				}
-			},
+			currentVendor: banhji.vendor.get("current"),
 			items 		: [],
 			vatDS 		: [],
 			cashAccts	: banhji.ds.cashAccounts,
 			creditAccts : banhji.ds.creditAccounts,
 			terms 		: banhji.ds.paymentTerms,
-			classes 		: banhji.ds.classes,
+			classes 		: banhji.class.get('dataSource'),
 			class_id 		: "",
 			paymentMethod: [
 				{ id: 1, method: "Cash"},
@@ -10492,9 +10634,10 @@
 			creditAccts : banhji.ds.creditAccounts,
 			accounts 	: banhji.ds.accounts,
 			paymentTerms : banhji.ds.paymentTerms,
-			classes 	: banhji.ds.classes,
+			classes 	: banhji.class.get('dataSource'),
 			class_id 	: "",
 			invoiceNumber: "",
+			vendorVM: banhji.vendor,
 			paymentMethod: [
 				{ id: 1, method: "Cash"},
 				{ id: 2, method: "Check"},
@@ -11009,7 +11152,7 @@
 
 			invoiceItemList 	: invoiceItemDS,
 			vatList 			: vatDS,								
-			classList 			: classDS,
+			classList 			: banhji.class.get('dataSource'),
 							
 			pageLoad 			: function(customer_id){
 				invoiceItemDS.data([]);
@@ -11541,7 +11684,7 @@
 			errorCode 		: "",
 			errorName 		: "",
 			errorType 		: "",
-			classes 		: classDS,		
+			classes 		: banhji.class.get('dataSource'),		
 			startDate		: function() {
 				var date = new Date();
 				var month = date.getMonth()+1;
@@ -12325,111 +12468,6 @@
 		});
 		
 		return  itemModel;
-	}());
-
-	banhji.class = (function(){
-		var classCollection = new kendo.data.DataSource({
-	        transport: {
-	            read: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "GET",
-                    dataType: "json",
-                },
-                create: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "POST",
-                    dataType: "json"
-                },
-                update: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "PUT",
-                    dataType: "json"
-                },  
-                destroy: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "DELETE",
-                    dataType: "json"
-                },   
-                parameterMap: function(data, operation) {
-                    if (operation !== "read" && data.models) {
-                        return {models: kendo.stringify(data.models)};
-                    }   
-                    return data;
-               	}
-	        },
-            schema: {
-                    model: {
-                    	id : "id",
-                    	fields: {
-                    		"name": {type:"string"},
-                    		"description": {type: "string"},
-                    		"type": { type: "string"}
-                    	}
-                    },
-                    data: "results"
-            },
-            filter: {field: "company_id", value: banhji.config.userData['company']},
-            serverFiltering: true,
-            serverSorting: true
-        });
-
-        var classVM = kendo.observable({
-        	dataSource 	: classCollection,
-        	setDataSource: function(dataSource) {
-        		this.set("dataSurce", dataSource);
-        	},
-        	dataSource 	: classCollection,
-        	setCurrent 	: function(model) {
-        		this.set("current", model);
-        	},
-        	query 		: function(query) {},
-        	getById 	: function(id) {
-        		var dfd = $.Deferred();
-        		classCollection.filter({field: "id", value: id});
-    			classCollection.bind('requestEnd', function(e){
-    				dfd.resolve(e.response);
-    			});
-    			return dfd.promise();
-        	},
-        	getBy 		: function(criteria) {},
-	       	cancel 		: function() {
-
-        		classCollection.cancelChanges();
-        	},
-        	addNew 		: function() {
-        		classCollection.insert(0, {
-        			company_id: banhji.config.userData['company'],
-        			name: "ឈ្មោះ",
-        			type: "class",
-        			description: "ពណ៌នា"
-        		});
-        	},
-        	save 		: function() {
-        		classCollection.sync();
-        	},
-        	update 		: function(id, data) {
-        		var dfd = $.Deferred();
-        		if(classCollection.data()>0) {
-        			var model = classCollection.get(id);
-        			$.each(data, function(i, v){
-        				model.set(i,v);
-        			});
-        		} else {
-        			this.getById(id).then(
-        				function(res) {
-        					var model = classCollection.get(id);
-        					$.each(data, function(i, v){
-        						// model.set(i, v);
-        					});
-        				}
-        			)
-        			
-        		}
-        		
-        	},
-        	remove 		: function() {}
-        });
-        return classVM;
 	}());
 
 	banhji.inventoryItemView = (function(){
@@ -17226,7 +17264,7 @@
 			vatList 			: vatDS,
 			estimateList 		: estimateDS,
 			gdnList 			: gdnDS,									
-			classList 			: classDS,
+			classList 			: banhji.class.get('dataSource'),
 							
 			pageLoad 			: function(customer_id){
 				this.set("estimate_id", 0);
@@ -27680,9 +27718,6 @@
 		var clssGrid = $("#clsGrid").kendoGrid({
 			dataSource: banhji.class.get('dataSource'),
 			editable: "popup",
-			toolbar: [
-				{ template: '<a class="k-button" href="\\#" onclick="return toolbar_click()">Command</a>'}
-			],
 			columns: [
 				{ title: "ឈ្មោះ", field: "name"},
 				{ title: "ពណ៌នា", field: "description"},
@@ -28008,5 +28043,30 @@
 		if(banhji.config.userData['company']==="") {
 			window.location.href="<?php echo base_url();?>app#new_company";
 		}
+
+		$("#vendorPopupBtn").on('click', function(e){
+			e.preventDefault();
+			var parent = $("#layout-view").parent().append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
+			var wnd = $("#popupVendor").kendoWindow({
+				title: "Vendor",
+				width: "400px",
+				height: "300px",
+				modal: true
+			}).data("kendoWindow");
+			wnd.center().open();
+			$("#vendorListItem1").kendoGrid({
+				dataSource: banhji.vendor.vendorsList,
+				columns: [
+					{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
+				],
+				height: "266px",
+				selectable: true,
+				change: function(e) {
+					var selected = this.select();
+					var vendor = this.dataItem(selected);
+					banhji.vendor.setCurrent(vendor.id);
+				}
+			});
+		});
 	});
 </script>

@@ -92,7 +92,11 @@ class Accounts extends REST_Controller {
 	function account_delete() {
 		//$this->response(array("status"=>$this->delete('id')), 200);
 		$this->account->delete($this->delete('id'));
-	}		
+	}
+
+	function index_get($id=null, $action=null) {
+		$this->response(array("status"=> "OK", "msg"=>"with param"), 200);
+	}
 		
 	
 }//End Of Class
