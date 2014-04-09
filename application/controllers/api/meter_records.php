@@ -349,7 +349,7 @@ class Meter_records extends REST_Controller {
 								'people'			=> $this->people->get($row->customer_id),
 								//'meters'			=> $this->meter->get($row->meter_id),
 							   	'electricity_boxes' => $this->electricity_box->get($row->electricity_box_id),
-							   	'isCheck'				=> false						   	
+							   	'isCheck'			=> false						   	
 						  );
 
 				//Cast object to array
@@ -551,10 +551,11 @@ class Meter_records extends REST_Controller {
 
 		$data = array();
 		if(count($arr)>0){
-			$meterIds = array();
+		 	$meterIds = array();
 			foreach ($arr as $row) {
 				array_push($meterIds, $row->id);
 			}
+								
 			$readingRecorded = $this->meter_record->where_in("meter_id", $meterIds)
 											->distinct("meter_id")											
 											->get_many_by("month_of",$month_of);

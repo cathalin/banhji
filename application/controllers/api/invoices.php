@@ -387,7 +387,9 @@ class Invoices extends REST_Controller {
 			   	'issued_date'	=> $start_date,
 			   	'description' 	=> 'សមតុល្យពីមុន',						   
 			   	'amount' 		=> $balanceForward,			   	
-			   	'balance'     	=> $balanceForward	 				  
+			   	'balance'     	=> $balanceForward,
+			   	'rate' 			=> $row->rate,
+				'sub_code'		=> $row->sub_code	 				  
 		  	);			
 		}				
 						
@@ -408,7 +410,9 @@ class Invoices extends REST_Controller {
 				   	'issued_date'	=> $row->issued_date,
 				   	'description' 	=> $row->number,						   
 				   	'amount' 		=> $row->amount,
-				   	'balance'		=> 0	 				  
+				   	'balance'		=> 0,
+				   	'rate' 			=> $row->rate,
+					'sub_code'		=> $row->sub_code	 				  
 				);			  
 			}
 
@@ -420,7 +424,9 @@ class Invoices extends REST_Controller {
 					   	'issued_date'	=> $row->payment_date,
 					   	'description' 	=> "បង់ប្រាក់",						   
 					   	'amount' 		=> $row->amount_paid*-1,
-					   	'balance'		=> 0	 				  
+					   	'balance'		=> 0,
+					   	'rate' 			=> $row->rate,
+						'sub_code'		=> $row->sub_code	 				  
 					);
 				}
 			}
@@ -539,6 +545,8 @@ class Invoices extends REST_Controller {
 				   'issued_date' 	=> $row->payment_date,
 				   'due_date' 		=> "",
 				   'amount'     	=> $row->amount_paid,
+				   'rate' 			=> $row->rate,
+				   'sub_code'		=> $row->sub_code,
 				   'status' 		=> -1	 				  
 			  	);	
 		  	} 			

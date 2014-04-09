@@ -3842,13 +3842,9 @@
         <td>#:typeName#</td>
         <td>
         	#if(type==="Invoice"){#								
-				<a href="\#invoice/#=id#"><i></i> #=number#</a>				
-			#}else if(type==="eInvoice"){#
-
+				<a href="\#invoice/#=id#"><i></i> #=number#</a>	
 			#}else if(type==="Receipt"){#
-        		<a href="\#receipt/#=id#"><i></i> #=number#</a>	
-        	#}else if(type==="Notice"){#
-        		
+        		<a href="\#receipt/#=id#"><i></i> #=number#</a>        	        		
 			#}else if(type==="SO"){#
         		<a href="\#so/#=id#"><i></i> #=number#</a>
         	#}else if(type==="Estimate"){#        		
@@ -3859,7 +3855,7 @@
         		#=number#
         	#}#
         </td>
-        <td align="right">#:kendo.toString(kendo.parseFloat(amount), "c")#</td>
+        <td align="right">#:kendo.toString(kendo.parseFloat(amount)/kendo.parseFloat(rate), "c", sub_code)#</td>
         <td>        	
         	#if(type==="Invoice" || type==="eInvoice" || type==="Notice"){#
         		#if(status==="0" || status==="2") {#
@@ -3893,11 +3889,11 @@
 				#}#
 			#}else if(type==="eInvoice"){#
         		#if(status==="0" || status==="2"){#
-        			
+        			<a href="\#cashier_single/#=id#"><i></i> ទទួលប្រាក់</a>
         		#}#
         	#}else if(type==="Notice"){#
         		#if(status==="0" || status==="2"){#
-        			
+        			<a href="\#cashier_single/#=id#"><i></i> ទទួលប្រាក់</a>
         		#}#
 			#}else if(type==="SO"){#
         		#if(status==="0"){#
@@ -7410,6 +7406,7 @@
 	</div>
 </script>
 
+<!-- New company -->
 <script id="newCompany" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7582,7 +7579,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->	
 </script>
-
 <script id="users" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7603,7 +7599,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="currencyRates" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7624,7 +7619,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="customerTypes" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7645,7 +7639,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="classes" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7667,6 +7660,7 @@
 	</div><!-- //End div row-fluid-->
 </script>
 
+<!-- Electricity setting -->
 <script id="useElectricity" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7697,7 +7691,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->	
 </script>
-
 <script id="eSetting" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7722,7 +7715,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->	
 </script>
-
 <script id="amperes" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7734,7 +7726,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="voltages" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7746,7 +7737,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="electricityBoxes" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7758,7 +7748,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="tariffPlans" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7770,7 +7759,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="tariffs" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7782,7 +7770,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="exemptions" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7794,7 +7781,6 @@
 		</div><!-- //End div span12-->
 	</div><!-- //End div row-fluid-->
 </script>
-
 <script id="maintenances" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -14434,6 +14420,8 @@
 							'issued_date' 	: data.issued_date,
 							'due_date' 		: "",
 							'amount'     	: data.amount,
+							'rate' 			: data.rate,
+				   			'sub_code'		: data.sub_code,
 							'status'		: data.status
 						});						
 					}					
@@ -14452,6 +14440,8 @@
 							'issued_date' 	: data.issued_date,
 							'due_date' 		: "",
 							'amount'     	: data.amount,
+							'rate' 			: data.rate,
+				   			'sub_code'		: data.sub_code,
 							'status'		: data.status
 						});						
 					}					
@@ -14489,6 +14479,8 @@
 								'issued_date' 	: data.issued_date,
 								'due_date' 		: data.due_date,
 								'amount'     	: data.amount,
+								'rate' 			: data.rate,
+				   				'sub_code'		: data.sub_code,
 								'status'		: data.status
 							});
 						}
@@ -14527,6 +14519,8 @@
 								'issued_date' 	: data.issued_date,
 								'due_date' 		: data.due_date,
 								'amount'     	: data.amount,
+								'rate' 			: data.rate,
+				   				'sub_code'		: data.sub_code,
 								'status'		: data.status
 							});
 						}						
@@ -21035,6 +21029,16 @@
 			serverFiltering: true		
 		});
 
+		var currencyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/currencies/index",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
 		var journalDS = new kendo.data.DataSource({
 		  	transport: {	  
 			    create: {
@@ -21111,6 +21115,8 @@
 				tariffItemDS.fetch();
 				maintenanceDS.fetch();
 				exemptionDS.fetch();
+				currencyDS.fetch();
+				currencyRateDS.fetch();
 
 				this.setDueDate();
 				this.setNumber();								
@@ -21211,6 +21217,17 @@
 		        });
 				
 		        return kendo.parseFloat(rate);
+			},
+			getSubCode 	: function(code){
+				var subCode = "km-KH";			
+				$.each(currencyDS.data(), function(index, value){	        	
+		        	if(code===value.code){	        		
+		        		subCode = value.sub_code;
+		        		return false;
+		        	}	        	
+		        });
+				
+		        return subCode;
 			},
 			distrinctCustomer	: function(){
 				//Get all avialiable id
@@ -21526,6 +21543,7 @@
 							amount 			: total_amount,
 							rate 			: rate,	  
 							status			: 0,
+							sub_code 		: this.getSubCode(mr.people.currency_code),
 							biller			: this.get("biller"),	  
 							customer_id		: dx,
 							address			: mr.people.address,
@@ -21547,7 +21565,7 @@
 						invoice_no++;
 
 						//Add new customer balances to []
-						var balance = kendo.parseFloat(mr.people.balance) + kendo.parseFloat(total_amount);
+						var balance = kendo.parseFloat(mr.people.balance) + (kendo.parseFloat(total_amount)/rate);
 						this.customerBalanceList.push({
 							id			: kendo.parseInt(mr.people.id),
 							balance 	: balance
@@ -21822,6 +21840,18 @@
 		  	}  	
 		});
 
+		var currencyRateDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/currency_rates/currency_rate",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter: { field: "status", value: 1 },
+			serverFiltering: true		
+		});
+
 		var journalDS = new kendo.data.DataSource({
 		  	transport: {	  
 			    create: {
@@ -21879,6 +21909,7 @@
 			pageLoad 			: function(){
 				this.clear();
 				this.loadPaymentForCashier();
+				currencyRateDS.read();
 			},
 			customerSearch 		: function(){
 				var self = this;
@@ -22039,8 +22070,10 @@
 							this.paymentList.push({
 								invoice_id 			: data.id,								
 								amount_paid 		: kendo.parseFloat(data.pay_amount)*kendo.parseFloat(data.rate),
+								rate 				: kendo.parseFloat(data.rate),
 								discount 			: kendo.parseFloat(this.get("discount"))*kendo.parseFloat(data.rate),
-								fine 				: kendo.parseFloat(this.get("fine"))*kendo.parseFloat(data.rate),			
+								fine 				: kendo.parseFloat(this.get("fine"))*kendo.parseFloat(data.rate),
+								sub_code 			: data.sub_code,			
 								payment_date		: kendo.toString(this.get("payment_date"), "yyyy-MM-dd"),
 								payment_method_id	: this.get("payment_method_id"),
 								check_no 			: this.get("check_no"),							  	  
@@ -22055,7 +22088,7 @@
 							var balance = 0;										
 							var index = jQuery.inArray(data.customer_id, arr);					
 							if(index > -1){ //If a customer has two invoices											
-								balance = kendo.parseFloat(this.customerBalanceList[index].balance) - kendo.parseFloat(data.pay_amount);
+								balance = kendo.parseFloat(this.customerBalanceList[index].balance) - (kendo.parseFloat(data.pay_amount)/kendo.parseFloat(data.rate));
 								this.customerBalanceList[index].set("balance", balance);
 							}else{
 								arr.push(data.customer_id);
