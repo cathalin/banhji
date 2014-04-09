@@ -2726,6 +2726,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<div id="itemInformationStatus" class="alert"></div>
 			<button class="btn" data-bind="visible: shown, click: cancelChange">មិនយក</button>
 			<button class="btn" data-bind="visible: shown, click: record">រក្សាទុក</button>
 		</div>
@@ -2751,7 +2752,7 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsNewView">
-	<div class="span8 offset2">
+	<div class="span10 offset1">
 		<button class="btn pull-right" data-bind="click: closeX">X</button>
 		<table class="table table-bordered">
 			<tbody>
@@ -2809,8 +2810,13 @@
 				</tr>
 			</tbody>
 		</table>
-		<button class="btn" data-bind="visible: shown, click: cancelChange">មិនយក</button>
-		<button class="btn" data-bind="visible: shown, click: record">រក្សាទុក</button>
+		<div id="itemInformationStatus" class="alert">
+		 <p>សូមបំពេញទិន្ន័យខាងលើ</p>
+		</div>
+		<div>
+			<button class="btn" data-bind="visible: shown, click: cancelChange">មិនយក</button>
+			<button class="btn" data-bind="visible: shown, click: record">រក្សាទុក</button>
+		</div>	
 	</div>
 </script>
 <script type="text/x-kendo-template" id="itemsRecordView">
@@ -12047,12 +12053,12 @@
 				company_id: banhji.config.userData['company'],
 				sku 	: null,
 				name 	: null,
-				cost 	: null,
-				price 	: null,
+				cost 	: 0.00,
+				price 	: 0.00,
 				purchase_description: null,
 				sale_description: null,
-				quantity: null,
-				order_point: null,
+				quantity: 0,
+				order_point: 0,
 				type 	: {id: 1},
 				general_account: {id: 0},
 				income_account: {id: 0},
@@ -12067,7 +12073,9 @@
 			closeX 	: function () {
 				kendo.fx($("#purchase-form")).slideIn("up").play();
 				window.history.go(-1);
-				this.cancelChange();
+				if(this.get("dataStore").hasChanges() && this.get("current").dirty) {
+					this.cancelChange();
+				}
 			},
 			setCurrent 			: function(item){
 				this.set("current", item);
@@ -12195,8 +12203,22 @@
 				);
 			},
 			addNew 				: function() {
-				this.get("dataStore").insert(0, this.items);
-				this.setCurrent(this.get("dataStore").at(0));
+				var dataItem = this.get("dataStore").insert(0, {
+					company_id: banhji.config.userData['company'],
+					sku 	: null,
+					name 	: null,
+					cost 	: 0.00,
+					price 	: 0.00,
+					purchase_description: null,
+					sale_description: null,
+					quantity: 0,
+					order_point: 0,
+					type 	: {id: 1},
+					general_account: {id: 0},
+					income_account: {id: 0},
+					cogs_account: {id: 0}
+				});
+				this.setCurrent(this.get("dataStore").data()[0]);
 			},
 			cancelChange 		: function() {
 				this.get("dataStore").cancelChanges();
@@ -12206,10 +12228,15 @@
 				if(this.get("dataStore").hasChanges() && this.get("current").dirty) {
 					this.get("dataStore").sync();
 					this.get("dataStore").bind('requestEnd', function(e){
-						if(e.response.id) {
-							self.closeX();
+						if(e.type === "create") {
+							if(e.response.id) {
+								$("#itemInformationStatus").html("<p>កត់ត្រាបានជោគជ័យ។");
+							}
+						} else if(e.type==="update") {
+							if(e.response.id) {
+								$("#itemInformationStatus").html("<p>កត់ត្រាបានជោគជ័យ។");
+							}
 						}
-						
 					});
 				}
 			},
@@ -13600,8 +13627,7 @@
 					read: baseUrl + "api/accounting_api/class_dropdown",
 					type: "GET",
 					dataType: "json"
-				}
-				 
+				} 
 			}),
 			
 
