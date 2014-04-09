@@ -146,6 +146,7 @@ class Inventory_api extends REST_Controller {
 	//POST
 	function item_post() {	
 		$arr = array('item_sku' 			=> $this->post('item_sku'),
+					 'company_id'			=> $this->post('company_id'),
 					 'name' 			    => $this->post('name'),
 					 'item_type_id' 		=> $this->post('item_type_id'),
 					 'unit_measure_id' 		=> $this->post('unit_measure_id'),
