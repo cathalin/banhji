@@ -168,7 +168,7 @@ var themerPrimaryColor = primaryColor;
 	<?php foreach($javascript as $js):?>
 	<script defer src="<?php echo base_url().JS.$js?>"></script>
 	<?php endforeach;?>
-
+	<script src="<?php echo base_url();?>resources/common/theme/scripts/demo/megamenu.js?1374506514"></script>
 	<script>
     var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
     (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
