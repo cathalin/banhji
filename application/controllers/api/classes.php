@@ -36,11 +36,7 @@ class Classes extends REST_Controller {
 				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
 			}	
 		}else{
-<<<<<<< HEAD
-			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);				
-=======
 			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);		
->>>>>>> 063774c8c55f1f165ce516530f5850434bd576b2
 		}			
 	}
 	

@@ -31,25 +31,31 @@ class Accounting_api extends REST_Controller {
 	
 	//GET 
 	function account_get() {
-		$filter= $this->get('filter');
-		if($filter) {
-			$data = $this->account->order_by("code", "ASC")->get_many_by(array($filter['filters'][0]['field'] => $filter['filters'][0]['value']));
-		} else {
-			$data = $this->account->order_by("code", "ASC")->get_many_by(array("company_id"=>1));
-		}
-		
-		//$data = $this->account->get_account_with_type();	
-		foreach($data as $ac) {
-			$accounts[] = array(
-				"id" => $ac->id,
-				"code" => $ac->code,
-				"name" => $ac->name,
-				"description" => $ac->description,
-				"type_id" => $ac->account_type_id,
-				"type" => $this->account->get_ac_type($ac->account_type_id)
-			);
-		}	
-		$this->response($accounts, 200);		
+		$filter = $this->get("filter");		
+		if(!empty($filter) && isset($filter)){
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			$query = $this->account->get_many_by($para);			
+			if(count($query)>0) {
+				foreach($query as $ac) {
+					$data[] = array(
+						"id" => $ac->id,
+						"code" => $ac->code,
+						"name" => $ac->name,
+						"description" => $ac->description,
+						"type_id" => $ac->account_type_id,
+						"type" => $this->account->get_ac_type($ac->account_type_id)
+					);
+				}				
+				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
+			} else {				
+				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
+			}	
+		}else{
+			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);		
+		}		
 	}
 
 	function account_trans_get(){
