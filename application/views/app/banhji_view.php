@@ -7844,7 +7844,15 @@
 			      	<tr>		            
 			            <td>ថ្ងៃបង់ប្រាក់</td>
 			            <td><input data-role="datepicker" data-bind="value: due_date" data-format="dd-MM-yyyy" /></td>								            
-			      	</tr>		          	
+			      	</tr>
+			      	<tr>
+		                <td>Class</td>
+		              	<td><select id="classes" name="classes" data-role="combobox" 
+		              				data-text-field="name" data-value-field="id" 
+		              				data-bind="source: classList, value: class_id"
+		              				required data-required-msg="ត្រូវការ Class"></select>
+		              	</td>
+		            </tr>		          	
 			    </table>
 
 			    <div id="status"></div>						
@@ -14053,7 +14061,8 @@
 			schema: {
 				model: {id: "id"},
 				data: "results"
-			},			
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -14799,13 +14808,7 @@
 			closeX 			: function () {
 				kendo.fx($("#slide-form")).slideIn("up").play();				
 				window.history.go(-1);
-			},
-			pageLoad 		: function(){
-				classDS.filter([
-						{ field: "type", value: "Class" },						
-						{ field: "company_id", value: banhji.config.userData.company }
-				]);
-			},								
+			},											
 			checkExistingNumber : function(){
 				var customerNo = this.get("number");
 				var origNo = this.get("customer_no_origin");
@@ -15065,7 +15068,8 @@
 			schema: {
 				model: {id: "id"},
 				data: "results"
-			},			
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -15331,11 +15335,6 @@
 			},			
 			loadReferences 		: function(customer_id){
 				currencyRateDS.fetch();
-
-				classDS.filter([
-						{ field: "type", value: "Class" },						
-						{ field: "company_id", value: banhji.config.userData.company }
-				]);
 
 				estimateDS.filter({
 					filters: [
@@ -16134,7 +16133,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -17149,7 +17152,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -17806,7 +17813,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -18293,7 +18304,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -19255,7 +19270,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -21009,9 +21028,13 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
-		});	
+		});
 
 		var planItemDS = new kendo.data.DataSource({
 		  	transport: {	  
@@ -21851,7 +21874,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 
@@ -22741,7 +22768,11 @@
 					dataType: "json"
 				}
 			},
-			filter: { field: "type", value: "Class" },
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
 		
@@ -23557,6 +23588,34 @@
 		  	}
 		});
 
+		var currencyRateDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/currency_rates/currency_rate",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter: { field: "status", value: 1 },
+			serverFiltering: true		
+		});
+
+		var classDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/classes/class",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			schema: {
+				model: {id: "id"},
+				data: "results"
+			},
+			filter: { field: "type", value: "Class" },						
+			serverFiltering: true		
+		});
+
 		var journalDS = new kendo.data.DataSource({
 		  	transport: {	  
 			    create: {
@@ -23579,6 +23638,7 @@
 		});
 		
 		var viewModel = kendo.observable({
+			class_id 		: "",
 			month_of 		: new Date(),
 			issued_date 	: new Date(),
 			due_date 		: "",
@@ -23587,10 +23647,12 @@
 			invoiceList 	: [],
 			invoiceItemList : [],
 
+			classList 		: classDS,
 			customerList 	: customerDS,
 
 			pageLoad 		: function(){
 				this.setDueDate();
+				currencyRateDS.read();
 				customerDS.filter({ field: "balance >", value: 0 });				
 			},			
 			setDueDate		: function(){
@@ -23598,68 +23660,91 @@
 				duedate.setDate(duedate.getDate()+7);
 				this.set("due_date", kendo.toString(duedate,'dd-MM-yyyy'));
 			},			
+			getCurrencyRateByCode 	: function(code){
+				var rate = 0;			
+				$.each(currencyRateDS.data(), function(index, value){	        	
+		        	if(code===value.code){	        		
+		        		rate = kendo.parseFloat(value.rate);
+		        		return false;
+		        	}	        	
+		        });
+				
+		        return rate;
+			},			
 			add 	: function(){
 				var next_inv_id = 1;
-				var last_no = "";
-
+				var open_balance_item_id = 17;
+				
 				var monthOf = new Date(this.get("month_of"));
 				monthOf.setDate(1);
 				monthOf = kendo.toString(monthOf, "yyyy-MM-dd");
 
-				var invoice_no = 0;
-				if(last_no.length>7){
-					invoice_no = parseInt(last_no.substr(7));
-
-					//Apply invoice no back to 0000 for the new year
-					var y = parseInt(last_no.substr(3,2));
-					var yof = parseInt(new Date(this.get("month_of")).getFullYear().toString().substr(2,2));			
-					if(yof>y){
-						invoice_no = 0;
-					}					
-				}
-				
-				invoice_no++;		
-
+				var invoice_no = 1;				
 				var str_inv_no = "INV" + kendo.toString(new Date(this.get("month_of")), "yy") 
 										+ kendo.toString(new Date(this.get("month_of")), "MM");
 
 				var invoice_id = kendo.parseInt(next_inv_id);
-				var biller = <?php echo $this->session->userdata('user_id'); ?>;
+				var biller = banhji.config.userData.userId;
 
 				var amount = 0;
 				for (var i=0;i<customerDS.total();i++) {
 					var d = customerDS.at(i);			
 					var inv_no = str_inv_no + kendo.toString(invoice_no, "00000");
+					
+					var rate = 1;
+					var companyCode = d.companies.based_currency;
+					var customerCode = d.currency_code
+					
+			        if(companyCode!==customerCode){
+			        	var companyCodeRate = this.getCurrencyRateByCode(companyCode);
+			        	var customerCodeRate = this.getCurrencyRateByCode(customerCode);
 
-					amount += kendo.parseFloat(d.balance);
+			        	if(companyCodeRate>0 && customerCodeRate>0){
+			        		rate = companyCodeRate/customerCodeRate;
+			        	}	
+			        }
+
+			        amount += kendo.parseFloat(d.balance)*rate;
 
 					//Invoice
 					this.invoiceList.push({
-						number			: inv_no,
-						type 			: "Invoice",	  
-						status			: 0,
-						amount 			: d.balance,
-						biller			: biller,	  
-						customer_id		: d.id,
-						address			: d.address,
-						issued_date		: kendo.toString(new Date(this.get("issued_date")), "yyyy-MM-dd"),				
-						due_date		: kendo.toString(new Date(this.get("due_date")), "yyyy-MM-dd"),
-						month_of 		: monthOf,				
-						payment_term_id	: 0,	  	  	
-						currency_id		: 0,
-						memo			: "សមតុល្យដើមគ្រា"				
-					});
+			    		'number' 			: inv_no,
+					   	'type'				: "Invoice",				   					   				   	
+					   	'amount'			: kendo.parseFloat(d.balance)*rate,
+					   	'rate'				: rate,
+					   	'vat'				: 0,
+					   	'vat_id'			: 0,
+					   	'status' 			: 0,
+					   	'sub_code'			: d.currencies.sub_code,
+					   	'biller' 			: biller,
+					   	'customer_id' 		: d.id,			   	
+					   	'address' 			: d.address,
+					   	'issued_date' 		: kendo.toString(this.get("issued_date"),"yyyy-MM-dd"),
+					   	'due_date' 			: kendo.toString(this.get("due_date"),"yyyy-MM-dd"),
+					   	'so_id' 			: 0,
+					   	'estimate_id' 		: 0,
+						'gdn_id' 			: 0,
+						'payment_term_id'	: 0,			   	
+					   	'class_id' 			: d.class_id,
+					   	'memo' 				: "សមតុល្យដើមគ្រា",
+					   	'memo2'				: "",
+					   	'company_id'		: d.company_id
+			    	});						
 
 					//Invoice item
 					this.invoiceItemList.push({
-						invoice_id	: invoice_id,
-						item_id		: open_balance_item_id,	
-						description	: "សមតុល្យដើមគ្រា",				
-						quantity	: 1,	  
-						unit_price	: d.balance,					  	  
-						amount		: d.balance				
+						'invoice_id' 	: invoice_id,
+						'item_id' 		: open_balance_item_id,
+						'description' 	: "សមតុល្យដើមគ្រា",				
+						'quantity' 		: 1,
+						'unit_price' 	: d.balance,												
+						'amount' 		: d.balance,
+						'rate'			: rate,
+						'sub_code'		: d.currencies.sub_code,
+						'vat' 			: "false",
+						'so_id'			: 0		
 					});
-
+					
 					invoice_no++;
 					invoice_id++;			
 				}
@@ -23675,48 +23760,56 @@
 				var d = new Date(this.get("month_of"));	
 				var lastD = new Date(d.getFullYear(), d.getMonth() + 1, 0);
 				var journalEntries = [];
+				var account_receiveable_id = 3;
+				var opening_balance_account_id = 86;
 								
-				//A/R		
+				//A/R on Dr		
 				journalEntries.push({				
-					account_id	: account_receiveable_id,				
-					dr			: amount, 
-					cr			: 0,				
-					class_id 	: 0,
-					memo 		: "សមតុល្យដើមគ្រា"
+					account_id 	: account_receiveable_id,	 		
+			 		dr 			: amount, 
+			 		cr 			: 0,
+			 		class_id  	: this.get("class_id"),
+			 		memo 		: "សមតុល្យដើមគ្រា",
+			 		exchange_rate: 1,
+				 	main 		: 0	
 				});
 				
 
-				//Open Balance		
+				//Open Balance on Cr		
 				journalEntries.push({
-					account_id	: open_balance_acct_id,
-					dr			: 0, 
-					cr			: amount,
-					class_id 	: 0,
-					memo 		: "សមតុល្យដើមគ្រា"
+					account_id 	: opening_balance_account_id,	 		
+			 		dr 			: 0, 
+			 		cr 			: amount,
+			 		class_id  	: this.get("class_id"),
+			 		memo 		: "សមតុល្យដើមគ្រា",
+			 		exchange_rate: 1,
+				 	main 		: 0	
 				});
 									
-				//Add new journal to database			
-				journalDS.add({	 		
-			 		memo		: "សមតុល្យដើមគ្រា", 
-			 		voucher		: "",
-			 		class_id	: 0,
-			 		budget_id	: 0,
-			 		donor_id	: 0,
-			 		check_no	: "",
-			 		location_id	: 0,
-			 		transaction_type: "Invoice",
-			 		people_id 	: 0,
-			 		employee_id : biller,
-			 		invoice_id 	: 0,
-			 		payment_id  : 0,
-			 		bill_id		: 0,	
-			 		date 		: kendo.toString(lastD, "yyyy-MM-dd"), 
-			 		receipt_id  : 0,
-			 		item_receipt_id : 0,
-			 		cashier 	: 0,
-			 		journalEntries 	: journalEntries	 			 		
-			 	});	 	
-
+				//Add new journal to database
+				journalDS.add({
+					company_id: banhji.config.userData.company,
+					vendor_id: 0,
+					people_id: 0,
+					employee_id: banhji.config.userData.userId,
+					payment_id: 0,
+					transaction_type: "Invoice",
+					payment_method: "cash",
+					check_no: "",
+					memo: "សមតុល្យដើមគ្រា",
+					date: kendo.toString(lastD, "yyyy-MM-dd"),
+					//due_date: kendo.toString(this.dateDue, "yyyy-MM-dd"),
+					// amount_billed: 0,
+					// amount_due: 0,
+					// amount_paid: 0,
+					voucher: "",
+					number: "",
+					class_id: this.get("class_id"),
+					status: 1,
+					journalEntries: journalEntries,
+					inJournal: 1			 		 		
+			 	});			
+				
 			 	journalDS.sync();	 	
 			}	
 		});
@@ -23843,8 +23936,7 @@
 		var users = new kendo.View("#users");
 		var currencyRates = new kendo.View("#currencyRates");
 		var customerTypes = new kendo.View("#customerTypes");
-		var classes = new kendo.View("#classes");
-		
+				
 		var eSetting = new kendo.View("#eSetting");
 		var useElectricity = new kendo.View("#useElectricity");
 		var amperes = new kendo.View("#amperes");
@@ -23958,8 +24050,7 @@
 			users 			: users,
 			currencyRates 	: currencyRates,
 			customerTypes 	: customerTypes,
-			classes 		: classes,
-			
+						
 			useElectricity 	: useElectricity,
 			eSetting 		: eSetting,
 			amperes  		: amperes,
@@ -24126,8 +24217,7 @@
 	banhji.router.route("new_customer", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.newCustomer);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
-		banhji.newCustomer.viewModel.pageLoad();
-				
+						
 		var currencyCBB = $("#currencyCBB").kendoComboBox({
 			dataTextField: "code",
 			dataValueField: "code",	

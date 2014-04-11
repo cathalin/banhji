@@ -130,7 +130,7 @@ class Invoice_items extends REST_Controller {
 		$post = $this->post();
 		foreach($post as $key => $value) {			
 				$data[] = $value;			
-		}				  
+		}					  
 		$ids = $this->invoice_item->insert_many($data);		 
 		$this->response($ids, 200);			
 	}

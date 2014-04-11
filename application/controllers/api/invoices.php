@@ -213,10 +213,9 @@ class Invoices extends REST_Controller {
 		//Remove model
 		foreach($post as $key => $value) {			
 			$data[] = $value;									
-		}
-				
+		}						
 		$ids = $this->invoice->insert_many($data);		 
-		$this->response($ids, 201);			
+		$this->response($ids, 200);			
 	}
 
 	//POST MANY
@@ -226,6 +225,7 @@ class Invoices extends REST_Controller {
 	  		$data[] = $value;	  				 				  	
 	  	}
 	  	$result = $this->invoice->insert_many($data);
+	  	
 		$this->response($result, 200);		
 	}
 
