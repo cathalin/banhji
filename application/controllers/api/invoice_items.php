@@ -81,7 +81,7 @@ class Invoice_items extends REST_Controller {
 				   	'exemption_id' 		=> $this->post('exemption_id')				   				
 		);				
 		$id = $this->invoice_item->insert($data);		
-		$this->response($id, 200);		
+		$this->response($id, 201);		
 	}
 	
 	//PUT
@@ -132,7 +132,7 @@ class Invoice_items extends REST_Controller {
 				$data[] = $value;			
 		}					  
 		$ids = $this->invoice_item->insert_many($data);		 
-		$this->response($ids, 200);			
+		$this->response($ids, 201);			
 	}
 
 	//POST MANY	
