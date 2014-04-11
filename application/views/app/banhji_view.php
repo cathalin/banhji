@@ -6261,13 +6261,13 @@
 			              	<br>
 				          	ប្រាក់ត្រូវបង់
 			          	</p>		          	
-
+			          	<br>
 			          	<div align="right">		          		
 			          		<span data-bind="text: amount_due"
 			          			style="color: white; font-size: 30px; background-color:maroon; border:0px solid black; padding: 5px;"></span>		          			          		
 			          	</div>		          	
 			        </div>
-
+			        <br><br>
 			        <div>
 			        	ឈ្មោះ : 
 			        	<span data-bind="text: fullname"></span>
@@ -6433,7 +6433,7 @@
 										<i class="icon-play-circle"></i>
 									</a>
 								</div>
-<<<<<<< HEAD
+
 							</div>
 
 							<div class="span4">
@@ -6562,172 +6562,6 @@
 								</table>
 							</div>
 						</div>
-					</div> <!-- //End span9 -->
-				</div> <!-- //End example -->
-			</div>
-		</div>
-	</div>
-</script>
-<script id="cashierSingle" type="text/x-kendo-template">
-	<div id="slide-form">
-		<div class="row-fluid">
-			<div class="span12">			
-				<div id="example">
-					<div align="right">			        				        	
-			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
-					</div>
-					<h3 class="heading glyphicons cart_in"><i></i> ទទួលប្រាក់</h3>
-=======
-							</div>
-
-							<div class="span4">
-								<div class="innerAll padding-bottom-none-phone">
-									<a href="#reconcile" class="widget-stats widget-stats-inverse widget-stats-5">
-										<span class="glyphicons refresh"><i></i></span>
-										<span class="txt">ផ្ទៀងផ្ទាត់ &<br><br> ផ្ទេរសាច់ប្រាក់</span>
-										<div class="clearfix"></div>
-									</a>
-								</div>
-							</div>				
-
-						</div> <!-- //End row-fluid -->
-						
-						<br>
->>>>>>> 5fff235d08f78c8c2691e142d929ad1846b3d92c
-
-						<div class="row-fluid">
-							<div class="span4">						
-								<table>								
-									<tr>
-						                <td>Class</td>
-						              	<td><select id="classes" name="classes" data-role="combobox" 
-						              				data-text-field="name" data-value-field="id" 
-						              				data-bind="source: classList, value: class_id"
-						              				required data-required-msg="ត្រូវការ Class"></select>
-						              	</td>
-						            </tr>
-									<tr>
-					                    <td>វីធីបង់ប្រាក់</td>
-					                  	<td>
-					                  		<select id="paymentMethod" name="paymentMethod" data-role="combobox"
-					                  				data-text-field="name" data-value-field="id" 
-					                  				data-bind="source: paymentMethodList, value: payment_method_id"
-					                  				required data-required-msg="ត្រូវការ វីធីបង់ប្រាក់"></select>
-					                  	</td>
-					                <tr>
-									<tr>
-						                <td>លេខកូដសែក</td>
-						                <td><input id="check_no" class="k-textbox" data-bind="value: check_no" /></td>
-						            <tr>
-						            <tr>
-										<td>គណនីសាច់ប្រាក់</td>
-										<td>
-											<select id="cashAccount" name="cashAccount" data-role="combobox" 
-													data-text-field="name" data-value-field="id" 
-													data-bind="source: cashAccountList, value: cash_account_id"
-													required data-required-msg="ត្រូវការ គណនីសាច់ប្រាក់"></select>
-										</td>
-									</tr>
-								</table>							
-							</div>
-							<div class="span4">
-
-							</div>
-							<div class="span4">
-								<p>
-					              	ថ្ងៃទទួលប្រាក់
-					              	<input id="paymentDate" name="paymentDate" data-role="datepicker" 
-					              			data-bind="value: payment_date" data-format="dd-MM-yyyy"
-					              			required data-required-msg="ត្រូវការ ថ្ងៃទទួលប្រាក់" />
-					              	<br>
-						          	ប្រាក់ត្រូវបង់
-					          	</p>		          	
-
-					          	<div align="right">		          		
-					          		<span style="color: white; font-size: 30px; background-color:maroon; border:0px solid black; padding: 5px;" data-bind="text: total"></span>		          			          		
-					          	</div>
-							</div>
-						</div>
-						
-						<br>
-
-						<div data-role="grid" data-bind="source: invoiceList"
-				            data-auto-bind="false" data-row-template="invoiceCashierRowTemplate"                  
-				            data-columns='[{ title: "", width: 25 },	                 	
-				                { title: "ល.រ", width: 40 },
-				                { title: "កាលបរិច្ឆេទ", width:80 },	                     
-				                { title: "ឈ្មោះ" },
-				                { title: "# វិក្កយបត្រ" },
-				                { title: "ទឹកប្រាក់" },	                    	                     
-				                { title: "ទទួលប្រាក់" }	                    	                    
-				                ]'>
-						</div>
-<<<<<<< HEAD
-					</div>
-					
-					<br>
-
-					<div data-role="grid" data-bind="source: invoiceList"
-			            data-auto-bind="false" data-row-template="invoiceCashierSingleRowTemplate"                  
-			            data-columns='[{ title: "", width: 50 },	                 	
-			                { title: "ល.រ", width: 70 },
-			                { title: "កាលបរិច្ឆេទ" },			                
-			                { title: "# វិក្កយបត្រ" },
-			                { title: "ទឹកប្រាក់" },	                    	                     
-			                { title: "ទទួលប្រាក់" }	                    	                    
-			                ]'>
-					</div>
-					
-					<br>
-=======
-						
-						<br>
->>>>>>> 5fff235d08f78c8c2691e142d929ad1846b3d92c
-
-						<div id="status"></div>
-
-						<div class="row-fluid">
-							<div class="span6">
-								<div class="innerAll padding-bottom-none-phone">
-									<a id="save" name="save" class="widget-stats widget-stats-info widget-stats-4">
-										<span class="txt">ទឹកប្រាក់ទទួលបាន</span>
-										<span class="count" style="font-size: 35px;" data-bind="text: pay_amount"></span>
-										<span class="glyphicons cart_in"><i></i></span>
-										<div class="clearfix"></div>
-										<i class="icon-play-circle"></i>
-									</a>
-								</div>
-							</div>
-							<div class="span2">
-
-							</div>
-							<div class="span4">
-								<table>
-									<tr>
-										<td>ទឹកប្រាក់ត្រូវបង់:</td>
-										<td align="right"><span data-bind="text: total"></span></td>
-									</tr>
-									<tr>
-										<td>បញ្ចុះតំលៃ:</td>
-										<td><input data-role="numerictextbox" data-format="c0" data-bind="value: discount, events: {change : change}" /></td>
-									</tr>
-									<tr>
-										<td>ទឹកប្រាក់ពិន័យ:</td>							
-										<td><input data-role="numerictextbox" data-format="c0" data-bind="value: fine, events: {change : change}" /></td>
-									</tr>
-									<tr>
-										<td>ទឹកប្រាក់ទទួលបាន:</td>
-										<td align="right"><span data-bind="text: pay_amount"></span></td>
-									</tr>
-									<tr>
-										<td>នៅសល់:</td>
-										<td align="right"><span data-bind="text: remain"></span></td>
-									</tr>
-								</table>
-							</div>
-						</div>
-<<<<<<< HEAD
-=======
 					</div> <!-- //End span9 -->
 				</div> <!-- //End example -->
 			</div>
@@ -6830,7 +6664,7 @@
 						<div class="span2">
 
 						</div>
->>>>>>> 5fff235d08f78c8c2691e142d929ad1846b3d92c
+
 						<div class="span4">
 							<table>
 								<tr>
