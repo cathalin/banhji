@@ -231,7 +231,7 @@
 	</div>		
 </script>
 <script type="text/x-kendo-template" id="vendorInfo">
-	<div class="span12">
+	<div class="span12" style="margin-top: 5px;">
 		<div class="row-fluid">
 			<div class="span3">
 				<a href="#" data-bind="click: getPO" class="widget-stats widget-stats-2 widget-stats-easy-pie widget-stats-primary">
@@ -298,7 +298,7 @@
 	</div>
 </script>
 <script type="text/x-kendo-template" id="vendorSingle">
-	<div class="span12">
+	<div class="span12" style="margin-top: 5px;">
 		<div class="row-fluid">
 			<div class="span3">
 				<a href="#" data-bind="click: getPO" data-bind="click: home" class="widget-stats widget-stats-2 widget-stats-easy-pie widget-stats-primary">
@@ -352,6 +352,7 @@
 					<li><a href="#" data-bind="click: home">ព័តមានលំអិតអ្នកផ្គត់ផ្គង់</a></li>
 					<li><a href="#" data-bind="click: payTo">ទូទាត់វិក្កយប័ត្រ</a></li>
 					<li><a href="#" data-bind="click: getBillHistory">ប្រត្តិប័ត្រការណ៍</a></li>
+					<li><a href="#" data-bind="click: purchaseReturn">Purchase Return</a></li>
 				</ul>
 				<ul class="nav pull-right">
 					<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i></a>
@@ -899,6 +900,66 @@
 			<button class="btn btn-primary pull-right" data-bind="invisible: showRecordBtn, events: {click: update}"><i class="icon-ok-sign"></i> កត់ត្រា</button>
 		</div>
 	</div>	
+</script>
+<script id="purchase-return" type="text/x-kendo-template">
+	<div class="row-fluid">
+		<div class="table table-strip table-condensed" data-role="grid"
+			 data-columns='[
+			 	{ title: "&nbsp;", width: "50px"},
+			 	{ title: "សំភារៈ"},
+				{ title: "ព៌ណនា"},
+				{ title: "ចំនួន", width: "90px"},
+				{ title: "តំលៃ", width: "120px"},
+				{ title: "សរុប", width: "120px"}
+			 ]'
+			 data-bind="source: returnedItems"
+			 data-editable='true'
+			 data-row-template="purchase-return-list"></div>
+		<span class="glyphicons circle_plus" data-bind="click: addItemToList"><i></i></span>
+		<div class="span4 pull-right">
+			<div class="widget widget-heading-simple widget-body-white">
+				<div class="widget-body">
+					<table>
+						<tr>
+							<td width="200">Available Credit</td>
+							<td><input type="radio" name="type" value="1" data-bind="checked: returnType, events: {change: showAccount}"></td>
+						</tr>
+						<tr>
+							<td>Refund</td>
+							<td><input type="radio" name="type" value="2" data-bind="checked: returnType, events: {change: showAccount}"></td>
+						</tr>
+						<tr>
+							<td>Against Bill</td>
+							<td><input type="radio" name="type" value="3" data-bind="checked: returnType, events: {change: showAccount}"></td>
+						</tr>
+					</table>
+					<input type="text" data-role="combobox" data-bind="visible: showCashAcct, source: apAcct" 
+									   data-text-field="name" data-value-field="id" style="width: 100%">
+					<input type="text" data-role="combobox" data-bind="invisible: showCashAcct, source: cashAcct" 
+									   data-text-field="name" data-value-field="id" style="width: 100%">
+				</div>
+			</div>
+			<button class="btn btn-primary btn-block btn-icon glyphicons ok" data-bind="click: record"><i></i> កត់ត្រា</button>
+		</div>
+	</div>
+</script>
+<script id="purchase-return-list" type="text/x-kendo-template">
+	<tr>
+		<td><span class="glyphicons bin" style="margin: 1px 8px 11px 8px;" data-bind="click: removeItemFromList"><i></i></span></td>
+		<td><input type="text" data-bind="source: items, value: item.id" 
+							   data-template="purchase-return-list-tmpl" 
+							   data-role="combobox" 
+							   data-value-field="id" 
+							   data-text-field="name"
+							   style="width: 100%"></td>
+		<td><input type="text" data-bind="value: description, events: {keydown: keyAction}"></td>
+		<td><input type="text" data-bind="value: unit, events: {change: amountChange, keydown: keyAction}" style="width: 85%"></td>
+		<td><input type="text" data-bind="value: price, events: {change: amountChange, keydown: keyAction}" style="width: 85%"></td>
+		<td>#=amount#</td>
+	</tr>
+</script>
+<script id="purchase-return-list-tmpl" type="text/x-kendo-template">
+	<span>#:name#</span>
 </script>
 <script id="cartTmpl" type="text/x-kendo-template">
 	<tr>
@@ -6372,6 +6433,7 @@
 										<i class="icon-play-circle"></i>
 									</a>
 								</div>
+<<<<<<< HEAD
 							</div>
 
 							<div class="span4">
@@ -6515,6 +6577,172 @@
 			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
 					</div>
 					<h3 class="heading glyphicons cart_in"><i></i> ទទួលប្រាក់</h3>
+=======
+							</div>
+
+							<div class="span4">
+								<div class="innerAll padding-bottom-none-phone">
+									<a href="#reconcile" class="widget-stats widget-stats-inverse widget-stats-5">
+										<span class="glyphicons refresh"><i></i></span>
+										<span class="txt">ផ្ទៀងផ្ទាត់ &<br><br> ផ្ទេរសាច់ប្រាក់</span>
+										<div class="clearfix"></div>
+									</a>
+								</div>
+							</div>				
+
+						</div> <!-- //End row-fluid -->
+						
+						<br>
+>>>>>>> 5fff235d08f78c8c2691e142d929ad1846b3d92c
+
+						<div class="row-fluid">
+							<div class="span4">						
+								<table>								
+									<tr>
+						                <td>Class</td>
+						              	<td><select id="classes" name="classes" data-role="combobox" 
+						              				data-text-field="name" data-value-field="id" 
+						              				data-bind="source: classList, value: class_id"
+						              				required data-required-msg="ត្រូវការ Class"></select>
+						              	</td>
+						            </tr>
+									<tr>
+					                    <td>វីធីបង់ប្រាក់</td>
+					                  	<td>
+					                  		<select id="paymentMethod" name="paymentMethod" data-role="combobox"
+					                  				data-text-field="name" data-value-field="id" 
+					                  				data-bind="source: paymentMethodList, value: payment_method_id"
+					                  				required data-required-msg="ត្រូវការ វីធីបង់ប្រាក់"></select>
+					                  	</td>
+					                <tr>
+									<tr>
+						                <td>លេខកូដសែក</td>
+						                <td><input id="check_no" class="k-textbox" data-bind="value: check_no" /></td>
+						            <tr>
+						            <tr>
+										<td>គណនីសាច់ប្រាក់</td>
+										<td>
+											<select id="cashAccount" name="cashAccount" data-role="combobox" 
+													data-text-field="name" data-value-field="id" 
+													data-bind="source: cashAccountList, value: cash_account_id"
+													required data-required-msg="ត្រូវការ គណនីសាច់ប្រាក់"></select>
+										</td>
+									</tr>
+								</table>							
+							</div>
+							<div class="span4">
+
+							</div>
+							<div class="span4">
+								<p>
+					              	ថ្ងៃទទួលប្រាក់
+					              	<input id="paymentDate" name="paymentDate" data-role="datepicker" 
+					              			data-bind="value: payment_date" data-format="dd-MM-yyyy"
+					              			required data-required-msg="ត្រូវការ ថ្ងៃទទួលប្រាក់" />
+					              	<br>
+						          	ប្រាក់ត្រូវបង់
+					          	</p>		          	
+
+					          	<div align="right">		          		
+					          		<span style="color: white; font-size: 30px; background-color:maroon; border:0px solid black; padding: 5px;" data-bind="text: total"></span>		          			          		
+					          	</div>
+							</div>
+						</div>
+						
+						<br>
+
+						<div data-role="grid" data-bind="source: invoiceList"
+				            data-auto-bind="false" data-row-template="invoiceCashierRowTemplate"                  
+				            data-columns='[{ title: "", width: 25 },	                 	
+				                { title: "ល.រ", width: 40 },
+				                { title: "កាលបរិច្ឆេទ", width:80 },	                     
+				                { title: "ឈ្មោះ" },
+				                { title: "# វិក្កយបត្រ" },
+				                { title: "ទឹកប្រាក់" },	                    	                     
+				                { title: "ទទួលប្រាក់" }	                    	                    
+				                ]'>
+						</div>
+<<<<<<< HEAD
+					</div>
+					
+					<br>
+
+					<div data-role="grid" data-bind="source: invoiceList"
+			            data-auto-bind="false" data-row-template="invoiceCashierSingleRowTemplate"                  
+			            data-columns='[{ title: "", width: 50 },	                 	
+			                { title: "ល.រ", width: 70 },
+			                { title: "កាលបរិច្ឆេទ" },			                
+			                { title: "# វិក្កយបត្រ" },
+			                { title: "ទឹកប្រាក់" },	                    	                     
+			                { title: "ទទួលប្រាក់" }	                    	                    
+			                ]'>
+					</div>
+					
+					<br>
+=======
+						
+						<br>
+>>>>>>> 5fff235d08f78c8c2691e142d929ad1846b3d92c
+
+						<div id="status"></div>
+
+						<div class="row-fluid">
+							<div class="span6">
+								<div class="innerAll padding-bottom-none-phone">
+									<a id="save" name="save" class="widget-stats widget-stats-info widget-stats-4">
+										<span class="txt">ទឹកប្រាក់ទទួលបាន</span>
+										<span class="count" style="font-size: 35px;" data-bind="text: pay_amount"></span>
+										<span class="glyphicons cart_in"><i></i></span>
+										<div class="clearfix"></div>
+										<i class="icon-play-circle"></i>
+									</a>
+								</div>
+							</div>
+							<div class="span2">
+
+							</div>
+							<div class="span4">
+								<table>
+									<tr>
+										<td>ទឹកប្រាក់ត្រូវបង់:</td>
+										<td align="right"><span data-bind="text: total"></span></td>
+									</tr>
+									<tr>
+										<td>បញ្ចុះតំលៃ:</td>
+										<td><input data-role="numerictextbox" data-format="c0" data-bind="value: discount, events: {change : change}" /></td>
+									</tr>
+									<tr>
+										<td>ទឹកប្រាក់ពិន័យ:</td>							
+										<td><input data-role="numerictextbox" data-format="c0" data-bind="value: fine, events: {change : change}" /></td>
+									</tr>
+									<tr>
+										<td>ទឹកប្រាក់ទទួលបាន:</td>
+										<td align="right"><span data-bind="text: pay_amount"></span></td>
+									</tr>
+									<tr>
+										<td>នៅសល់:</td>
+										<td align="right"><span data-bind="text: remain"></span></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+<<<<<<< HEAD
+=======
+					</div> <!-- //End span9 -->
+				</div> <!-- //End example -->
+			</div>
+		</div>
+	</div>
+</script>
+<script id="cashierSingle" type="text/x-kendo-template">
+	<div id="slide-form">
+		<div class="row-fluid">
+			<div class="span12">			
+				<div id="example">
+					<div align="right">			        				        	
+			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
+					</div>
+					<h3 class="heading glyphicons cart_in"><i></i> ទទួលប្រាក់</h3>
 
 					<div class="row-fluid">
 						<div class="span4">						
@@ -6602,6 +6830,7 @@
 						<div class="span2">
 
 						</div>
+>>>>>>> 5fff235d08f78c8c2691e142d929ad1846b3d92c
 						<div class="span4">
 							<table>
 								<tr>
@@ -9664,6 +9893,12 @@
 			getElectric: function(e) {
 				e.preventDefault();
 				banhji.router.navigate("#ebill", false);
+			},
+			purchaseReturn: function(e) {
+				// show purchase return form
+				e.preventDefault();
+				var form = new kendo.View("#purchase-return", {model: banhji.purchaseReturn});
+				banhji.view.vendorSingle.showIn("#vendorSingleDetail", form);
 			}
 		});
 
@@ -10644,6 +10879,192 @@
 		}());
 
 		return {viewModel: viewModel};
+	}());
+	banhji.purchaseReturn = (function(){
+		var Item = kendo.Class.extend({
+			dataSource: new kendo.data.DataSource({
+				transport: {
+					read: {
+						url: banhji.baseUrl + "api/inventory_api/items",
+						type: "GET",
+						dataType: "json"
+					}
+				},
+				filter: [
+					{ field: "status", value: 1 },
+					{ field: "parent_id >", value: 0},
+					{ field: "item_type_id", value: 1}
+				],
+				serverFiltering: true
+			}),
+			list: [],
+			init: function() {
+				var self = this;
+				this.dataSource.fetch(function(){
+					$.each(this.data(), function(i,v){
+						viewModel.items.push(v);
+					});
+				});
+			}
+		});
+		var item = new Item;
+		var cashAcct = new kendo.data.DataSource({
+		    transport: {
+			    read: {
+			    	url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "GET",
+				    dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "POST",
+				    dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "PUT",
+				    dataType: "json"
+				},
+				destroy: {
+					url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "DELETE",
+				    dataType: "json"
+				},
+				parameterMap: function(options, operation) {
+					if(operation !== "read" && options.models) {
+						return {models: kendo.stringigy(options.models)};
+					}
+					return options;
+				}
+		    },
+		    serverFiltering: true,
+		    filter: [
+	        	{ field: "company_id", value: banhji.config.userData.company},
+	        	{ field: "active", value: 1},
+	        	{ field: "account_type_id", value: 6}
+	        ],
+	        schema: {
+	        	model: {
+	        		id: "id"
+	        	},
+	        	data: "results"
+	        }
+	    });
+		var apAcct = new kendo.data.DataSource({
+		    transport: {
+			    read: {
+			    	url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "GET",
+				    dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "POST",
+				    dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "PUT",
+				    dataType: "json"
+				},
+				destroy: {
+					url: banhji.baseUrl + "api/accounting_api/account",
+				    type: "DELETE",
+				    dataType: "json"
+				},
+				parameterMap: function(options, operation) {
+					if(operation !== "read" && options.models) {
+						return {models: kendo.stringigy(options.models)};
+					}
+					return options;
+				}
+		    },
+		    serverFiltering: true,
+		    filter: [
+	        	{ field: "company_id", value: banhji.config.userData.company},
+	        	{ field: "active", value: 1},
+	        	{ field: "account_type_id", value: 11}
+	        ],
+	        schema: {
+	        	model: {
+	        		id: "id"
+	        	},
+	        	data: "results"
+	        }
+	    });
+		var viewModel = kendo.observable({
+			vendor: function() {
+				if(banhji.vendor.get("current").id !== null) {
+					return banhji.vendor.get("current");
+				} else {
+					return false;
+				}
+			},
+			items: [],
+			cashAcct: cashAcct,
+			apAcct: apAcct,
+			showCashAcct: true,
+			returnedItems: [
+				{
+					item: { id: null, name: ""},
+					description: "",
+					unit: 0,
+					price: 0,
+					amount: 0
+				}
+			],
+			addItemToList: function(){
+				this.returnedItems.push({
+					item: { id: null, name: ""},
+					description: "",
+					unit: 0,
+					price: 0,
+					amount: 0
+				});
+			},
+			removeItemFromList: function(e){
+				var list = this.returnedItems;
+				if(list.length>0) {
+					$.each(list, function(i,v){
+						if(e.data === v) {
+							list.splice(i,1);
+							return false;
+						}
+					});
+				}
+			},
+			amountChange: function(e) {
+				var list = this.returnedItems;
+				if(list.length>0) {
+					$.each(list, function(i,v){
+						if(e.data === v) {
+							list[i].set("amount", e.data.price * e.data.unit);
+							return false;
+						}
+					});
+				}
+			},
+			keyAction: function(e) {
+				var $curr = $(e.currentTarget)
+				if(e.keyCode) {
+					// console.log($curr.parent().siblings().next());
+				}
+			},
+			returnType: 1,
+			showAccount: function(){
+				if(this.get("returnType") !== "2") {
+					this.set("showCashAcct", true);
+				} else {
+					this.set("showCashAcct", false);
+				}
+				console.log(item.list);
+			},
+			record: function(){
+				// return and sync item
+				console.log(this.returnedItems);
+			}
+		});
+		return viewModel;
 	}());
 	banhji.expense = (function(){
 		$.getJSON(banhji.baseUrl + "api/accounting_api/expense_account", function(data) {
@@ -28023,29 +28444,7 @@
 			window.location.href="<?php echo base_url();?>app#new_company";
 		}
 
-		$("#vendorPopupBtn").on('click', function(e){
-			e.preventDefault();
-			var parent = $("#layout-view").parent().append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
-			var wnd = $("#popupVendor").kendoWindow({
-				title: "Vendor",
-				width: "400px",
-				height: "300px",
-				modal: true
-			}).data("kendoWindow");
-			wnd.center().open();
-			$("#vendorListItem1").kendoGrid({
-				dataSource: banhji.vendor.vendorsList,
-				columns: [
-					{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
-				],
-				height: "266px",
-				selectable: true,
-				change: function(e) {
-					var selected = this.select();
-					var vendor = this.dataItem(selected);
-					banhji.vendor.setCurrent(vendor.id);
-				}
-			});
-		});
+
+
 	});
 </script>
