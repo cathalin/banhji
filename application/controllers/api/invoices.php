@@ -215,7 +215,7 @@ class Invoices extends REST_Controller {
 			$data[] = $value;									
 		}						
 		$ids = $this->invoice->insert_many($data);		 
-		$this->response($ids, 200);			
+		$this->response($ids, 201);			
 	}
 
 	//POST MANY

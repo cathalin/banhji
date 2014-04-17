@@ -7611,7 +7611,7 @@
 							    <td></td>
 							</tr>
 							<tr>
-								<td>Logo</td>
+								<td valign="top">Logo</td>
 								<td>
 									<input name="userfile" id="userfile" type="file" />
 									ទំហំតូចជាង 1MB | 1024*768 pixels
@@ -7730,7 +7730,7 @@
 						<a href="#currency_rates" class="btn btn-reverse btn-large btn-icon glyphicons left_arrow"><i></i> ត្រលប់ក្រោយវិញ</a>
 					</div>
 					<div class="span2 offset8" align="right">
-						<a href="#classes" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
+						<a href="#use_electricity" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
 					</div>						
 				</div>
 			</div><!-- //End div example-->
@@ -24190,12 +24190,12 @@
 					   	'vat'				: 0,
 					   	'vat_id'			: 0,
 					   	'status' 			: 0,
-					   	'sub_code'			: d.currencies.sub_code,
-					   	'biller' 			: biller,
-					   	'customer_id' 		: d.id,			   	
-					   	'address' 			: d.address,
+					   	'sub_code'			: d.currencies.sub_code,					   	
 					   	'issued_date' 		: kendo.toString(this.get("issued_date"),"yyyy-MM-dd"),
 					   	'due_date' 			: kendo.toString(this.get("due_date"),"yyyy-MM-dd"),
+					   	'address' 			: d.address,
+					   	'biller' 			: biller,
+					   	'customer_id' 		: d.id,	
 					   	'so_id' 			: 0,
 					   	'estimate_id' 		: 0,
 						'gdn_id' 			: 0,
@@ -24688,7 +24688,6 @@
 		    }			
 		}	
 	});	
-	
 	banhji.router.route("new_customer", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.newCustomer);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -24758,7 +24757,6 @@
 	        }
 		});		
 	});
-
 	banhji.router.route("receipt(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.receipt);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -24793,7 +24791,6 @@
 	        }
 		});		
 	});
-
 	banhji.router.route("so(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.so);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -24828,7 +24825,6 @@
 	        }
 		});		
 	});
-
 	banhji.router.route("estimate(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.estimate);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -24862,7 +24858,6 @@
 	        }
 		});		
 	});
-
 	banhji.router.route("gdn(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.gdn);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -24979,7 +24974,6 @@
 	        }
 		});
 	});
-
 	banhji.router.route("eInvoice", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.eInvoice);
 		banhji.eInvoice.viewModel.pageLoad();
@@ -25080,7 +25074,6 @@
 		
 		$('#txtSearch').focus();		
 	});
-
 	banhji.router.route("cashier_single/:id", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.cashierSingle);
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25105,7 +25098,6 @@
 	        }
 		});			
 	});
-
 	banhji.router.route("daily_payment", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.dailyPayment);
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25129,7 +25121,6 @@
 	        }
 		});			
 	});
-
 	banhji.router.route("reconcile", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.reconcile);
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25272,7 +25263,6 @@
 			}					
 		}			
 	});
-
 	banhji.router.route("aging_summary", function(){		
 		banhji.view.layout.showIn("#layout-view", banhji.view.agingSummary);
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25320,7 +25310,6 @@
 	        }
 		});			
 	});
-
 	banhji.router.route("aging_detail", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.agingDetail);
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25368,7 +25357,6 @@
 	        }
 		});			
 	});
-
 	banhji.router.route("low_consumption", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.lowConsumption);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25406,7 +25394,6 @@
             }
         }).data("kendoDropDownList");						
 	});
-
 	banhji.router.route("disconnect_list", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.disconnectList);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
@@ -25511,35 +25498,28 @@
 	        }
 		});			
 	});
-
 	banhji.router.route("users", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.users);		
 	});
-
 	banhji.router.route("currency_rates", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.currencyRates);		
 	});
-
 	banhji.router.route("customer_types", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.customerTypes);		
-	});	
+	});
 
 	banhji.router.route("use_electricity", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.useElectricity);		
 	});
-
 	banhji.router.route("eSetting", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.eSetting);		
 	});
-
 	banhji.router.route("amperes", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.amperes);		
 	});
-
 	banhji.router.route("voltages", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.voltages);		
 	});
-
 	banhji.router.route("electricity_boxes", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.electricityBoxes);		
 	});
