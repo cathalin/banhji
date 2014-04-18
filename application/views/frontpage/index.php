@@ -89,7 +89,7 @@
 								<td><p style="background: #9b1c08; padding: 5px; color: #fff; font-weight: bold;">លេខសង្ងាត់</p></td>
 							</tr>
 							<tr>
-								<td><input type="text" class="block" placeholder="you@email.com" data-bind="value: email"></td>
+								<td><input type="email" class="block" placeholder="you@email.com" data-bind="value: email"></td>
 								<td><input type="password" class="block" placeholder="password" data-bind="value: password"></td>
 							</tr>
 							<tr>

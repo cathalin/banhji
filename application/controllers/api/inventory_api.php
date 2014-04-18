@@ -350,7 +350,7 @@ class Inventory_api extends REST_Controller {
 			}
 		}
 
-		$query = $this->item_record->insert_many($data);
+		$query[] = $this->item_record->insert_many($data);
 		if($this->db->affected_rows() > 0) {
 			$this->response(array("status"=>"OK", "count"=>$this->db->affected_rows(), "results"=>$query), 200);
 		} else {
@@ -369,8 +369,8 @@ class Inventory_api extends REST_Controller {
 		$vat_id = 6;
 		$other_charge_id = 7;
 
-		$arr = array($meter_id, $breaker_id);
-		$arrType = array($vat_id, $other_charge_id);				
+		$arr = array($meter_id, $breaker_id, $other_charge_id);
+		$arrType = array($vat_id);				
 		$data = $this->item->where_not_in("id",$arr)->where_not_in("item_type_id",$arrType)->get_all();						
 		$this->response($data, 200);
 	}
