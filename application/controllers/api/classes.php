@@ -28,10 +28,21 @@ class Classes extends REST_Controller {
 						"company" => $this->company->get($row->company_id),
 						"name" => $row->name,
 						"type" => $row->type,
-						"description" => $row->description
+						"description" => $row->description,
+						"url" => array(
+							"href"=> base_url() ."classes/class/".$row->id,
+							"title"=> $row->name
+						)
 					);
 				}				
-				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
+				$this->response(array('error'=>'false', 
+					'meta'=>array(
+						'code'=>200,
+						'message'=>"data found.", 
+						'dataAccessed'=>Date('d-m-Y'),
+						'action'=>"GET"), 
+					'results'=>$data), 
+				200);	
 			} else {				
 				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
 			}	

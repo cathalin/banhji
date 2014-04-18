@@ -901,46 +901,106 @@
 	</div>	
 </script>
 <script id="purchase-return" type="text/x-kendo-template">
-	<div class="row-fluid">
-		<div class="table table-strip table-condensed" data-role="grid"
-			 data-columns='[
-			 	{ title: "&nbsp;", width: "50px"},
-			 	{ title: "សំភារៈ"},
-				{ title: "ព៌ណនា"},
-				{ title: "ចំនួន", width: "90px"},
-				{ title: "តំលៃ", width: "120px"},
-				{ title: "សរុប", width: "120px"}
-			 ]'
-			 data-bind="source: returnedItems"
-			 data-editable='true'
-			 data-row-template="purchase-return-list"></div>
-		<span class="glyphicons circle_plus" data-bind="click: addItemToList"><i></i></span>
-		<div class="span4 pull-right">
-			<div class="widget widget-heading-simple widget-body-white">
-				<div class="widget-body">
-					<table>
-						<tr>
-							<td width="200">Available Credit</td>
-							<td><input type="radio" name="type" value="1" data-bind="checked: returnType, events: {change: showAccount}"></td>
-						</tr>
-						<tr>
-							<td>Refund</td>
-							<td><input type="radio" name="type" value="2" data-bind="checked: returnType, events: {change: showAccount}"></td>
-						</tr>
-						<tr>
-							<td>Against Bill</td>
-							<td><input type="radio" name="type" value="3" data-bind="checked: returnType, events: {change: showAccount}"></td>
-						</tr>
-					</table>
-					<input type="text" data-role="combobox" data-bind="visible: showCashAcct, source: apAcct" 
-									   data-text-field="name" data-value-field="id" style="width: 100%">
-					<input type="text" data-role="combobox" data-bind="invisible: showCashAcct, source: cashAcct" 
-									   data-text-field="name" data-value-field="id" style="width: 100%">
-				</div>
+	<div class="container-960">
+		<div class="row-fluid">
+			<div class="well">
+				<table class="table">
+					<tr>
+						<td>វិក្កយប័ត្រៈ</td>
+						<td><input type="text" name="invoice" class="k-input"
+						 					   data-role="combobox"
+											   data-auto-bind="false",
+											   data-suggest="true",
+											   data-min-length="6"
+											   data-filter="startswith"
+											   data-bind="source: invoices, value: invoice, events: {change: onInvoiceChange}"
+											   data-text-field="number"
+											   data-value-field="id"></td>
+						<td width="100">កាលបរិច្ឆេទៈ</td>
+						<td><input type="date" data-role="datepicker" 
+											   date-bind="value: date"
+											   data-format="dd-MM-yyyy"></td>
+					</tr>
+					<tr>
+						<td width="100">អ្នកផ្គត់ផ្គង់ៈ</td>
+						<td><input type="text" name="supplier" class="k-input"
+											   data-role="combobox"
+											   data-auto-bind="false"
+											   data-bind="source: vendors, value: vendor"
+											   data-text-field="company"
+											   data-value-field="id"></td>
+						<td>គណនីៈ</td>
+						<td>
+							
+						</td>
+					</tr>
+					<tr>
+						<td>លេខសក្ខីបត្រ័ៈ</td>
+						<td><input type="text" name="voucher" class="k-input"></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>ទំព័រចំណាត់ថ្នាក់ៈ</td>
+						<td><input type="text" name="invoice" class="k-input"
+						 					   data-role="combobox"
+											   data-auto-bind="false",
+											   data-suggest="true",
+											   data-min-length="6"
+											   data-filter="startswith"
+											   data-bind="source: classes, value: class"
+											   data-text-field="name"
+											   data-value-field="id"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+				
+				
 			</div>
-			<button class="btn btn-primary btn-block btn-icon glyphicons ok" data-bind="click: record"><i></i> កត់ត្រា</button>
+			<div class="table table-strip table-condensed" data-role="grid"
+				 data-columns='[
+				 	{ title: "&nbsp;", width: "50px"},
+				 	{ title: "សំភារៈ"},
+					{ title: "ព៌ណនា"},
+					{ title: "ចំនួន", width: "90px"},
+					{ title: "តំលៃ", width: "120px"},
+					{ title: "សរុប", width: "120px"}
+				 ]'
+				 data-bind="source: returnedItems"
+				 data-editable='true'
+				 data-row-template="purchase-return-list"></div>
+			<span class="glyphicons circle_plus" data-bind="click: addItemToList"><i></i></span>
+			<div class="span4 pull-right">
+				<div class="widget widget-heading-simple widget-body-white">
+					<div class="widget-body">
+						<table>
+							<tr>
+								<td width="200">Available Credit</td>
+								<td><input type="radio" name="type" value="1" data-bind="checked: returnType, events: {change: showAccount}"></td>
+							</tr>
+							<tr>
+								<td>Refund</td>
+								<td><input type="radio" name="type" value="2" data-bind="checked: returnType, events: {change: showAccount}"></td>
+							</tr>
+							<tr>
+								<td>Against Bill</td>
+								<td><input type="radio" name="type" value="3" data-bind="checked: returnType, events: {change: showAccount}"></td>
+							</tr>
+						</table>
+						<input type="text" data-role="combobox" data-bind="visible: showCashAcct, source: apAcct" 
+										   data-text-field="name" data-value-field="id" style="width: 100%">
+						<input type="text" data-role="combobox" data-bind="invisible: showCashAcct, source: cashAcct" 
+										   data-text-field="name" data-value-field="id" style="width: 100%">
+					</div>
+				</div>
+				<button class="btn btn-primary btn-block btn-icon glyphicons ok" data-bind="click: record"><i></i> កត់ត្រា</button>
+			</div>
 		</div>
-	</div>
+	</div>	
+</script>
+<script id="vendorDDListTemplate" type="text/x-kendo-template">
+	<input type="text" value="dfdlsf" style="width: 100px">
 </script>
 <script id="purchase-return-list" type="text/x-kendo-template">
 	<tr>
@@ -8081,10 +8141,11 @@
 		    serverFiltering: true,
 		    filter: [
 	        	{ field: "company_id", value: banhji.config.userData.company},
-	        	{ field: "status", value: 1}
+	        	{ field: "active", value: 1}
 	        ],
 	        schema: {
-	        	model: account
+	        	model: {id: "id"},
+	        	data: "results"
 	        }
 	    });
 		var viewModel = kendo.observable({
@@ -9720,8 +9781,7 @@
 			purchaseReturn: function(e) {
 				// show purchase return form
 				e.preventDefault();
-				var form = new kendo.View("#purchase-return", {model: banhji.purchaseReturn});
-				banhji.view.vendorSingle.showIn("#vendorSingleDetail", form);
+				banhji.router.navigate("purchasereturn");
 			}
 		});
 
@@ -10597,7 +10657,8 @@
 								class_id: this.get("class_id"),
 								status: 0,
 								reference: this.get("po_id"),
-								journalEntries: self.get("grn") === null ? []:this.journalEntries							
+								journalEntries: self.get("grn") === null ? []:this.journalEntries,
+								inJournal: 1							
 							}).then(
 								function(data){
 									if(self.get("grn") !== null) {
@@ -10816,13 +10877,13 @@
 	        }
 	    });
 		var viewModel = kendo.observable({
-			vendor: function() {
-				if(banhji.vendor.get("current").id !== null) {
-					return banhji.vendor.get("current");
-				} else {
-					return false;
-				}
-			},
+			invoices: banhji.transaction.database,
+			invoice: null,
+			vendors: banhji.ds.vendors,
+			vendor: null,
+			classes: banhji.class.dataSource,
+			class: null,
+			date: "2014-04-18",
 			items: [],
 			cashAcct: cashAcct,
 			apAcct: apAcct,
@@ -10836,6 +10897,17 @@
 					amount: 0
 				}
 			],
+			onInvoiceChange: function(e) {
+				if(this.get("invoice").amount_billed === this.get("invoice").amount_paid) {
+					// paid bill
+					console.log("paid bill");
+				} else {
+					// open bill
+					console.log("open bill");
+				}
+				this.set("vendor", this.get("invoice").people_name);
+				this.set("class", this.get("invoice").class_name);
+			},
 			addItemToList: function(){
 				this.returnedItems.push({
 					item: { id: null, name: ""},
@@ -11148,7 +11220,8 @@
 							number: this.get("invoiceNumber"),
 							class_id: this.get("class_id"),
 							status: 0,
-							journalEntries: this.journalEntries							
+							journalEntries: this.journalEntries,
+							inJournal: 1						
 						}).then(
 							function(data){
 								viewModel.empty();
@@ -27743,15 +27816,7 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.items);
 		var transTmpl = kendo.template($("#itemsRecordView").html());
-		var template = kendo.template($("#menu").html());
-		var menu = [];
-		for(var i=0;i<banhji.km.length; i++) {
-			var current = banhji.km[i];
-			if(banhji.config.userData.allowedModules[i]) {
-				menu.push(current);
-			}
-		}
-		$("#header").html(template(menu));
+		
 		$("#home-menu").text("Banhji | សន្និធិ");
 		$("#secondary-menu").html("<li><a href='\#new/item'>សារពើណ័ណ្ឌថ្មី</a></li><li><a href='\#pomonitoring'>ប្រតិបត្តិការមូល</a></li><li><a href='\#load_adjustment'>សំរួលសន្និធិ</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 
@@ -27920,6 +27985,14 @@
 			width: "400px",
 			height: "350px"
 		}).data("kendoWindow");
+	});
+
+	banhji.router.route("purchasereturn(/:id)", function(id){
+		if(typeof id !== "undefined") {
+			console.log(typeof id);
+		}
+		var form = new kendo.View("#purchase-return", {model: banhji.purchaseReturn});
+		banhji.view.layout.showIn("#layout-view", form);
 	});
 
 	//By Visal -----------------------------------
