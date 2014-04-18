@@ -15,7 +15,7 @@
 		</ul>
 	</div>
 </div>
-<div id="wrapper"></div>
+<div id="wrapperApplication"></div>
 <script src="<?php echo base_url();?>resources/js/locale.js"></script>
 <script src="<?php echo base_url();?>resources/js/cultures/kendo.culture.km-KH.min.js"></script>
 
@@ -37,11 +37,10 @@
 		</div>
 	</div>
 </script>
-<script type="text/x-kendo-template" id="index">
-	
-	<div class="row-fluid">
-		<div class="innerLR">
-			<div class="span12">
+<script type="text/x-kendo-template" id="index">	
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="innerLR">
 				<div id="content"></div>
 			</div>
 		</div>
@@ -101,7 +100,7 @@
 </script>
 
 <script type="text/x-kendo-template" id="vendor">
-	<div class="widget widget-heading-simple widget-body-gray widget-employees">			
+	<div class="widget widget-heading-simple widget-body-white widget-employees">			
 		<!-- Widget Heading -->
 		<!-- <div class="widget-head">
 			<h4 class="heading glyphicons user"><i></i>ទំព័រអគ្គីសនី</h4>
@@ -352,7 +351,6 @@
 					<li><a href="#" data-bind="click: home">ព័តមានលំអិតអ្នកផ្គត់ផ្គង់</a></li>
 					<li><a href="#" data-bind="click: payTo">ទូទាត់វិក្កយប័ត្រ</a></li>
 					<li><a href="#" data-bind="click: getBillHistory">ប្រត្តិប័ត្រការណ៍</a></li>
-					<li><a href="#" data-bind="click: purchaseReturn">Purchase Return</a></li>
 				</ul>
 				<ul class="nav pull-right">
 					<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i></a>
@@ -360,6 +358,7 @@
 							<li><a href="#purchase">ទិញ</a></li>
 						    <li><a href="#expense">ចំណាយ</a></li>
 						    <li><a href="#po">បញ្ជាទិញ</a></li>
+						    <li><a href="#" data-bind="click: purchaseReturn">Purchase Return</a></li>
 						    <li><a href="#" data-bind="visible: supplyElectricity, events: {click: getElectric}">អគ្គីសនី</a></li>
 						</ul>
 					</li>
@@ -10881,7 +10880,6 @@
 				} else {
 					this.set("showCashAcct", false);
 				}
-				console.log(item.list);
 			},
 			record: function(){
 				// return and sync item
@@ -24232,7 +24230,7 @@
 	/* Router section */
 	banhji.router = new kendo.Router({
 		init: function() {
-			banhji.view.layout.render("#wrapper");
+			banhji.view.layout.render("#wrapperApplication");
 		},
 		routeMissing: function(e) {
 			banhji.view.layout.showIn("#layout-view", banhji.view.missing);
