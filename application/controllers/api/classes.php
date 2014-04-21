@@ -31,7 +31,7 @@ class Classes extends REST_Controller {
 						"description" => $row->description
 					);
 				}				
-				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
+				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>array()), 200);	
 			} else {				
 				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
 			}	
