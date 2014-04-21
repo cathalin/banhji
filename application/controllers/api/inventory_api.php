@@ -350,7 +350,7 @@ class Inventory_api extends REST_Controller {
 			}
 		}
 
-		$query = $this->item_record->insert_many($data);
+		$query[] = $this->item_record->insert_many($data);
 		if($this->db->affected_rows() > 0) {
 			$this->response(array("status"=>"OK", "count"=>$this->db->affected_rows(), "results"=>$query), 200);
 		} else {
