@@ -483,6 +483,7 @@ class Meter_records extends REST_Controller {
 
 		$data = array();
 		if(count($arr)>0){
+			//Reading
 			$meterIds = array();
 			foreach ($arr as $row) {
 				array_push($meterIds, $row->id);

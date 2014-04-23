@@ -32,10 +32,7 @@ class Invoice_model extends MY_Model {
     //Get last invoice no by type
     function last_number($type=''){
     	$this->db->select('number');
-		$this->db->where('type', $type);
-		if($type=='Invoice'){
-			$this->db->or_where('type', 'eInvoice');
-		}
+		$this->db->where('type', $type);		
 		$this->db->order_by('id', 'desc');
 		$this->db->limit(1); 
 
