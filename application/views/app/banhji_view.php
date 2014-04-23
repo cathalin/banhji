@@ -911,7 +911,7 @@
 						 					   data-role="combobox"
 											   data-auto-bind="false",
 											   data-suggest="true",
-											   data-min-length="6"
+											   data-min-length="5"
 											   data-filter="startswith"
 											   data-bind="source: invoices, value: invoice, events: {change: onInvoiceChange}"
 											   data-text-field="number"
@@ -929,19 +929,26 @@
 											   data-bind="source: vendors, value: vendor"
 											   data-text-field="company"
 											   data-value-field="id"></td>
-						<td>គណនីៈ</td>
+						<td><span data-bind="invisible: invoiceOpenned">បញ្ជូនជាៈ</span></td>
 						<td>
-							
+							<span data-bind="invisible: invoiceOpenned"><input type="radio" name="type" value="1" data-bind="checked: returnType, events: {change: showAccount}"> Available Credit <br></span>
+							<span data-bind="invisible: invoiceOpenned"><input type="radio" name="type" value="2" data-bind="checked: returnType, events: {change: showAccount}"> Refund <br></span>
+							<span data-bind="invisible: invoiceOpenned"><input type="radio" name="type" value="3" data-bind="checked: returnType, events: {change: showAccount}"> សំរាប់វិក័យប័ត្រ</span>
 						</td>
 					</tr>
 					<tr>
 						<td>លេខសក្ខីបត្រ័ៈ</td>
 						<td><input type="text" name="voucher" class="k-input"></td>
-						<td></td>
-						<td></td>
+						<td><span data-bind="invisible: invoiceOpenned">គណនីៈ</span></td>
+						<td>
+							<span data-bind="invisible: invoiceOpenned">
+							<input type="text" data-role="combobox" data-bind="source: apAcct, value: accountAP, events: {change: accountChange}" 
+										   data-text-field="name" data-value-field="id">
+							</span>
+						</td>
 					</tr>
 					<tr>
-						<td>ទំព័រចំណាត់ថ្នាក់ៈ</td>
+						<td>ចំណាត់ថ្នាក់ៈ</td>
 						<td><input type="text" name="invoice" class="k-input"
 						 					   data-role="combobox"
 											   data-auto-bind="false",
@@ -951,12 +958,15 @@
 											   data-bind="source: classes, value: class"
 											   data-text-field="name"
 											   data-value-field="id"></td>
-						<td></td>
-						<td></td>
+						<td><span data-bind="invisible: invoiceOpenned">វិក្កយប័ត្រៈ:</span></td>
+						<td><input type="text" data-role="combobox" 
+											   data-bind="invisible:invoiceOpenned,source: openBills, value: openBill"
+											   data-suggest="true"
+											   data-min-length="5"
+											   data-text-field="number"
+											   data-value-field="id"></td>
 					</tr>
-				</table>
-				
-				
+				</table>		
 			</div>
 			<div class="table table-strip table-condensed" data-role="grid"
 				 data-columns='[
@@ -972,36 +982,13 @@
 				 data-row-template="purchase-return-list"></div>
 			<span class="glyphicons circle_plus" data-bind="click: addItemToList"><i></i></span>
 			<div class="span4 pull-right">
-				<div class="widget widget-heading-simple widget-body-white">
-					<div class="widget-body">
-						<table>
-							<tr>
-								<td width="200">Available Credit</td>
-								<td><input type="radio" name="type" value="1" data-bind="checked: returnType, events: {change: showAccount}"></td>
-							</tr>
-							<tr>
-								<td>Refund</td>
-								<td><input type="radio" name="type" value="2" data-bind="checked: returnType, events: {change: showAccount}"></td>
-							</tr>
-							<tr>
-								<td>Against Bill</td>
-								<td><input type="radio" name="type" value="3" data-bind="checked: returnType, events: {change: showAccount}"></td>
-							</tr>
-						</table>
-						<input type="text" data-role="combobox" data-bind="visible: showCashAcct, source: apAcct" 
-										   data-text-field="name" data-value-field="id" style="width: 100%">
-						<input type="text" data-role="combobox" data-bind="invisible: showCashAcct, source: cashAcct" 
-										   data-text-field="name" data-value-field="id" style="width: 100%">
-					</div>
-				</div>
-				<button class="btn btn-primary btn-block btn-icon glyphicons ok" data-bind="click: record"><i></i> កត់ត្រា</button>
+				<button class="btn btn-primary btn-block btn-icon glyphicons ok" data-bind="click: record"><i></i> កត់ត្រា</button><br>
+				<div class="alert" style="visibility: hidden"></div>
 			</div>
 		</div>
 	</div>	
 </script>
-<script id="vendorDDListTemplate" type="text/x-kendo-template">
-	<input type="text" value="dfdlsf" style="width: 100px">
-</script>
+
 <script id="purchase-return-list" type="text/x-kendo-template">
 	<tr>
 		<td><span class="glyphicons bin" style="margin: 1px 8px 11px 8px;" data-bind="click: removeItemFromList"><i></i></span></td>
@@ -7984,8 +7971,11 @@
     </tr>   
 </script>
 <!-- END OF DAWINE -->
-
-
+<script id="classesTemplate" type="text/x-kendo-tmpl">
+	<li>
+		#=name#
+	</li>
+</script>
 <!-- Application -->
 <script>
 	var banhji = banhji || {};
@@ -8349,58 +8339,66 @@
 		return viewModel;
 	}());
 	banhji.class = (function(){
-		var classCollection = new kendo.data.DataSource({
-	        transport: {
-	            read: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "GET",
-                    dataType: "json",
-                },
-                create: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "POST",
-                    dataType: "json"
-                },
-                update: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "PUT",
-                    dataType: "json"
-                },  
-                destroy: {
-                    url : banhji.baseUrl +"api/classes/class",
-                    type: "DELETE",
-                    dataType: "json"
-                },   
-                parameterMap: function(data, operation) {
-                    if (operation !== "read" && data.models) {
-                        return {models: kendo.stringify(data.models)};
-                    }   
-                    return data;
-               	}
-	        },
-            schema: {
-                    model: {
-                    	id : "id",
-                    	fields: {
-                    		"name": {type:"string"},
-                    		"description": {type: "string"},
-                    		"type": { type: "string"}
-                    	}
-                    },
-                    data: "results"
-            },
-            filter: {field: "company_id", value: banhji.config.userData['company']},
-            serverFiltering: true,
-            serverSorting: true
-        });
-
         var classVM = kendo.observable({
-        	dataSource 	: classCollection,
-        	setDataSource: function(dataSource) {
-        		this.set("dataSurce", dataSource);
+        	baseUrl: banhji.baseUrl +"api/classes/class/",
+        	url: function(resource) {
+        		if(resource === undefined) {
+        			return this.get("baseUrl");
+        		} else {
+        			return this.get("baseUrl") + "resource";
+        		}
         	},
-        	dataSource 	: classCollection,
-        	setCurrent 	: function(model) {
+        	dataSource 	: new kendo.data.DataSource({
+		        transport: {
+		            read: {
+	                    url : function(options) {
+	                    	return classVM.url();
+	                    },
+	                    type: "GET",
+	                    dataType: "json",
+	                },
+	                create: {
+	                    url : banhji.baseUrl +"api/classes/class",
+	                    type: "POST",
+	                    dataType: "json"
+	                },
+	                update: {
+	                    url : function(options) {
+	                    	return classVM.url();
+	                    },
+	                    type: "PUT",
+	                    dataType: "json"
+	                },  
+	                destroy: {
+	                    url : function(options) {
+	                    	return classVM.url();
+	                    },
+	                    type: "DELETE",
+	                    dataType: "json"
+	                },   
+	                parameterMap: function(data, operation) {
+	                    if (operation !== "read" && data.models) {
+	                        return {models: kendo.stringify(data.models)};
+	                    }   
+	                    return data;
+	               	}
+		        },
+	            schema: {
+	                    model: {
+	                    	id : "id",
+	                    	fields: {
+	                    		"name": {type:"string"},
+	                    		"description": {type: "string"},
+	                    		"type": { type: "string"}
+	                    	}
+	                    },
+	                    data: "results"
+	            },
+	            filter: {field: "company_id", value: banhji.config.userData['company']},
+	            serverFiltering: true,
+	            serverSorting: true
+	        }),
+           	setCurrent 	: function(model) {
         		this.set("current", model);
         	},
         	query 		: function(query) {},
@@ -8448,7 +8446,37 @@
         		}
         		
         	},
-        	remove 		: function() {}
+        	remove 		: function() {},
+        	popup 		: function(e) {
+        		var evt = e;
+        		$('#wrapperApplication').append('<div id="clsPopup"><div id="clsPopupContent"></div></div>');
+        		$('#clsPopupContent').kendoGrid({
+        			dataSource: classVM.dataSource,
+        			columns: [
+        				{ field: "name", title: "ផ្ទាំងចំណាត់ថ្ានក់" }
+        			],
+        			selectable: true,
+        			change: function(e) {
+        				var selected = this.select();
+        				var model = this.dataItem(selected);
+        				// var $class = $(evt.currentTarget.previousSibling).children(':nth-child(2)')[0];
+        				// $class.value = model.name;
+        				var $class = $(evt.currentTarget);
+        				console.log($($class));
+        			}
+        		});
+        		var wnd = $("#clsPopup").kendoWindow({
+        				title: "Dialog",
+        				width: "300px",
+        				height: "400px",
+        				animation: {
+							open: {
+								effects: "fade:in"
+							}
+						},
+        			}).data("kendoWindow");
+        		wnd.center().open();
+        	}
         });
         return classVM;
 	}());
@@ -10792,48 +10820,7 @@
 			}
 		});
 		var item = new Item;
-		var cashAcct = new kendo.data.DataSource({
-		    transport: {
-			    read: {
-			    	url: banhji.baseUrl + "api/accounting_api/account",
-				    type: "GET",
-				    dataType: "json"
-				},
-				create: {
-					url: banhji.baseUrl + "api/accounting_api/account",
-				    type: "POST",
-				    dataType: "json"
-				},
-				update: {
-					url: banhji.baseUrl + "api/accounting_api/account",
-				    type: "PUT",
-				    dataType: "json"
-				},
-				destroy: {
-					url: banhji.baseUrl + "api/accounting_api/account",
-				    type: "DELETE",
-				    dataType: "json"
-				},
-				parameterMap: function(options, operation) {
-					if(operation !== "read" && options.models) {
-						return {models: kendo.stringigy(options.models)};
-					}
-					return options;
-				}
-		    },
-		    serverFiltering: true,
-		    filter: [
-	        	{ field: "company_id", value: banhji.config.userData.company},
-	        	{ field: "active", value: 1},
-	        	{ field: "account_type_id", value: 6}
-	        ],
-	        schema: {
-	        	model: {
-	        		id: "id"
-	        	},
-	        	data: "results"
-	        }
-	    });
+
 		var apAcct = new kendo.data.DataSource({
 		    transport: {
 			    read: {
@@ -10876,6 +10863,121 @@
 	        	data: "results"
 	        }
 	    });
+		var openBills = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "PUT",
+					dataType: "json"
+				},
+				destroy: {
+					url: banhji.baseUrl + "api/accounting_api/journals/",
+					type: "DELETE",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},
+			serverFiltering: true,
+			filter: [
+				{ field: "company_id", value: banhji.config.userData.company },
+				{ field: "archived", value: 0},
+				{ field: "status", value: 0}
+			],
+			schema: {
+				model: { id: "id"},
+				data: "results"
+			}
+		});
+		var itemRecords = kendo.observable({
+			idFilter: "",
+			resourceFilter: "",
+			baseUrl: banhji.baseUrl + "api/inventory_api/item_record",
+			url: function () {
+				if(this.get('idFilter') !== "" || this.get('resourceFilter') !== "") {
+					return this.get("baseUrl") + this.get("idFilter") + this.get("resourceFilter");
+				} else {
+					return this.get("baseUrl");
+				}
+				
+			},
+			dataSource: new kendo.data.DataSource({
+		        transport: {
+		        	read: {
+				        url : function(options){
+				        	return itemRecords.url();
+				        },
+				        type: "GET",
+				        dataType: "json"
+			        },
+			        create: {
+				        url : banhji.baseUrl + "api/inventory_api/item_record",
+				        type: "POST",
+				        dataType: "json"
+			        },
+			        parameterMap: function(options, operation) {
+			    		if (operation !== "read" && options.models) {
+			    			  	 return {models: kendo.stringify(options.models)};
+			  			}
+						return options;				   
+			  		}
+				},
+				batch: false,
+				serverFiltering: true,	                            
+			 	schema: {
+					model: {
+						id : "id"
+					},
+					data: "results"		 
+				}
+			}),
+			getByJournal: function(journalId) {
+				var dfd = $.Deferred();
+				this.get("dataSource").filter({ 
+					field: "bill_id", 
+					value: journalId
+				});
+				this.get("dataSource").bind('requestEnd', function(e){
+					if(e.response.error !== true) {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("រកមិនមានទិន្ន័យ។");
+					}
+				});
+				return dfd.promise();
+			},
+			save: function(data) {
+				var dfd = $.Deferred();
+				if(data === undefined) {
+					dfd.reject("សូមផ្ដល់ទិន្ន័យ!");
+				} else {
+					itemRecords.dataSource.add(data);
+					itemRecords.dataSource.sync();
+					itemRecords.dataSource.bind('requestEnd', function(e){
+						if(e.response.error !== true) {
+							dfd.resolve(e.response.results);
+						} else {
+							dfd.reject("រកមិនមានទិន្ន័យ។");
+						}
+					});
+				}
+				return dfd.promise();
+			}
+		});
 		var viewModel = kendo.observable({
 			invoices: banhji.transaction.database,
 			invoice: null,
@@ -10883,14 +10985,21 @@
 			vendor: null,
 			classes: banhji.class.dataSource,
 			class: null,
+			getClass: banhji.class.popup,
+			reference: null,
+			voucher: null,
 			date: "2014-04-18",
 			items: [],
-			cashAcct: cashAcct,
 			apAcct: apAcct,
+			accountAP: null,
 			showCashAcct: true,
+			invoiceOpenned: true,
+			openBills: openBills,
+			openBill: null,
 			returnedItems: [
 				{
 					item: { id: null, name: ""},
+					account_id: 0,
 					description: "",
 					unit: 0,
 					price: 0,
@@ -10898,13 +11007,32 @@
 				}
 			],
 			onInvoiceChange: function(e) {
+				var self = this;
 				if(this.get("invoice").amount_billed === this.get("invoice").amount_paid) {
 					// paid bill
-					console.log("paid bill");
+					this.set("invoiceOpenned", false);
 				} else {
 					// open bill
-					console.log("open bill");
+					this.set("invoiceOpenned", true);
 				}
+				itemRecords.getByJournal(this.get("invoice").id).
+				then(function(data){
+					if(viewModel.get("returnedItems").length>0) {
+						viewModel.get("returnedItems").splice(0,1);
+					}
+					$.each(data, function(i,v){
+						viewModel.get("returnedItems").push({
+							item: {id: v.item_name.id, name: v.item_name.name},
+							account_id: v.item_name.cogs_account_id,
+							description: v.item_name.purchase_description,
+							unit: kendo.parseInt(v.quantity) * -1,
+							price: v.cost,
+							amount: v.amount
+						});
+					});
+				},function(error){});
+
+				this.set("reference", this.get("invoice").id);
 				this.set("vendor", this.get("invoice").people_name);
 				this.set("class", this.get("invoice").class_name);
 			},
@@ -10949,13 +11077,121 @@
 			showAccount: function(){
 				if(this.get("returnType") !== "2") {
 					this.set("showCashAcct", true);
+					apAcct.filter(
+						[
+				        	{ field: "company_id", value: banhji.config.userData.company},
+				        	{ field: "active", value: 1},
+				        	{ field: "account_type_id", value: 11}
+				        ]
+					);
 				} else {
 					this.set("showCashAcct", false);
+					apAcct.filter(
+						[
+				        	{ field: "company_id", value: banhji.config.userData.company},
+				        	{ field: "active", value: 1},
+				        	{ field: "account_type_id", value: 6}
+				        ]
+					);
 				}
+			},
+			accountChange: function(e) {
+				console.log(e);
+			},
+			grandTotal: function() {
+				var amount = 0;
+				if(this.get("returnedItems").length>0) {
+					$.each(this.get("returnedItems"), function(i,v){
+						amount += kendo.parseFloat(v.amount);
+					});
+				}
+				return amount;
+			},
+			empty: function(){
+				this.get("returnedItems").splice(0,this.get("returnedItems").length);
+				this.addItemToList();
+				this.set("invoice", null);
+				this.set("showCashAcct", true);
+				this.set("accountAP", null);
+				this.set("vendor", null);
+				this.set("class", null);
+				this.set("invoiceOpenned", true);
+				this.set("voucher", null);
 			},
 			record: function(){
 				// return and sync item
-				console.log(this.returnedItems);
+				$(".alert").addClass("alert-primary").html("កំពុងធ្វើការកត្រា");
+				var journalEntries = [];
+				if(this.get('vendor')=== null) {
+					alert("Please select a vendor.");
+				} else {
+					journalEntries.push({
+				 		account_id: this.get("accountAP").id, 
+				 		dr: kendo.parseFloat(this.grandTotal()) * kendo.parseFloat(banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company))), 
+				 		cr: 0,
+				 		class_id: this.get("class").id,
+						memo: "បញ្ជូនទំនិញ",
+					 	exchange_rate: banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company)),
+					 	main: 1
+				 	});
+					for(var i=0; i < this.returnedItems.length; i++) {
+						journalEntries.push({
+					 		account_id: this.returnedItems[i].account_id,
+					 		dr: 0, 
+					 		cr: this.returnedItems[i].amount,
+					 		class_id: this.get("class").id, 
+					 		memo: this.returnedItems[i].description,
+					 		exchange_rate: banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company)),
+					 		main: 0
+						});
+					}
+
+					banhji.transaction.save({
+						company_id: banhji.config.userData.company,
+						vendor_id: banhji.vendor.get("current").id,
+						employee_id: banhji.config.userData.userId,
+						payment_id: this.get("paymentTerm"),
+						transaction_type: "return",
+						payment_method: this.get("showCashAcct") ? "Cash":"Credit",
+						check_no: 0,
+						memo: "បញ្ជូនទំនិញ",
+						date: kendo.toString(this.get("date"), "yyyy-MM-dd"),
+						due_date: null,
+						amount_billed: 0,
+						amount_due: 0,
+						amount_paid: 0,
+						voucher: this.get("voucher"),
+						invoiceNumber: 0,
+						class_id: this.get("class").id,
+						status: 1,
+						reference: this.get("reference"),
+						journalEntries: journalEntries,
+						inJournal: 1							
+					})
+					.then(function(data){
+						if(data.status === "OK") {
+							var items = [];
+							$.each(viewModel.get("returnedItems"), function(i,v){
+								items.push({
+									bill_id: data.results.id,
+									item_id: v.item.id,
+									description: v.description,
+									cost: v.price,
+									price: 0,
+									quantity: v.unit,
+									amount: v.amount
+								});
+							});
+
+							itemRecords.save(items)
+							.then(function(data){
+								// great every is fine
+								viewModel.empty();
+								$(".alert").addClass("alert-primary").html("កត់ត្រាបានជោគជ័យ។");
+							});
+						}
+					});
+				}
 			}
 		});
 		return viewModel;
@@ -28256,8 +28492,5 @@
 		if(banhji.config.userData['company']==="") {
 			window.location.href="<?php echo base_url();?>app#new_company";
 		}
-
-
-
 	});
 </script>
