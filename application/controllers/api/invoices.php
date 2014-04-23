@@ -208,14 +208,11 @@ class Invoices extends REST_Controller {
 
 	//POST BATCH	
 	function invoice_batch_post() {
-		$post = $this->post();
+		$post = json_decode($this->post('models'));
 
-		//Remove model
-		foreach($post as $key => $value) {			
-			$data[] = $value;									
-		}						
-		$ids = $this->invoice->insert_many($data);		 
-		$this->response($ids, 201);			
+		$data = $this->invoice->insert_many($post);
+
+		$this->response($data, 201);			
 	}
 
 	//POST MANY

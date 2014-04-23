@@ -901,7 +901,7 @@
 	</div>	
 </script>
 <script id="purchase-return" type="text/x-kendo-template">
-<<<<<<< HEAD
+
 	<div class="container-960">
 		<div class="row-fluid">
 			<div class="well">
@@ -994,7 +994,7 @@
 						<input type="text" data-role="combobox" data-bind="invisible: showCashAcct, source: cashAcct" 
 										   data-text-field="name" data-value-field="id" style="width: 100%">
 					</div>
-=======
+
 	<div class="row-fluid">
 		<div class="well">
 			<table class="table">
@@ -1051,7 +1051,7 @@
 									   data-text-field="name" data-value-field="id" style="width: 100%">
 					<input type="text" data-role="combobox" data-bind="invisible: showCashAcct, source: cashAcct" 
 									   data-text-field="name" data-value-field="id" style="width: 100%">
->>>>>>> f85f685d60af33b0690bfc5d04617f65e79f1394
+
 				</div>
 				<button class="btn btn-primary btn-block btn-icon glyphicons ok" data-bind="click: record"><i></i> កត់ត្រា</button>
 			</div>
@@ -8091,9 +8091,9 @@
       		id: "id"
       	}
       }
-  });
-  PaymentTermDS.read();
-  var transformerDS = new kendo.data.DataSource({
+  	});
+  	PaymentTermDS.read();
+  	var transformerDS = new kendo.data.DataSource({
 		transport: {
 			read: {
 				url: banhji.baseUrl + "api/electricities/transformers/",
@@ -9898,7 +9898,7 @@
             	{field: "item_type_id", value: 1}
             ],
             serverSorting: true
-    });
+    	});
 		var itemRecordsStore = new kendo.data.DataSource({
 	        transport: {
 	            read: {
@@ -9943,7 +9943,7 @@
             },
             serverFiltering: true,
             serverSorting: true
-    });
+    	});
 		var types = new kendo.data.DataSource({
 			schema: {
 				id: "id"
@@ -10058,7 +10058,7 @@
 	        	},
 	        	data: "results"
 	        }
-	  });
+	  	});
 
 		// viewModel
 		var recordModel = kendo.observable({
@@ -10703,7 +10703,7 @@
 								inJournal: 1							
 							}).then(
 								function(data){
-<<<<<<< HEAD
+
 									viewModel.sync(data.results[0].id);
 									viewModel.empty();
 								},
@@ -10769,7 +10769,7 @@
 										banhji.transaction.update(self.get("po_id"), {status: 1});
 									}
 									viewModel.empty();
-=======
+
 									self.set("cashAcct", "");
 									self.set("checkNo", "");
 									self.set("payment_not", "");
@@ -10785,7 +10785,7 @@
 											billPayments.remove(billPayments.at(0));
 										}
 									});
->>>>>>> f85f685d60af33b0690bfc5d04617f65e79f1394
+
 								},
 								function(error){
 									console.log(error);
@@ -10814,7 +10814,7 @@
 
 		return { viewModel: billModel };
 	}());
-<<<<<<< HEAD
+
 	banhji.purchaseReturn = (function(){
 		var Item = kendo.Class.extend({
 			dataSource: new kendo.data.DataSource({
@@ -11014,12 +11014,15 @@
 	banhji.expense = (function(){
 		$.getJSON(banhji.baseUrl + "api/accounting_api/expense_account", function(data) {
 		 	$.each(data, function(key, val) {
-		    	viewModel.expenseAccts.push({	account_type_id 	: val.account_type_id, 
-		    								id 					: val.id,
-	    									code 				: val.code,
-	    									name 				: val.name,
-	    									description 		: val.description
-=======
+		    	// viewModel.expenseAccts.push({	account_type_id 	: val.account_type_id, 
+		    	// 							id 					: val.id,
+	    		// 							code 				: val.code,
+	    		// 							name 				: val.name,
+	    		// 							description 		: val.description
+	    		// 						});
+		    });	
+		});
+	}());
 
 	banhji.eBill= (function(){
 		$.getJSON(banhji.baseUrl + "api/electricities/transformers/", function(data) {
@@ -11028,7 +11031,7 @@
 		    									transformerNumber: val.transformerNumber, 
 		    									lastReading: val.lastInvoice.new_reading=== ""? 0:val.lastInvoice.new_reading, 
 		    									lastTariff: val.lastInvoice.tariff
->>>>>>> f85f685d60af33b0690bfc5d04617f65e79f1394
+
 		    								});
 			});	
 		});
@@ -11153,11 +11156,8 @@
 							class_id: this.get("class_id"),
 							status: 0,
 							journalEntries: this.journalEntries,
-<<<<<<< HEAD
-							inJournal: 1						
-=======
 							inJournal: 1							
->>>>>>> f85f685d60af33b0690bfc5d04617f65e79f1394
+
 						}).then(
 							function(data){
 								viewModel.sync(data.results[0].id);
@@ -14332,7 +14332,7 @@
 	// banhji.grn.viewModel.getBy({field: "id", value: "d92a3c18-3133-42b6-a777-188a36e343cb"});
 	// .then(function(data){console.log(data);});
 											
-  banhji.adjustment = (function(){
+  	banhji.adjustment = (function(){
 		var baseUrl = "<?php echo base_url(); ?>";
 
 		function GetToday(){
@@ -14904,15 +14904,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -15911,15 +15907,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -16979,15 +16971,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -17998,15 +17986,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -18659,15 +18643,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -19150,15 +19130,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -20116,15 +20092,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -21596,6 +21568,7 @@
 						  	}			  	  			  	
 						});
 					}else{
+						para.push({ field: "status >", value: 0 });
 						meterDS.filter(para);
 						meterDS.bind("requestEnd", function(e){
 				    		var response = e.response;
@@ -21874,15 +21847,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -22052,7 +22021,7 @@
 		    	$.ajax({
 					type: "GET",
 					url: banhji.baseUrl + "api/invoices/last_idNumber",			
-					data: { type: "Invoice" },
+					data: { type: "eInvoice" },
 					dataType: "json",
 					success: function (response) {
 						//var data = response.d;
@@ -22205,8 +22174,8 @@
 				monthOf = kendo.toString(monthOf, "yyyy-MM-dd");
 
 				var invoice_no = 0;
-				if(last_no.length>7){
-					invoice_no = parseInt(last_no.substr(7));
+				if(last_no.length>8){
+					invoice_no = parseInt(last_no.substr(8));
 
 					//Apply invoice no back to 0000 for the new year
 					var y = parseInt(last_no.substr(3,2));
@@ -22217,7 +22186,7 @@
 				}				
 				invoice_no++;
 				var number = "";
-				var inv_header = "INV" + kendo.toString(new Date(this.get("month_of")), "yy") 
+				var inv_header = "eINV" + kendo.toString(new Date(this.get("month_of")), "yy") 
 										+ kendo.toString(new Date(this.get("month_of")), "MM");
 
 				this.distrinctCustomer();
@@ -22720,15 +22689,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -23614,15 +23579,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -24410,7 +24371,8 @@
 				  	}		  
 				  	return options;  
 			  	}
-		  	},  
+		  	},
+		  	batch: true,  
 		  	schema: {
 			  	model: {
 					  id : "id"
@@ -24431,7 +24393,8 @@
 				  	}		  
 				  	return options;  
 			  	}
-		  	},  	 
+		  	},
+		  	batch: true,  	 
 		  	schema: {
 			 	model: {
 				  	id : "id"
@@ -24454,15 +24417,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},
+			},			
 			filter: { field: "type", value: "Class" },						
 			serverFiltering: true		
 		});
@@ -24523,6 +24482,7 @@
 		        return rate;
 			},			
 			add 	: function(){
+				var self = this;
 				var next_inv_id = 1;
 				var open_balance_item_id = 17;
 				
@@ -24538,70 +24498,73 @@
 				var biller = banhji.config.userData.userId;
 
 				var amount = 0;
-				for (var i=0;i<customerDS.total();i++) {
-					var d = customerDS.at(i);			
+
+				var issuedDate = kendo.toString(this.get("issued_date"),"yyyy-MM-dd");
+				var dueDate = kendo.toString(this.get("due_date"),"yyyy-MM-dd");
+				
+				$.each(customerDS.data(), function(index, data){												
 					var inv_no = str_inv_no + kendo.toString(invoice_no, "00000");
 					
 					var rate = 1;
-					var companyCode = d.companies.based_currency;
-					var customerCode = d.currency_code
+					var companyCode = data.companies.based_currency;
+					var customerCode = data.currency_code;
 					
 			        if(companyCode!==customerCode){
-			        	var companyCodeRate = this.getCurrencyRateByCode(companyCode);
-			        	var customerCodeRate = this.getCurrencyRateByCode(customerCode);
+			        	var companyCodeRate = self.getCurrencyRateByCode(companyCode);
+			        	var customerCodeRate = self.getCurrencyRateByCode(customerCode);
 
 			        	if(companyCodeRate>0 && customerCodeRate>0){
 			        		rate = companyCodeRate/customerCodeRate;
 			        	}	
 			        }
 
-			        amount += kendo.parseFloat(d.balance)*rate;
+			        amount += kendo.parseFloat(data.balance)*rate;
 
-					//Invoice
-					this.invoiceList.push({
+					//Invoice					
+					invoiceDS.add({
 			    		'number' 			: inv_no,
 					   	'type'				: "Invoice",				   					   				   	
-					   	'amount'			: kendo.parseFloat(d.balance)*rate,
+					   	'amount'			: kendo.parseFloat(data.balance)*rate,
 					   	'rate'				: rate,
 					   	'vat'				: 0,
 					   	'vat_id'			: 0,
 					   	'status' 			: 0,
-					   	'sub_code'			: d.currencies.sub_code,					   	
-					   	'issued_date' 		: kendo.toString(this.get("issued_date"),"yyyy-MM-dd"),
-					   	'due_date' 			: kendo.toString(this.get("due_date"),"yyyy-MM-dd"),
-					   	'address' 			: d.address,
+					   	'sub_code'			: data.currencies.sub_code,					   	
+					   	'issued_date' 		: issuedDate,
+					   	'due_date' 			: dueDate,
+					   	'address' 			: data.address,
 					   	'biller' 			: biller,
-					   	'customer_id' 		: d.id,	
+					   	'customer_id' 		: data.id,	
 					   	'so_id' 			: 0,
 					   	'estimate_id' 		: 0,
 						'gdn_id' 			: 0,
 						'payment_term_id'	: 0,			   	
-					   	'class_id' 			: d.class_id,
+					   	'class_id' 			: data.class_id,
 					   	'memo' 				: "សមតុល្យដើមគ្រា",
 					   	'memo2'				: "",
-					   	'company_id'		: d.company_id
-			    	});						
+					   	'company_id'		: data.company_id					   	
+			    	});
 
-					//Invoice item
-					this.invoiceItemList.push({
+			    	//Invoice item
+					invoiceItemDS.add({
 						'invoice_id' 	: invoice_id,
 						'item_id' 		: open_balance_item_id,
 						'description' 	: "សមតុល្យដើមគ្រា",				
 						'quantity' 		: 1,
-						'unit_price' 	: d.balance,												
-						'amount' 		: d.balance,
+						'unit_price' 	: data.balance,												
+						'amount' 		: data.balance,
 						'rate'			: rate,
-						'sub_code'		: d.currencies.sub_code,
+						'sub_code'		: data.currencies.sub_code,
 						'vat' 			: "false",
 						'so_id'			: 0		
-					});
+					});				
 					
 					invoice_no++;
-					invoice_id++;			
-				}
+					invoice_id++;								
+				});
 
-				invoiceDS.add(this.get("invoiceList"));
-				invoiceItemDS.add(this.get("invoiceItemList"));
+				// invoiceDS.add(this.get("invoiceList"));
+				// invoiceItemDS.add(this.get("invoiceItemList"));
 				this.addJournal(biller, amount);
 
 				invoiceDS.sync();

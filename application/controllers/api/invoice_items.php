@@ -127,12 +127,10 @@ class Invoice_items extends REST_Controller {
 
 	//POST BATCH	
 	function invoice_item_batch_post() {
-		$post = $this->post();
-		foreach($post as $key => $value) {			
-				$data[] = $value;			
-		}					  
-		$ids = $this->invoice_item->insert_many($data);		 
-		$this->response($ids, 201);			
+		$post = json_decode($this->post('models'));
+							  
+		$data = $this->invoice_item->insert_many($post);		 
+		$this->response($data, 201);			
 	}
 
 	//POST MANY	

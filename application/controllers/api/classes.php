@@ -35,9 +35,6 @@ class Classes extends REST_Controller {
 						)
 					);
 				}				
-<<<<<<< HEAD
-				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>array()), 200);	
-=======
 				$this->response(array('error'=>'false', 
 					'meta'=>array(
 						'code'=>200,
@@ -46,7 +43,7 @@ class Classes extends REST_Controller {
 						'action'=>"GET"), 
 					'results'=>$data), 
 				200);	
->>>>>>> 9b08db4865278208cfe004cad6b20401d7b67534
+
 			} else {				
 				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
 			}	
@@ -89,6 +86,23 @@ class Classes extends REST_Controller {
 			return TRUE;
 		} else {
 			return FALSE;
+		}
+	}
+
+	//BY DAWINE 
+	function class_dropdown_get(){
+		$filter = $this->get("filter");		
+		if(!empty($filter) && isset($filter)){			
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}			
+			$data = $this->classes->get_many_by($para);
+			
+			$this->response($data, 200);			
+		}else{
+			$data = $this->classes->get_all();
+			$this->response($data, 200);
 		}
 	}
 
