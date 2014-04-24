@@ -4737,7 +4737,7 @@
 			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
 					</div>
 					<h3 class="heading glyphicons cart_in"><i></i> វិក្កយបត្រ</h3>		        						
-									
+						
 					<div class="row-fluid">
 						<div class="span4">				
 							<table cellpadding="2" cellspacing="2">					          
@@ -14681,6 +14681,7 @@
 			number 			: "",				
 			genders			: ["ប", "ស"],		  	  
 			gender			: "ប",
+			company 		: "",
 			
 			currency_code 	: "",
 			account_receiveable_id : 0,
@@ -15293,6 +15294,7 @@
 			number 			: "",				
 			genders			: ["ប", "ស"],		  	  
 			gender			: "ប",
+			company 		: "",
 			
 			currency_code 	: "",
 			account_receiveable_id : 0,
@@ -15547,7 +15549,7 @@
 			newCustomerModel: newCustomerModel
 		};
 	}());	
-
+	
 	banhji.invoice = (function(){		
 		var customerDS = new kendo.data.DataSource({
 			transport: {
@@ -15657,8 +15659,8 @@
 			  	model: {
 				  	id : "id"
 			  	}		
-		  	},		  	
-		  	serverFiltering : true	  	
+		  	},
+		  	serverFiltering : true		  		
 		});
 
 		var invoiceItemDS = new kendo.data.DataSource({
@@ -15823,7 +15825,7 @@
 				this.set("total", "");
 
 				invoiceItemDS.data([]);
-				this.setNumber();
+				this.setNumber("Invoice");
 				this.setDueDate();				
 				this.setItemSource();
 				this.loadReferences(customer_id);				
@@ -15832,41 +15834,107 @@
 			closeX 				: function () {
 				kendo.fx($("#slide-form")).slideIn("up").play();				
 				window.history.go(-1);
-			},									
+			},												
 		    setItemSource 		: function(){
-		    	var self = this;		    		    		    		    	
-				itemDS.fetch(function(){
-					var d = this.data();													  					  			  	
-				  	$.each(d, function(index, data) {		    				    		
-			    		self.itemList.push({
-			    			id 		: data.id,
-			    			name 	: data.item_sku +' '+ data.name	    			
-			    		});
-			    	});
-				});				    			  	    	
-		    },	    	    
-		    setNumber 			: function(){
 		    	var self = this;
-		    	$.ajax({
-					type: "GET",
-					url: banhji.baseUrl + "api/invoices/last_number",			
-					data: { type: "Invoice" },
-					dataType: "json",
-					success: function (response) {
-						//var data = response.d;
-						var last_no = response;		
-						var no = 0;
-						if(last_no.length>7){
-							no = parseInt(last_no.substr(7));			
-						}
-						no++;
 
-						var str_inv_no = "INV" + kendo.toString(new Date(self.get("issued_date")), "yy") + kendo.toString(new Date(self.get("issued_date")), "MM");
-						var number = str_inv_no + kendo.toString(no, "00000");
-
-						self.set("number", number);
+		    	itemDS.fetch();
+				itemDS.bind("requestEnd", function(e){
+					var response = e.response;					
+					if(response.length>0){
+						$.each(response, function(index, value) {		    				    		
+				    		self.get("itemList").push({
+				    			id 		: value.id,
+				    			name 	: value.item_sku +' '+ value.name	    			
+				    		});
+				    	});
 					}
-				});		    	
+				});
+		    },		   	    	    	    
+		    setNumber 			: function(type){
+		    	var self = this;
+
+		    	var header = "";
+		    	switch(type){
+				case "Receipt":
+				  header = "SR";
+				  break;
+				case "SO":
+				  header = "SO";
+				  break;
+				case "Estimate":
+				  header = "QO";
+				  break;
+				case "GDN":
+				  header = "GDN";
+				  break;				
+				default:
+				  header = "INV";
+				}
+
+				var dataSource = new kendo.data.DataSource({
+					transport: {
+						read: {
+							url: banhji.baseUrl + "api/invoices/invoice",
+							type: "GET",
+							dataType: "json"
+						}
+					},
+					serverSorting: true,
+					serverPaging: true,
+					serverFiltering: true
+				});
+
+				dataSource.query({
+					filter: { field: "type", value: type },
+					sort: { field: "id", dir: "desc" },										
+					pageSize: 1
+				});
+
+				dataSource.bind("requestEnd", function(e){
+					var response = e.response;
+
+					var d = new Date();
+					var YY = kendo.toString(d, "yy");
+					var MM = kendo.toString(d, "MM");
+					var headerWithDate = header + YY + MM;
+
+					var last_no = "";
+					if(response.length>0){
+						last_no = e.response[0].number;
+					}
+					var no = 0;
+					var curr_YY = 0;
+					if(last_no.length>10){
+						no = parseInt(last_no.substr(last_no.length - 5));
+						curr_YY = parseInt(last_no.substr(last_no.length - 9, last_no.length - 10));			
+					}				 
+					
+					//Reset invoice number back to 1 for the new year starts
+					if(parseInt(YY)>curr_YY){
+						no = 1;
+					}else{
+						no++;
+					}
+											
+					var number = headerWithDate + kendo.toString(no, "00000");
+
+					self.set("number", number);
+				});											   	
+		    },		    	    	    
+		    setNextNumber 		: function(last_no){
+		    	var d = new Date();
+		    	var no = 0;
+		    	var header = "";
+		    	if(last_no.length>5){
+		    		header = last_no.substr(0, last_no.length - 5);
+					no = parseInt(last_no.substr(last_no.length - 5));								
+				}
+				no++;
+				
+				var number = header + kendo.toString(no, "00000");
+				
+				this.set("number", number);
 		    },
 		    setDueDate 			: function(){
 				var duedate = new Date();
@@ -16195,8 +16263,7 @@
 				}
 
 				this.change();				
-			},			
-
+			},
 		    add 				: function(){
 		    	var self = this;		    	
 				var rate = this.get("rate");
@@ -16584,7 +16651,8 @@
 				customerDS.sync();
 			},
 		    clear 				: function(){
-		    	this.setNumber();		    	
+		    	this.setNextNumber(this.get("number"));
+
 		    	this.set("so_id", 0);
 				this.set("estimate_id", 0);
 				this.set("gdn_id", 0);			
