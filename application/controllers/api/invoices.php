@@ -30,14 +30,32 @@ class Invoices extends REST_Controller {
 				
 	//GET 
 	function invoice_get() {
-		$filter = $this->get("filter");		
+		$filter = $this->get("filter");
+		
 		if(!empty($filter) && isset($filter)){			
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}			
+			}
+
+			$limit = $this->get("pageSize");
+			$offset = $this->get('skip');
+			if(!empty($limit) && isset($limit)){
+				$this->invoice->limit($limit, $offset);
+			}
+			
+			$sorter = $this->get("sort");
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->invoice->order_by($sort);
+			}
+
 			$arr = $this->invoice->get_many_by($para);
-			$data = Array();
+
+			$data = array();
 			if(count($arr) >0){
 				foreach($arr as $row) {																			   
 				   	$totalPaid	 = $this->payment->get_total_payment($row->id);
