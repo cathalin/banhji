@@ -31,20 +31,23 @@ class Invoices extends REST_Controller {
 	//GET 
 	function invoice_get() {
 		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
 		
 		if(!empty($filter) && isset($filter)){			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-
-			$limit = $this->get("pageSize");
-			$offset = $this->get('skip');
+			
+			//Limit
 			if(!empty($limit) && isset($limit)){
 				$this->invoice->limit($limit, $offset);
-			}
+			}			
 			
-			$sorter = $this->get("sort");
+			//Sort
 			if(!empty($sorter) && isset($sorter)){			
 				$sort = array();
 				for ($j = 0; $j < count($sorter); ++$j) {				

@@ -228,23 +228,38 @@ class People_api extends REST_Controller {
 	
 	//GET 
 	function people_get($type=1) {		
-		$filter = $this->get("filter");				
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
 		if(!empty($filter) && isset($filter)){
-			// $limit 	= $this->get('pageSize');
-			// $offset = $this->get('skip');			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->invoice->limit($limit, $offset);
 			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->invoice->order_by($sort);
+			}
+						
 		 	$arr = $this->people->type($type)->get_many_by($para);		 	
 			if(count($arr) >0){
-				foreach($arr as $row) {
-					$fullname = $row->surname .' '. $row->name;
-					$fullIdName = $row->number .' '. $fullname;
+				foreach($arr as $row) {					
 					
 				   	//Add extra fields
-					$extra = array( 'fullname' 		=> $fullname,
-									'fullIdName' 	=> $fullIdName,									
+					$extra = array( 								
 									'people_types'	=> $this->people_type->get($row->people_type_id),
 								   	'amperes' 		=> $this->ampere->get($row->ampere_id), 
 								   	'phases' 		=> $this->phase->get($row->phase_id),
