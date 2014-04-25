@@ -51,10 +51,10 @@ class Accounting_api extends REST_Controller {
 				}				
 				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
 			} else {				
-				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
+				$this->response(array('error'=>'true','code'=>404,'message'=>'no data found.', 'results'=>array()), 200);	
 			}	
 		}else{
-			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);		
+			$this->response(array('error'=>'true','code'=>401,'message'=>'no query passed.', 'results'=>array()), 200);		
 		}		
 	}
 
