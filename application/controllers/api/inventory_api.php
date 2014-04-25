@@ -364,14 +364,16 @@ class Inventory_api extends REST_Controller {
 
 	//ITEM FOR DROPDOWN 
 	function item_dropdown_get(){
-		$meter_id = 1;
-		$breaker_id = 2;
-		$vat_id = 6;
-		$other_charge_id = 7;
+		$filter = $this->get("filter");
 
-		$arr = array($meter_id, $breaker_id, $other_charge_id);
-		$arrType = array($vat_id);				
-		$data = $this->item->where_not_in("id",$arr)->where_not_in("item_type_id",$arrType)->get_all();						
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}
+
+		$data = $this->item->where_not_in("item_type_id", array(6))
+							->get_many_by($para);
+													
 		$this->response($data, 200);
 	}
 

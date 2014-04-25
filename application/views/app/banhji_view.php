@@ -4737,7 +4737,7 @@
 			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
 					</div>
 					<h3 class="heading glyphicons cart_in"><i></i> វិក្កយបត្រ</h3>		        						
-						
+					
 					<div class="row-fluid">
 						<div class="span4">				
 							<table cellpadding="2" cellspacing="2">					          
@@ -15551,7 +15551,7 @@
 	}());	
 	
 	banhji.invoice = (function(){		
-		var customerDS = new kendo.data.DataSource({
+		var peopleDS = new kendo.data.DataSource({
 			transport: {
 				read: {
 					url: banhji.baseUrl + "api/people_api/people",
@@ -15601,7 +15601,8 @@
 					type: "GET",
 					dataType: "json"
 				}
-			}
+			},
+			serverFiltering: true
 		});
 
 		var vatDS = new kendo.data.DataSource({
@@ -15619,15 +15620,11 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
-			},
-			schema: {
-				model: {id: "id"},
-				data: "results"
-			},			
+			},					
 			serverFiltering: true		
 		});
 
@@ -15784,7 +15781,9 @@
 			biller				: banhji.config.userData.userId,
 			company_code 		: "km-KH",
 			sub_code 			: "km-KH",
-			rate 				: 1,	
+			rate 				: 1,
+
+			customer_id 		: 0,			
 			
 			address				: "",		  	  
 			issued_date			: new Date(),
@@ -15813,32 +15812,64 @@
 			classList 			: classDS,
 							
 			pageLoad 			: function(customer_id){
-				this.set("so_id", 0);
-				this.set("estimate_id", 0);
-				this.set("gdn_id", 0);			
-		    	this.set("class_id", "");
-				this.set("memo", "");
-				this.set("memo2", "");
-				this.set("sub_total", "");
-				this.set("vat_id", "");
-				this.set("vat", "");	
-				this.set("total", "");
+				var self = this;
 
-				invoiceItemDS.data([]);
-				this.setNumber("Invoice");
-				this.setDueDate();				
-				this.setItemSource();
-				this.loadReferences(customer_id);				
-				this.loadCustomer(customer_id);				
+				var curr_customer_id = this.get("customer_id");
+				if(curr_customer_id!==customer_id){
+					this.set("customer_id", customer_id);
+
+					this.set("so_id", 0);
+					this.set("estimate_id", 0);
+					this.set("gdn_id", 0);			
+			    	this.set("class_id", "");
+					this.set("memo", "");
+					this.set("memo2", "");
+					this.set("sub_total", "");
+					this.set("vat_id", "");
+					this.set("vat", "");	
+					this.set("total", "");
+
+					currencyRateDS.fetch();
+					this.setNumber("Invoice");
+					this.setDueDate();
+
+					//Promise ^_^
+					this.loadCustomer(customer_id).then(
+						function(data){
+							var d = data[0];					  	
+						  	self.set("customer", d);		  	
+						  	self.set("address", d.address);					  						  	
+						  	self.set("sub_code", d.currencies.sub_code);
+						  	self.set("company_code", d.companies.based_currency);
+						  	self.set("class_id", d.class_id);					  	
+
+						  	var company_id = d.companies.id;
+						  	if(d.companies.parent_id>0){
+						  		compnay_id = d.companies.parent_id;					  		
+						  	}
+
+						  	self.setItemSource(company_id);
+						  	self.loadReferences(company_id, d.id);
+						  	self.setRate(d.companies.based_currency, d.currency_code);
+
+						  	if(invoiceItemDS.data().length<1){
+						  		self.addNewRow();
+						  	}
+						}				
+					);
+				}															
 			},
-			closeX 				: function () {
+			closeX 				: function(){
 				kendo.fx($("#slide-form")).slideIn("up").play();				
 				window.history.go(-1);
 			},												
-		    setItemSource 		: function(){
+		    setItemSource 		: function(company_id){
 		    	var self = this;
 
-		    	itemDS.fetch();
+		    	itemDS.filter([
+		    			{ field: "company_id", value: company_id },
+		    			{ field: "status", value: 1 }		    			
+		    			]);
 				itemDS.bind("requestEnd", function(e){
 					var response = e.response;					
 					if(response.length>0){
@@ -15907,7 +15938,7 @@
 					var curr_YY = 0;
 					if(last_no.length>10){
 						no = parseInt(last_no.substr(last_no.length - 5));
-						curr_YY = parseInt(last_no.substr(last_no.length - 9, last_no.length - 10));			
+						curr_YY = parseInt(last_no.substr(last_no.length - 9, 2));			
 					}				 
 					
 					//Reset invoice number back to 1 for the new year starts
@@ -15921,13 +15952,13 @@
 
 					self.set("number", number);
 				});											   	
-		    },		    	    	    
+		    },		    	    	    	    
 		    setNextNumber 		: function(last_no){
 		    	var d = new Date();
 		    	var no = 0;
 		    	var header = "";
 		    	if(last_no.length>5){
-		    		header = last_no.substr(0, last_no.length - 5);
+		    		header = last_no.substr(0, last_no.length - 9);
 					no = parseInt(last_no.substr(last_no.length - 5));								
 				}
 				no++;
@@ -15941,28 +15972,24 @@
 				duedate.setDate(duedate.getDate()+7);
 				this.set("due_date", duedate);
 			},
-			setRate 			: function(){
-				var rate = 1;
-				var companyCode = this.get("company_code");
-				var customerCode = this.get("customer").currency_code;
-				
-		        if(companyCode!==customerCode){
-		        	var companyCodeRate = this.getCurrencyRateByCode(companyCode);
-		        	var customerCodeRate = this.getCurrencyRateByCode(customerCode);
+			setRate 			: function(company_code, customer_code){
+				var rate = 1;								
+		        if(company_code!==customer_code){
+		        	var companyCodeRate = this.getCurrencyRateByCode(company_code);
+		        	var customerCodeRate = this.getCurrencyRateByCode(customer_code);
 
 		        	if(companyCodeRate>0 && customerCodeRate>0){
 		        		rate = companyCodeRate/customerCodeRate;
 		        	}	
 		        }
-
-		        this.set("rate", rate);
-			},			
-			loadReferences 		: function(customer_id){
+		        this.set("rate", rate);		        	        
+			},
+			loadReferences 		: function(company_id, customer_id){
 				currencyRateDS.fetch();
 
 				classDS.filter([
 						{ field: "type", value: "Class" },						
-						{ field: "company_id", value: banhji.config.userData.company }
+						{ field: "company_id", value: company_id }
 				]);
 
 				estimateDS.filter({
@@ -15987,30 +16014,22 @@
 						{ field: "status", value: 0 },
 						{ field: "type", value: "SO" }
 					]
-				});
+				});				
 			},
 		    loadCustomer 		: function(id){
-		    	var self = this;
+		    	var self = this, dfd = $.Deferred();
 
-		    	customerDS.filter({ field: "id", value: id });
-		    	customerDS.bind("requestEnd", function(e){
+		    	peopleDS.filter({ field: "id", value: id });
+		    	peopleDS.bind("requestEnd", function(e){
 		    		var response = e.response;
     				var type = e.type;
 
 					if(type==="read"){
-					  	var d = response[0];					  	
-					  	self.set("customer", d);		  	
-					  	self.set("address", d.address);					  						  	
-					  	self.set("sub_code", d.currencies.sub_code);
-					  	self.set("company_code", d.companies.based_currency);
-					  	self.set("class_id", d.class_id);
-					  	self.setRate();
-
-					  	if(invoiceItemDS.data().length<1){
-					  		self.addNewRow();
-					  	}											  
+						dfd.resolve(response);											  												  
 				  	}			  	  			  	
-				});															    			  	    	
+				});
+
+				return dfd;															    			  	    	
 		    },
 		    loadInvoice			: function(id){			  	
 			  	var self = this;
@@ -16077,7 +16096,7 @@
 						self.autoIncreaseNo();
 					}																		
 			 	});				
-			},			
+			},						
 			autoIncreaseNo 		: function(){
 				$(".sno").each(function(index,element){                 
 				   $(element).text(index + 1); 
@@ -16158,7 +16177,6 @@
 				
 		        return rate;
 			},
-
 			soChange 			: function(e){
 				var id = e.sender._selectedValue;
 				
@@ -16264,8 +16282,26 @@
 
 				this.change();				
 			},
+			save 				: function(){
+		    	var self = this;
+
+				this.add().then(
+					function(data){						
+						var invoice_id = data.invoice_id;
+
+						self.addJournal(invoice_id);
+		    			self.updateSO();		    		   	
+				    	self.updateEstimate();
+					    self.updateGDN();
+					    self.updateCustomerBalance();
+
+					    return invoice_id;
+					}			
+				);
+			},
 		    add 				: function(){
-		    	var self = this;		    	
+		    	var self = this, dfd = $.Deferred();
+
 				var rate = this.get("rate");
 
 				var t = this.get("total");
@@ -16306,24 +16342,19 @@
 				   	
 				   	'invoice_items'		: invoiceItemDS.data()
 		    	});
-
+	
 		    	invoiceDS.sync();
-		    	
-		    	this.updateSO();		    		   	
-		    	this.updateEstimate();
-			    this.updateGDN();
-			    this.updateCustomerBalance();
-
 			    invoiceDS.bind("requestEnd", function(e){
 			    	var response = e.response;
     				var type = e.type;
 
     				if(type==="create"){
-    					var invoice_id = response.invoice_id;
-    					self.addJournal(invoice_id);
+    					dfd.resolve(response);    					
     				}
-			    });	    		    	
-		    },
+			    });
+
+			    return dfd;	    		    	
+		    },		    
 		    update 				: function(id){
 		    	var d = invoiceDS.get(id);
 		    	var rate = this.get("rate");
@@ -16364,9 +16395,10 @@
 				invoiceDS.sync();
 				invoiceItemDS.sync();						
 		    },	    	  
-		    addJournal 			: function(invoice_id){				
-				var journalEntries = [];		
+		    addJournal 			: function(invoice_id){
+		    	var self = this;				
 				
+				var journalEntries = [];				
 				var saleList = {};			
 				var inventoryList = {};
 				var cogsList = {};
@@ -16374,7 +16406,6 @@
 				var depositAmount = 0;
 				var rate = this.get("rate");
 				
-				var self = this;
 				$.each(invoiceItemDS.data(), function(index, data){								
 					var item = itemDS.get(data.item_id);
 					var amt = data.quantity*data.unit_price;						
@@ -16599,9 +16630,11 @@
 			 	});
 			 			 	
 			 	journalDS.sync();
-				this.clear();	 	
+			 	journalDS.bind("requestEnd", function(e){
+					dfd.resolve(e.response);
+				});			 						 	
 			},				
-			updateSO		: function(){
+			updateSO			: function(){
 				var id = this.get("so_id");
 				
 				if(id>0){
@@ -16629,7 +16662,7 @@
 				}								
 			},
 			updateCustomerDeposit : function(amount){				
-				var customer_id = this.get("customer").id;				
+				var cus = customerDS.get(this.get("customer").id);				
 				$.ajax({
 					type: "PUT",
 					url: banhji.baseUrl + "api/people_api/deposit",			
