@@ -731,6 +731,7 @@
 <script id="voucher" type="text/x-kendo-template">
 	<div class="container-960">
 		<div class="row-fluid">
+				<button class="btn-inverse pull-right" data-bind="click: closeX">X</button>
 			<div>
 				<input type="checkbox" data-bind="checked: cashPayment"> ទិញជាសាច់ប្រាក់
 			</div>
@@ -755,7 +756,7 @@
 						<td>លេខសក្ខីបត្រ័</td>
 						<td><input type="text" data-bind="value: voucher"></td>
 						<td>លិខិតបញ្ជាទិញៈ</td>
-						<td><input type="text" data-bind="value: voucher"></td>
+						<td><input type="text" data-bind="value: po"></td>
 					</tr>
 					<tr>
 						<td width="150">គណនីៈ</td>
@@ -777,7 +778,7 @@
 											   style="width: 220px;"></td>
 						<td><span data-bind="text: showCheck"></span></td>
 						<td>
-							<input type="text" data-bind="visible: cashPayment">
+							<input type="text" data-bind="visible: cashPayment, value: checkNo">
 							<input type="text" style="width: 220px;"
 											   data-role="datepicker" 
 											   data-bind="invisible: cashPayment, value: dueDate">
@@ -807,6 +808,12 @@
 						<tr>
 							<td>សរុបរួមៈ</td>
 							<td><span data-bind="text: grandTotal"></span></td>
+						</tr>
+						<tr>
+							<td colspan="4"><button class="btn btn-primary btn-block" data-bind="click: save">កត់ត្រា</button></td>
+						</tr>
+						<tr>
+							<td colspan="4"><div class="alert"></div></td>
 						</tr>
 					</table>
 				</div>
@@ -966,10 +973,10 @@
 <script id="expenseCart" type="text/x-kendo-template">
 	<tr>
 		<td><i class="icon-trash" data-bind="click: rmFromCart"></i></td>
-		<td><input style="width: 100%" type="text" placeholder="Select One" data-bind="source: expenseAccts, value: account_id, events: {change: change}" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 130px;"></td>
+		<td><input style="width: 100%" type="text" placeholder="Select One" data-bind="source: acctList, value: account_id, events: {change: change}" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 130px;"></td>
 		<td><input style='width: 93%; margin-bottom:3px;' type="text" data-bind="value: amount" data-format="{0:c}"></td>
 		<td><input style='width: 93%; margin-bottom:3px;' type="text" placeholder="Description" data-bind="value: memo"></td>
-		<td><input style='width: 93%; margin-bottom:3px;' type="text" placeholder="Select One" data-bind="source: classes, value: class_id" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 130px;"></td>
+		<td><input style='width: 93%; margin-bottom:3px;' type="text" placeholder="Select One" data-bind="source: classDS, value: class_id" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 130px;"></td>
 		<td><input style="width: 20px" type="checkbox" data-bind="checked: taxed, events: {change: taxable}"></td>
 	</tr>	
 </script>
@@ -2446,7 +2453,7 @@
 	kljlkj
 </script>
 <script type="text/x-kendo-template" id="po">
-	<div id="slide-form">
+	<div id="slide-form" class="container-960">
 		<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">
@@ -9334,7 +9341,72 @@
 				});
 			}
 		});
+		var Account = kendo.Class.extend({
+			dataSource 	: new kendo.data.DataSource({
+			    transport: {
+				    read: {
+				    	url: banhji.baseUrl + "api/accounting_api/account",
+					    type: "GET",
+					    dataType: "json"
+					},
+					create: {
+						url: banhji.baseUrl + "api/accounting_api/account",
+					    type: "POST",
+					    dataType: "json"
+					},
+					update: {
+						url: banhji.baseUrl + "api/accounting_api/account",
+					    type: "PUT",
+					    dataType: "json"
+					},
+					destroy: {
+						url: banhji.baseUrl + "api/accounting_api/account",
+					    type: "DELETE",
+					    dataType: "json"
+					},
+					parameterMap: function(options, operation) {
+						if(operation !== "read" && options.models) {
+							return {models: kendo.stringigy(options.models)};
+						}
+						return options;
+					}
+			    },
+			    serverFiltering: true,
+			    filter: {field: "company_id", value : banhji.config.userData['company']},
+		        schema: {
+		        	model: {
+		        		id: "id",
+		        		fields: {
+							company_id: { type: "string", nullable: false, defaultValue: banhji.config.userData.company },
+							account_type_id: { type: "number" },
+							code: {type: "string" },
+							name: { type: "string" },
+							name_en: { type: "string" },
+							description: { type: "string" },
+							parent_id: { type: "string" },
+							created_at: { type: "date", format: 'dd-MM-yyyy' }
+						}
+		        	},
+		        	data: "results"
+		        },
+		        change: function(e) {
+		        	viewModel.accounts.splice(0,1);
+		        	$.each(this.view(), function(i,v){
+		        		viewModel.accounts.push(v);
+		        	});
+		        }
+		    }),
+		    init: function() {
+				this.dataSource.fetch(function(){
+					$.each(this.data(), function(i,v){
+						viewModel.acctList.push(v);
+					});
+				});
+			} 
+
+		});
 		var item = new Item;
+		var account = new Account;
 		var itemRecords = kendo.observable({
 			idFilter: "",
 			resourceFilter: "",
@@ -9412,12 +9484,20 @@
 		});
 		var viewModel = kendo.observable({
 			accounts 	: [],
+			acctList 	: [],
+			setCurrent 	: function(journal) {
+				this.set("current", journal);
+			},
+			closeX 	: function () {
+				//kendo.fx($("#purchase-form")).slideIn("up").play();
+				window.history.go(-1);
+			},
 			pmtMethods 	: function() {
 				if(this.get("cashPayment") === true) {
 					return new kendo.data.DataSource({
-						data: [{id: "1", term: "សាច់ប្រាក់"},
-							   {id: "2", term: "សែក"},
-							   {id: "3", term: "Credit"}]
+						data: [{id: "cash", term: "សាច់ប្រាក់"},
+							   {id: "check", term: "សែក"},
+							   {id: "credit", term: "Credit"}]
 					});
 				} else {
 					 return banhji.ds.paymentTerms
@@ -9487,7 +9567,7 @@
 				console.log(banhji.vendor.get('current'));
 			},
 			type 		: null,
-			vendor 		: banhji.vendor.get('current'),
+			vendor 		: null,
 			date  : new Date(),
 			dueDate 	: function() {
 				var date;
@@ -9506,9 +9586,11 @@
 				return date;
 			},
 			class 		: null,
+			checkNo 	: null,
 			voucher 	: null,
 			invoice 	: null,
 			po 			: null,
+			description : "",
 			currency 	: null,
 			selectTax 	: function(){},
 			payTax 		: function(){},
@@ -9523,6 +9605,28 @@
 				this.set('invoice', null);
 				this.set('po', null);
 				this.set('currency', null);
+				this.cart.splice(0, this.cart.length);
+				$(".alert").hide();
+			},
+			change 		: function(e){
+				if(this.get("type")==="purchase") {
+					for(var i=0; i<this.get("items").length; i++) {
+	            		if(this.get("items")[i].id === e.data.item_id) {	            			
+	            				e.data.set("description", this.get("items")[i].purchase_description);
+	            				e.data.set("cost", this.get("items")[i].cost);
+	            				e.data.set("account_id", this.get("items")[i].general_account_id);
+	            			break;
+	            		}
+	            	}
+				} else {
+					for(var i=0; i<this.get("items").length; i++) {
+	            		if(this.get("items")[i].id === e.data.item_id) {	            			
+	            				e.data.set("description", this.get("items")[i].description);
+	            				e.data.set("account_id", this.get("items")[i].id);
+	            			break;
+	            		}
+	            	}
+				}	
 			},
 			popupVendor: function(e) {
 				e.preventDefault();
@@ -9645,6 +9749,93 @@
 			},
 			grandTotal 	: function() {
 				return kendo.toString(kendo.parseFloat(this.subTotal()) + kendo.parseFloat(this.get("taxAmount")), '##,#.00');
+			},
+			number 		: function() {
+				var type = [];
+				type['purchase'] = "puv";
+				type["expense"] = "exp";
+				var now = new Date();
+				var yy  = now.getFullYear().toString();
+				var num = type[this.get("type")].toUpperCase() +yy.substring(4, 2)+(now.getMonth() < 10 ? '0' + (now.getMonth() + 1): (now.getMonth() + 1));
+				return num;
+			},
+			save 		: function() {
+				var journalEntries = [];
+				journalEntries.push({
+			 		account_id: this.get("account").id, 
+			 		dr: 0, 
+			 		cr: kendo.parseFloat(this.grandTotal()) * kendo.parseFloat(banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company))),
+			 		class_id: this.get("class").id,
+					memo: this.get('description'),
+				 	exchange_rate: banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company)),
+				 	main: 1
+			 	});
+				for(var i=0; i < this.cart.length; i++) {
+					journalEntries.push({
+				 		account_id: this.cart[i].account_id,
+				 		dr: this.cart[i].amount, 
+				 		cr: 0,
+				 		class_id: 1,//this.get("class_id"), 
+				 		memo: "walla",//this.cart[i].memo,
+				 		exchange_rate: banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company)),
+				 		main: 0
+					});
+				}
+				banhji.transaction.save({
+					company_id: banhji.config.userData.company,
+					vendor_id: viewModel.get("vendor").id,
+					employee_id: banhji.config.userData.userId,
+					payment_id: this.get("cashPayment") === true ? "": this.get("paymentTerm").id,
+					transaction_type: this.get("type"),
+					payment_method: this.get("cashPayment") === true ? this.get('paymentTerm').id: "",
+					check_no: this.get("checkNo"),
+					memo: this.get("description"),
+					date: kendo.toString(this.get("date"), "yyyy-MM-dd"),
+					due_date: this.get("cashPayment") === true ? "": this.dueDate(),
+					amount_billed: kendo.parseFloat(this.grandTotal()) * kendo.parseFloat(banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company))),
+					amount_due: 0,
+					amount_paid: this.get("cashPayment") === true ? kendo.parseFloat(this.grandTotal()) * kendo.parseFloat(banhji.currency.getEX(banhji.vendor.get("current").currency_code, banhji.currency.getCompanyCurrency(banhji.config.userData.company))) : 0,
+					voucher: this.get("voucher"),
+					invoiceNumber: this.get("invoice"),
+					class_id: this.get("class").id,
+					status: this.get("cashPayment") === true ? 1 : 0,
+					reference: this.get("po") === null ? null:this.get("po").id,
+					journalEntries: journalEntries,
+					inJournal: 1							
+				})
+				.then(
+					function(data){
+						if(data.status === "OK") {
+							if(viewModel.get("type")=== "purchase") {
+								var items = [];
+								$.each(viewModel.get("cart"), function(i,v){
+									items.push({
+										bill_id: data.results.id,
+										item_id: v.item_id,
+										description: v.description,
+										cost: v.cost,
+										price: v.price,
+										quantity: v.quantity,
+										amount: v.amount
+									});
+								});
+
+								itemRecords.save(items)
+								.then(function(data){
+									// great every is fine
+									viewModel.reset();
+									$(".alert").show().addClass("alert-primary").html("កត់ត្រាបានជោគជ័យ។");
+								});
+							} else {
+								viewModel.reset();
+							}
+						}
+						
+					},
+					function(error){
+						console.log(error);
+					}
+				);
 			}
 		});
 		return viewModel;
@@ -14085,8 +14276,6 @@
 
 			return { viewModel 		: viewModel };	
 	}());
-	// banhji.grn.viewModel.getBy({field: "id", value: "d92a3c18-3133-42b6-a777-188a36e343cb"});
-	// .then(function(data){console.log(data);});
 											
     banhji.adjustment = (function(){
 		var baseUrl = "<?php echo base_url(); ?>";
@@ -25760,6 +25949,7 @@
 
 					if(banhji.vendor.get("current").id === null) {
 						banhji.vendor.setCurrent(vendor.id);
+						banhji.voucher.set("vendor", vendor);
 						
 						banhji.view.vendor.showIn("#vendorDetail", banhji.view.vendorSingle);
 						var now = new Date();
@@ -25804,6 +25994,7 @@
 						);
 					} else {
 						banhji.vendor.setCurrent(vendor.id);
+						banhji.voucher.set("vendor", vendor);
 					}
 					
 				}
@@ -26075,84 +26266,22 @@
 		banhji.view.purchase.showIn("#voucher-item", banhji.view.expense);
 		banhji.currency.init();
 		if(id!==undefined) {
+			banhji.transaction.database.filter({field: "id", value: id});
+			banhji.transaction.database;
 			banhji.transaction.getById(id)
 			.then(function(data){
-				banhji.expense.viewModel.get("expenses").splice(0,banhji.expense.viewModel.get("expenses").length);
-				banhji.expense.viewModel.set("vendor", data.results[0].people_name);
-				// banhji.purchase.viewModel.set("po_id", data.results[0].id);
-				if(data.results[0].payment_method === "cash") {
-					banhji.expense.viewModel.set("paidCash", true);
-					banhji.expense.viewModel.set("checkNo", null);
-					if(banhji.currency.getCompanyCurrency(banhji.config.userData.company) !== data.results[0].people_name.currency_code) {
-						$.each(data.results[0].journalEntries, function(k,v){
-							if(v.main === "1") {
-								banhji.expense.viewModel.set("cashAcct", v.account);
-							} else {
-								banhji.expense.viewModel.get("expenses").push({
-								account_id: v.account, 
-								code: "", 
-								account_name: "", 
-								amount: parseFloat(v.dr)/parseFloat(v.exchange_rate),
-								memo: v.memo, 
-								class_id: v.class_id
-							});
-							}
-						});
-					} else {
-						$.each(data.results[0].journalEntries, function(k,v){
-							if(v.main === "1") {
-								banhji.expense.viewModel.set("cashAcct", v.account);
-							} else {
-								banhji.expense.viewModel.get("expenses").push({
-								account_id: v.account, 
-								code: "", 
-								account_name: "", 
-								amount: v.dr,
-								memo: v.memo, 
-								class_id: v.class_id
-							});
-							}
-						});
-					}
-				} else {
-					banhji.expense.viewModel.set("paidCash", false);
-					if(banhji.currency.getCompanyCurrency(banhji.config.userData.company) !== data.results[0].people_name.currency_code) {
-						$.each(data.results[0].journalEntries, function(k,v){
-							if(v.main === "1") {
-								banhji.expense.viewModel.set("cashAcct", v.account);
-							} else {
-								banhji.expense.viewModel.get("expenses").push({
-								account_id: v.account, 
-								code: "", 
-								account_name: "", 
-								amount: parseFloat(v.dr)/parseFloat(v.exchange_rate),
-								memo: v.memo, 
-								class_id: v.class_id
-							});
-							}
-						});
-					} else {
-						$.each(data.results[0].journalEntries, function(k,v){
-							if(v.main === "1") {
-								banhji.expense.viewModel.set("cashAcct", v.account);
-							} else {
-								banhji.expense.viewModel.get("expenses").push({
-								account_id: v.account, 
-								code: "", 
-								account_name: "", 
-								amount: v.dr,
-								memo: v.memo, 
-								class_id: v.class_id
-							});
-							}
-						});
-					}
-				}
 
-				banhji.expense.viewModel.set("class_id", data.results[0].class_id);
-				banhji.expense.viewModel.set("date", data.results[0].date);
-				banhji.expense.viewModel.set("ref", data.results[0].voucher);
-				banhji.expense.viewModel.set("memo", data.results[0].memo);
+				if(data.status === "OK") {
+					banhji.voucher.set("vendor", data.results[0].people_name);
+					banhji.voucher.set("voucher", data.results[0].voucher);
+					banhji.voucher.set("class", data.results[0].class_name);
+					banhji.voucher.set("account", data.results[0].journalEntries[0].account);
+					banhji.voucher.set("cashPayment", data.results[0].payment_method === "cash"? true: false);
+					$.each(data.results[0].journalEntries, function(i,v){
+
+					});
+				}
+				console.log(data);
 			});
 		} else {
 			//new bill

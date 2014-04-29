@@ -441,34 +441,36 @@ class Inventory_api extends REST_Controller {
 	function item_record_post() {	
 		$posted_data = $this->post();
 		foreach($posted_data as $key => $value){
-			if(count($value)>0) {
+			if(count($value)>0 && $key !== "id") {
 				$item_records[] = array(
-						"bill_id" 		=> $value[$i]["bill_id"],
-						"item_id" 		=> $value[$i]["item_id"],
-						"description" 	=> $value[$i]["description"],
-						"cost" 			=> $value[$i]["cost"],
-						"price" 		=> $value[$i]["price"],
-						"quantity" 		=> $value[$i]["quantity"],
-						"amount" 		=> $value[$i]["amount"],
-						"balance" 		=> ($this->item_record->last_balance_of($value[$i]["item_id"]) + $value[$i]["quantity"])
+						"bill_id" 		=> $value["bill_id"],
+						"item_id" 		=> $value["item_id"],
+						"description" 	=> $value["description"],
+						"cost" 			=> $value["cost"],
+						"price" 		=> $value["price"],
+						"quantity" 		=> $value["quantity"],
+						"amount" 		=> $value["amount"],
+						"balance" 		=> ($this->item_record->last_balance_of($value["item_id"]) + $value["quantity"])
 				);
 				//Get the weighted average cost for each item
 				//formula total amount/total quantity
 				$items = array(
-					"cost" => (($this->item->get_item_cost($value[$i]["item_id"]) * $this->item_record->last_balance_of($value[$i]["item_id"])) + $data[$i]["amount"]) / ($this->item_record->last_balance_of($data[$i]["item_id"]) + $data[$i]["quantity"]),
-					"quantity" => $this->item->get_quantity($value[$i]["item_id"]) + $value[$i]["quantity"]
+					"cost" => (($this->item->get_item_cost($value["item_id"]) * $this->item_record->last_balance_of($value["item_id"])) + $value["amount"]) / ($this->item_record->last_balance_of($value["item_id"]) + $value["quantity"]),
+					"quantity" => $this->item->get_quantity($value["item_id"]) + $value["quantity"]
 				);
-				$item_ids[] = $value[$i]["item_id"];
+				$item_ids[] = $value["item_id"];
 				//Update Item
-				$this->item->update($value[$i]["item_id"], $items);
+				$this->item->update($value["item_id"], $items);
 			}
 		}
 
 		//Add Item Record
-		$row = $this->item_record->insert_many($item_records);				
-			
-		$this->response($this->item_record->get_many($row), 201);
-		//$this->response($data, 400);	
+		$row = $this->item_record->insert_many($item_records);	
+		if($row && count($row) > 0) {
+			$this->response(array("status"=>"Succeed.", "error"=>"false", "results"=>$this->item_record->get_many($row)), 201);
+		} else {
+			$this->response(array("status"=>"Fail", "error"=>"true", "results"=>array()), 200);
+		}	
 	}
 	
 	//PUT

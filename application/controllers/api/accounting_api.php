@@ -899,7 +899,7 @@ class Accounting_api extends REST_Controller {
 		if($this->db->affected_rows() > 0) {
 			$journal_Entries = $this->post("journalEntries");
 			if($journal_Entries){
-				foreach($journal_Entries as $k => $v) :
+				foreach($journal_Entries as $k => $v) {
 			 		//Find last balance of this account
 					$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
 			 		$entries[] = array(
@@ -913,15 +913,15 @@ class Accounting_api extends REST_Controller {
 					 				"balance"		=> $balance,
 					 				"exchange_rate" => $v['exchange_rate'],
 					 				"main"			=> $v['main']
-					 			); 		
-	 			endforeach;
+					 			); 
+				// $entries[] = array("account_id"=>$v['account_id']);		
+	 			}
 
 	 			$this->j_entry->insert_many($entries, FALSE);
 			}
- 			// if($this->db->affected_rows() === count(journal_Entries)) {
+ 			if($this->db->affected_rows()>0) {
  				$query = $this->journal->get($arr['id']);
- 					 if(count($query) > 0) {
- 					// 	foreach($query as $row) {
+ 					if(count($query) > 0) {
  							$journals[] = array(
 								"id" 				=> $query->id,
 								'number' 			=> $query->number,			
@@ -942,12 +942,11 @@ class Accounting_api extends REST_Controller {
 								'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
 								"entries"			=> $this->j_entry->get_many_by("journal_id", $query->id)
 							);
- 						}
- 					// } 				
-				$this->response(array("status"=>"OK", "message"=>"Data found ".count($journals), "results"=>$journals), 200);
-			// } else {
-			// 	$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
-			// }
+ 					}				
+				$this->response(array("status"=>"OK", "message"=>"Data found.","entry"=>$entries, "results"=>$query), 201);
+			} else {
+				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
+			}
 		} else {
 			$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 400);
 		}
