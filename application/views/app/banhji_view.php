@@ -4730,13 +4730,14 @@
 <!-- Invoice -->
 <script id="invoice" type="text/x-kendo-template">
 	<div id="slide-form">
-		<div class="row-fluid">
+		<div class="container-960">
+			<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">									
 					<div align="right">			        				        	
 			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
 					</div>
-					<h3 class="heading glyphicons cart_in"><i></i> វិក្កយបត្រ</h3>		        						
+					<h3 align="center">វិក្កយបត្រ</h3>		        						
 					
 					<div class="row-fluid">
 						<div class="span4">				
@@ -4744,15 +4745,7 @@
 								<tr>				
 									<td>លេខវិក្ក​យបត្រ</td>
 									<td><input class="k-textbox" data-bind="value: number" style="width:140px;" readonly /></td>
-								</tr>
-								<tr>
-									<td>ថ្ងៃចេញវិក្កយបត្រ</td>
-									<td>
-										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
-												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
-												required data-required-msg="ត្រូវការ ថ្ងៃចេញវិក្កយបត្រ" />
-									</td>
-								</tr>		                      
+								</tr>										                      
 								<tr>
 					                <td>Class</td>
 					              	<td><select id="classes" name="classes" data-role="combobox" 
@@ -4778,7 +4771,15 @@
 					    </div>
 
 						<div class="span4">
-							<table cellpadding="2" cellspacing="2">	
+							<table cellpadding="2" cellspacing="2" align="right">
+								<tr>
+									<td>ថ្ងៃចេញវិក្កយបត្រ</td>
+									<td>
+										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
+												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
+												required data-required-msg="ត្រូវការ ថ្ងៃចេញវិក្កយបត្រ" />
+									</td>
+								</tr>	
 								<tr>
 					                <td>កាលកំណត់</td>
 					              	<td>
@@ -4794,30 +4795,35 @@
 												data-bind="value: due_date" data-format="dd-MM-yyyy"
 												required data-required-msg="ត្រូវការ ថ្ងៃបង់ប្រាក់" />
 									</td>
-								</tr>					
+								</tr>													
 					            <tr>
-					            	<td>លេខបញ្ជាលក់</td>				
-									<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" 
-												data-auto-bind="false" data-bind="source: soList, value: so_id, events:{ change: soChange}" 
-												data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-								</tr>
-								<tr>
-					            	<td>លេខសម្រង់តំម្លៃ</td>				
-									<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" 
-												data-auto-bind="false" data-bind="source: estimateList, value: estimate_id, events:{ change: estimateChange}" 
-												data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-								</tr>
-								<tr>
-					            	<td>លេខលិខិតដឺកជញ្ជូន</td>				
-									<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" 
-												data-auto-bind="false" data-bind="source: gdnList, value: gdn_id, events:{ change: gdnChange}" 
-												data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-								</tr>
+					            	<td>
+					            		<select data-role="dropdownlist"					            			 
+					            			data-bind="value: reference_type, events:{change: loadReference}"
+					            			data-option-label="(-- ទាញពី ---)" 
+					            			style="width: 120px">
+										 	<option value="Estimate">សម្រង់តម្លៃ</option>
+										  	<option value="SO">បញ្ជាលក់</option>
+										  	<option value="GDN">លិខិតដឹកជញ្ជូន</option>										  	
+										</select>					            		
+					            	</td>				
+									<td>
+										<select data-role="dropdownlist"
+												data-text-field="number" 
+					              				data-value-field="id"
+					              				data-auto-bind="false" 
+					              				data-bind="source: referenceList, value: reference_id, 
+					              							enabled: bolReference,
+					              							events:{change: referenceChange}" 
+					              				data-option-label="(--- ជ្រើសរើស ---)"></select>
+									</td>
+								</tr>								
 							</table>           		          	
 					    </div>
 					</div>
 								
-					<div data-role="grid" data-bind="source: invoiceItemList"
+					<div id="grid" data-role="grid" 
+						data-bind="source: invoiceItemList"
 				        data-auto-bind="false"				        
 				        data-row-template="invoiceRowTemplate"				                        
 				        data-columns='[{ title: "", width: 20 },
@@ -4874,164 +4880,26 @@
 					</div>
 				</div>
 			</div>
+			</div>
 		</div>
 	</div>
 </script>
 <script id="receipt" type="text/x-kendo-template">
-	<div class="row-fluid">
-		<div class="span12">
-			<div id="example" class="k-content">
-				<div align="right">			        				        	
-		        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>		        	
-				</div>
-				<h3 class="heading glyphicons cart_in"><i></i>បង្កាន់ដៃលក់</h3>			
-				
-				<div class="row-fluid">				
-					<div class="span8">
-						<table cellpadding="2" cellspacing="2">
-							<tr>				
-								<td>លេខបង្កាន់ដៃលក់</td>
-								<td><input class="k-textbox" data-bind="value: number" style="width:138px;" readonly /></td>
-							</tr>
-							<tr>
-								<td>កាលបរិច្ឆេទ</td>
-								<td>
-									<input id="issuedDate" name="issuedDate" data-role="datepicker" 
-											data-bind="value: issued_date" data-format="dd-MM-yyyy" 
-											required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
-								</td>
-							</tr>					         
-							<tr>
-				                <td>Class</td>
-				              	<td>
-				              		<select id="classes" name="classes" data-role="combobox" data-text-field="name" data-value-field="id" 
-				              				data-bind="source: classList, value: class_id"
-				              				required data-required-msg="ត្រូវការ Class"></select>
-				              	</td>
-				            <tr>            
-							<tr>
-								<td colspan="2">
-									អាសយដ្ឋាន
-									<br>
-									<textarea id="address" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: address"></textarea>
-								</td>
-							</tr>
-						</table>
-					</div>
-
-					<div class="span4">			
-						<table cellpadding="2" cellspacing="2">					
-							<tr>
-				                <td>វីធីបង់ប្រាក់</td>
-				              	<td>
-				              		<select id="paymentMethod" name="paymentMethod" data-role="dropdownlist" 
-				              				data-text-field="name" data-value-field="id" 
-				              				data-bind="source: paymentMethodList, value: payment_method_id" 
-				              				data-option-label="(--- ជ្រើសរើស ---)"
-				              				required data-required-msg="ត្រូវការ វីធីបង់ប្រាក់"></select>
-				              	</td>
-				            <tr>
-							<tr>
-				                <td>លេខកូដសែក</td>
-				                <td><input id="check_no" class="k-textbox" data-bind="value: check_no" /></td>
-				            <tr>
-				            <tr>
-								<td>គណនីសាច់ប្រាក់</td>
-								<td>
-									<select id="cashAccount" name="cashAccount" data-role="combobox" 
-											data-text-field="name" data-value-field="id" 
-											data-bind="source: cashAccountList, value: cash_account_id"
-											required data-required-msg="ត្រូវការ គណនីសាច់ប្រាក់"></select>
-								</td>
-							</tr>					
-							<tr>
-				            	<td>លេខបញ្ជាលក់</td>				
-								<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" data-auto-bind="false" data-bind="source: soList, value: so_id, events:{ change: soChange}" data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-							</tr>
-							<tr>
-				            	<td>លេខសម្រង់តំម្លៃ</td>				
-								<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" data-auto-bind="false" data-bind="source: estimateList, value: estimate_id, events:{ change: estimateChange}" data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-							</tr>
-							<tr>
-				            	<td>លេខលិខិតដឺកជញ្ជូន</td>				
-								<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" data-auto-bind="false" data-bind="source: gdnList, value: gdn_id, events:{ change: gdnChange}" data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-							</tr>
-						</table>           		          	
-				    </div>			    			
-				</div>			
-
-				<div data-role="grid" data-bind="source: invoiceItemList"
-			        data-auto-bind="false" data-row-template="invoiceRowTemplate"                  
-			        data-columns='[{ title: "", width: 20 },
-			        	{ title: "ល.រ", width: 35 },
-			            { title: "ទំនិញ", width: 200 },	                     
-			            { title: "ពណ៌នា", width: 200 },
-			            { title: "ចំនួន", width: 85 },
-			            { title: "តំលៃ", width: 115 },		            
-			            { title: "ទឹកប្រាក់", width: 80 },
-			            { title: "vat", width: 30 }	                    	                    
-			            ]'>
-				</div>
-				<button class="btn btn-inverse" data-bind="click: addNewRow"><i class="icon-plus icon-white"></i></button>
-				
-				<div class="row-fluid">				
-					<div class="span8">
-						សំគាល់:
-						<br>
-						<textarea id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo" placeholder="សំគាល់ 1 (សំរាប់អតិថិជន)"></textarea>
-						<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo2" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
-					</div>
-
-					<div class="span4">
-						<table width="100%">
-							<tr align="right">
-								<td>សរុបរង:</td>
-								<td width="50%"><span data-bind="text: sub_total"></span></td>
-							</tr>
-							<tr align="right">
-								<td align="top">
-									<select data-role="combobox" data-text-field="name" data-value-field="id" 
-											data-bind="source: vatList, value: vat_id, events: {change: change}" placeholder="VAT" style="width:90px"></select>								
-								</td>
-								<td><span data-bind="text: vat"></span></td>
-							</tr>
-							<tr align="right">
-								<td>សរុប:</td>
-								<td bgcolor="#00BFFF"><span data-bind="text: total"></span></td>
-							</tr>						
-						</table>
-					</div>													
-				</div>
-
-				<br>
-
-				<div class="row-fluid">				
-					<div class="span12" align="right">
-						<div id="status"></div>
-						<span class="btn btn-primary btn-icon glyphicons print" data-bind="click: linkPrint, visible: isUpdate"><i></i> បោះពុម្ព</span>						
-						<button id="save" type="submit" class="btn btn-icon btn-primary glyphicons cart_in"><i></i> រៀបចំបង្កាន់ដៃ</button>
-					</div>
-				</div>		
-			</div><!-- //End div example-->
-		</div><!-- //End div span12-->
-	</div><!-- //End div row-fluid-->
-</script>
-<script id="so" type="text/x-kendo-template">
-	<div id="slide-form">
+	<div class="container-960">
 		<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">
 					<div align="right">			        				        	
-			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
+			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>		        	
 					</div>
-					<h3 class="heading glyphicons cart_in"><i></i>បញ្ជាលក់</h3>
-									
-					<div class="row-fluid">
-						<div class="span4">				
-							<table cellpadding="2" cellspacing="2">					          
+					<h3 align="center">បង្កាន់ដៃលក់</h3>			
+					
+					<div class="row-fluid">				
+						<div class="span8">
+							<table cellpadding="2" cellspacing="2">
 								<tr>				
-									<td>លេខបញ្ជាលក់</td>
-									<td><input class="k-textbox" data-bind="value: number" style="width:140px;" readonly /></td>
+									<td>លេខបង្កាន់ដៃលក់</td>
+									<td><input class="k-textbox" data-bind="value: number" style="width:138px;" readonly /></td>
 								</tr>
 								<tr>
 									<td>កាលបរិច្ឆេទ</td>
@@ -5040,23 +4908,15 @@
 												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
 												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
 									</td>
-								</tr>
-								<tr>
-									<td>ថ្ងៃរំពឹងទុក</td>
-									<td>
-										<input id="expectedDate" name="expectedDate" data-role="datepicker" 
-												data-bind="value: expected_date" data-format="dd-MM-yyyy" 
-												required data-required-msg="ត្រូវការ ថ្ងៃរំពឹងទុក" />
-									</td>
-								</tr>		                      
+								</tr>					         
 								<tr>
 					                <td>Class</td>
-					              	<td><select id="classes" name="classes" data-role="combobox" 
-					              				data-text-field="name" data-value-field="id" 
+					              	<td>
+					              		<select id="classes" name="classes" data-role="combobox" data-text-field="name" data-value-field="id" 
 					              				data-bind="source: classList, value: class_id"
 					              				required data-required-msg="ត្រូវការ Class"></select>
 					              	</td>
-					            </tr>            
+					            <tr>            
 								<tr>
 									<td colspan="2">
 										អាសយដ្ឋាន
@@ -5067,33 +4927,60 @@
 							</table>
 						</div>
 
-					    <div class="span4">
-					    	<div align="center">
-					    		<span class="glyphicons standard circle_ok" data-bind="visible: paid"><i></i> ទូទាត់រួច</span>				    	
-					    	</div>
-					    </div>
-
-						<div class="span4">
-							<table cellpadding="2" cellspacing="2">								
+						<div class="span4">			
+							<table cellpadding="2" cellspacing="2" align="right">					
 								<tr>
-					            	<td>លេខសម្រង់តំម្លៃ</td>				
-									<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" 
-												data-auto-bind="false" data-bind="source: estimateList, value: estimate_id, events:{ change: estimateChange}" 
-												data-option-label="(--- ជ្រើសរើស ---)"></select></td>
-								</tr>
+					                <td>វីធីបង់ប្រាក់</td>
+					              	<td>
+					              		<select id="paymentMethod" name="paymentMethod" data-role="dropdownlist" 
+					              				data-text-field="name" data-value-field="id" 
+					              				data-bind="source: paymentMethodList, value: payment_method_id" 
+					              				data-option-label="(--- ជ្រើសរើស ---)"
+					              				required data-required-msg="ត្រូវការ វីធីបង់ប្រាក់"></select>
+					              	</td>
+					            <tr>
 								<tr>
-					            	<td>លេខលិខិតដឺកជញ្ជូន</td>				
-									<td><select data-role="dropdownlist" data-text-field="number" data-value-field="id" 
-												data-auto-bind="false" data-bind="source: gdnList, value: gdn_id, events:{ change: gdnChange}" 
-												data-option-label="(--- ជ្រើសរើស ---)"></select></td>
+					                <td>លេខកូដសែក</td>
+					                <td><input id="check_no" class="k-textbox" data-bind="value: check_no" /></td>
+					            <tr>
+					            <tr>
+									<td>គណនីសាច់ប្រាក់</td>
+									<td>
+										<select id="cashAccount" name="cashAccount" data-role="combobox" 
+												data-text-field="name" data-value-field="id" 
+												data-bind="source: cashAccountList, value: cash_account_id"
+												required data-required-msg="ត្រូវការ គណនីសាច់ប្រាក់"></select>
+									</td>
+								</tr>					
+								<tr>
+					            	<td>
+					            		<select data-role="dropdownlist"					            			 
+					            			data-bind="value: reference_type, events:{change: loadReference}"
+					            			data-option-label="(-- ទាញពី ---)"
+					            			style="width: 120px">
+										 	<option value="Estimate">សម្រង់តម្លៃ</option>
+										  	<option value="SO">បញ្ជាលក់</option>
+										  	<option value="GDN">លិខិតដឹកជញ្ជូន</option>										  	
+										</select>					            		
+					            	</td>				
+									<td>
+										<select data-role="dropdownlist"
+												data-text-field="number" 
+					              				data-value-field="id"
+					              				data-auto-bind="false" 
+					              				data-bind="source: referenceList, value: reference_id, 
+					              							enabled: bolReference,
+					              							events:{change: referenceChange}" 
+					              				data-option-label="(--- ជ្រើសរើស ---)"></select>
+									</td>
 								</tr>
 							</table>           		          	
-					    </div>
-					</div>
-								
-					<div data-role="grid" data-bind="source: invoiceItemList"
-				        data-auto-bind="false"				        
-				        data-row-template="invoiceRowTemplate"				                        
+					    </div>			    			
+					</div>			
+
+					<div id="grid" data-role="grid" 
+						data-bind="source: invoiceItemList"
+				        data-auto-bind="false" data-row-template="invoiceRowTemplate"                  
 				        data-columns='[{ title: "", width: 20 },
 				        	{ title: "ល.រ", width: 35 },
 				            { title: "ទំនិញ", width: 200 },	                     
@@ -5105,8 +4992,6 @@
 				            ]'>
 					</div>
 					<button class="btn btn-inverse" data-bind="click: addNewRow"><i class="icon-plus icon-white"></i></button>
-					
-					<br>
 					
 					<div class="row-fluid">				
 						<div class="span8">
@@ -5143,23 +5028,24 @@
 						<div class="span12" align="right">
 							<div id="status"></div>
 							<span class="btn btn-primary btn-icon glyphicons print" data-bind="click: linkPrint, visible: isUpdate"><i></i> បោះពុម្ព</span>						
-							<button id="save" type="submit" class="btn btn-icon btn-primary glyphicons cart_in"><i></i> រៀបចំបញ្ជាលក់</button>
+							<button id="save" type="submit" class="btn btn-icon btn-primary glyphicons cart_in"><i></i> រៀបចំបង្កាន់ដៃ</button>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+					</div>		
+				</div><!-- //End div example-->
+			</div><!-- //End div span12-->
+		</div><!-- //End div row-fluid-->
 	</div>
 </script>
 <script id="estimate" type="text/x-kendo-template">
 	<div id="slide-form">
-		<div class="row-fluid">
+		<div class="container-960">
+			<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">
 					<div align="right">			        				        	
 			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
 					</div>
-					<h3 class="heading glyphicons cart_in"><i></i>សម្រង់តម្លៃ</h3>
+					<h3 align="center">សម្រង់តម្លៃ</h3>
 									
 					<div class="row-fluid">
 						<div class="span4">				
@@ -5168,14 +5054,7 @@
 									<td>លេខសម្រង់តម្លៃ</td>
 									<td><input class="k-textbox" data-bind="value: number" style="width:140px;" readonly /></td>
 								</tr>
-								<tr>
-									<td>កាលបរិច្ឆេទ</td>
-									<td>
-										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
-												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
-												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
-									</td>
-								</tr>		                      
+										                      
 								<tr>
 					                <td>Class</td>
 					              	<td><select id="classes" name="classes" data-role="combobox" 
@@ -5201,11 +5080,21 @@
 					    </div>
 
 						<div class="span4">
-							         		          	
+							<table cellpadding="2" cellspacing="2" align="right">
+								<tr>
+									<td>កាលបរិច្ឆេទ</td>
+									<td>
+										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
+												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
+												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
+									</td>
+								</tr>
+							</table>	         		          	
 					    </div>
 					</div>
 								
-					<div data-role="grid" data-bind="source: invoiceItemList"
+					<div id="grid" data-role="grid" 
+						data-bind="source: invoiceItemList"
 				        data-auto-bind="false"				        
 				        data-row-template="invoiceRowTemplate"				                        
 				        data-columns='[{ title: "", width: 20 },
@@ -5262,12 +5151,161 @@
 					</div>
 				</div>
 			</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script id="so" type="text/x-kendo-template">
+	<div id="slide-form">
+		<div class="container-960">
+			<div class="row-fluid">
+			<div class="span12">
+				<div id="example" class="k-content">
+					<div align="right">			        				        	
+			        	<button type="button" aria-hidden="true" data-bind="click:closeX">X</button>			        	
+					</div>
+					<h3 align="center">បញ្ជាលក់</h3>
+									
+					<div class="row-fluid">
+						<div class="span4">				
+							<table cellpadding="2" cellspacing="2">					          
+								<tr>				
+									<td>លេខបញ្ជាលក់</td>
+									<td><input class="k-textbox" data-bind="value: number" style="width:140px;" readonly /></td>
+								</tr>										                      
+								<tr>
+					                <td>Class</td>
+					              	<td><select id="classes" name="classes" data-role="combobox" 
+					              				data-text-field="name" data-value-field="id" 
+					              				data-bind="source: classList, value: class_id"
+					              				required data-required-msg="ត្រូវការ Class"></select>
+					              	</td>
+					            </tr>            
+								<tr>
+									<td colspan="2">
+										អាសយដ្ឋាន
+										<br>
+										<textarea id="address" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: address"></textarea>
+									</td>
+								</tr>
+							</table>
+						</div>
+
+					    <div class="span4">
+					    	<div align="center">
+					    		<span class="glyphicons standard circle_ok" data-bind="visible: paid"><i></i> ទូទាត់រួច</span>				    	
+					    	</div>
+					    </div>
+
+						<div class="span4">
+							<table cellpadding="2" cellspacing="2" align="right">
+								<tr>
+									<td>កាលបរិច្ឆេទ</td>
+									<td>
+										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
+												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
+												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
+									</td>
+								</tr>
+								<tr>
+									<td>ថ្ងៃរំពឹងទុក</td>
+									<td>
+										<input id="expectedDate" name="expectedDate" data-role="datepicker" 
+												data-bind="value: expected_date" data-format="dd-MM-yyyy" 
+												required data-required-msg="ត្រូវការ ថ្ងៃរំពឹងទុក" />
+									</td>
+								</tr>								
+								<tr>
+					            	<td>
+					            		<select data-role="dropdownlist"					            			 
+					            			data-bind="value: reference_type, events:{change: loadReference}"
+					            			data-option-label="(-- ទាញពី ---)"
+					            			style="width: 120px">
+										 	<option value="Estimate">សម្រង់តម្លៃ</option>										  	
+										  	<option value="GDN">លិខិតដឹកជញ្ជូន</option>										  	
+										</select>					            		
+					            	</td>				
+									<td>
+										<select data-role="dropdownlist"
+												data-text-field="number" 
+					              				data-value-field="id"
+					              				data-auto-bind="false" 
+					              				data-bind="source: referenceList, value: reference_id, 
+					              							enabled: bolReference,
+					              							events:{change: referenceChange}" 
+					              				data-option-label="(--- ជ្រើសរើស ---)"></select>
+									</td>
+								</tr>
+							</table>           		          	
+					    </div>
+					</div>
+								
+					<div id="grid" data-role="grid" 
+						data-bind="source: invoiceItemList"
+				        data-auto-bind="false"				        
+				        data-row-template="invoiceRowTemplate"				                        
+				        data-columns='[{ title: "", width: 20 },
+				        	{ title: "ល.រ", width: 35 },
+				            { title: "ទំនិញ", width: 200 },	                     
+				            { title: "ពណ៌នា", width: 200 },
+				            { title: "ចំនួន", width: 85 },
+				            { title: "តំលៃ", width: 115 },		            
+				            { title: "ទឹកប្រាក់", width: 80 },
+				            { title: "vat", width: 30 }	                    	                    
+				            ]'>
+					</div>
+					<button class="btn btn-inverse" data-bind="click: addNewRow"><i class="icon-plus icon-white"></i></button>
+					
+					<br>
+					
+					<div class="row-fluid">				
+						<div class="span8">
+							សំគាល់:
+							<br>
+							<textarea id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo" placeholder="សំគាល់ 1 (សំរាប់អតិថិជន)"></textarea>
+							<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo2" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
+						</div>
+
+						<div class="span4">
+							<table width="100%">
+								<tr align="right">
+									<td>សរុបរង:</td>
+									<td width="50%"><span data-bind="text: sub_total"></span></td>
+								</tr>
+								<tr align="right">
+									<td align="top">
+										<select data-role="combobox" data-text-field="name" data-value-field="id" 
+												data-bind="source: vatList, value: vat_id, events: {change: change}" placeholder="VAT" style="width:90px"></select>								
+									</td>
+									<td><span data-bind="text: vat"></span></td>
+								</tr>
+								<tr align="right">
+									<td>សរុប:</td>
+									<td bgcolor="#00BFFF"><span data-bind="text: total"></span></td>
+								</tr>						
+							</table>
+						</div>													
+					</div>
+
+					<br>
+
+					<div class="row-fluid">				
+						<div class="span12" align="right">
+							<div id="status"></div>
+							<span class="btn btn-primary btn-icon glyphicons print" data-bind="click: linkPrint, visible: isUpdate"><i></i> បោះពុម្ព</span>						
+							<button id="save" type="submit" class="btn btn-icon btn-primary glyphicons cart_in"><i></i> រៀបចំបញ្ជាលក់</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
 		</div>
 	</div>
 </script>
 <script id="gdn" type="text/x-kendo-template">
 	<div id="slide-form">
-		<div class="row-fluid">
+		<div class="container-960">
+			<div class="row-fluid">
 			<div class="span12">
 				<div id="example" class="k-content">
 					<div align="right">			        				        	
@@ -5281,15 +5319,7 @@
 								<tr>				
 									<td>លេខលិខិតដឹកជញ្ជូន</td>
 									<td><input class="k-textbox" data-bind="value: number" style="width:140px;" readonly /></td>
-								</tr>
-								<tr>
-									<td>កាលបរិច្ឆេទ</td>
-									<td>
-										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
-												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
-												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
-									</td>
-								</tr>		                      
+								</tr>										                      
 								<tr>
 					                <td>Class</td>
 					              	<td><select id="classes" name="classes" data-role="combobox" 
@@ -5315,11 +5345,21 @@
 					    </div>
 
 						<div class="span4">
-							          		          	
+							<table cellpadding="2" cellspacing="2" align="right">
+								<tr>
+									<td>កាលបរិច្ឆេទ</td>
+									<td>
+										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
+												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
+												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
+									</td>
+								</tr>
+							</table>          		          	
 					    </div>
 					</div>
 								
-					<div data-role="grid" data-bind="source: invoiceItemList"
+					<div id="grid" data-role="grid" 
+						data-bind="source: invoiceItemList"
 				        data-auto-bind="false"				        
 				        data-row-template="gdnRowTemplate"				                        
 				        data-columns='[{ title: "", width: 20 },
@@ -5361,6 +5401,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</div>
 	</div>
@@ -15594,6 +15635,28 @@
 			}		
 		});
 
+		var cashAccountDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/accounts/account",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			filter: { field: "account_type_id", value: 6 },
+			serverFiltering: true
+		});
+
+		var paymentMethodDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/payment_methods/payment_method",
+					type: "GET",
+					dataType: "json"
+				}
+			}
+		});
+
 		var itemDS = new kendo.data.DataSource({
 			transport: {
 				read: {
@@ -15697,7 +15760,7 @@
 		  	serverFiltering: true	  		  	
 		});
 
-		var estimateDS = new kendo.data.DataSource({
+		var referenceDS = new kendo.data.DataSource({
 		  	transport: {
 			  	read: {
 				  	url : banhji.baseUrl + "api/invoices/invoice",		  
@@ -15712,49 +15775,7 @@
 		  	},	  		  	
 		  	serverFiltering : true	  	
 		});
-
-		var gdnDS = new kendo.data.DataSource({
-		  	transport: {
-			  	read: {
-				  	url : banhji.baseUrl + "api/invoices/invoice",		  
-				  	type: "GET",
-				  	dataType: "json"
-			  	},
-			  	update: {
-				  	url : banhji.baseUrl + "api/invoices/invoice",		  
-				  	type: "PUT",
-				  	dataType: "json"
-			  	}
-		  	},
-		  	schema: {
-			  	model: {
-				  	id : "id"
-			  	}		
-		  	},		  		  	
-		  	serverFiltering : true	  	
-		});
-
-		var soDS = new kendo.data.DataSource({
-		  	transport: {
-			  	read: {
-				  	url : banhji.baseUrl + "api/invoices/invoice",		  
-				  	type: "GET",
-				  	dataType: "json"
-			  	},
-			  	update: {
-				  	url : banhji.baseUrl + "api/invoices/invoice",		  
-				  	type: "PUT",
-				  	dataType: "json"
-			  	}
-		  	},
-		  	schema: {
-			  	model: {
-				  	id : "id"
-			  	}		
-		  	},		  		  	
-		  	serverFiltering : true	  	
-		});
-
+		
 		var journalDS = new kendo.data.DataSource({
 		  	transport: {	  
 			    create: {
@@ -15775,7 +15796,6 @@
 			  	}		
 		  	}
 		});
-
 		
 		var viewModel = kendo.observable({											
 			biller				: banhji.config.userData.userId,
@@ -15783,13 +15803,20 @@
 			sub_code 			: "km-KH",
 			rate 				: 1,
 
-			customer_id 		: 0,			
+			type 				: "Invoice", 
+			customer_id 		: 0,
+			quantity 			: 0,			
+					  	  
+			issued_date			: new Date(),			
+			duedate  			: "",
+			expected_date 		: "",		
 			
-			address				: "",		  	  
-			issued_date			: new Date(),
-			duedate  			: "",		
+			payment_method_id   : 1,
 			payment_term_id   	: 0,
-						
+			cash_account_id 	: "",
+			check_no 			: "",
+			
+			address				: "",
 			memo				: "",
 			memo2 				: "",
 			class_id			: "",
@@ -15799,39 +15826,51 @@
 			so_id				: 0,
 
 			vat_id				: "",			
-			customer 			: null,			
+			customer 			: null,
+
+			reference_type 		: "",
+			reference_id 		: 0,
+			bolReference 		: false,			
 											
 			itemList 			: [],
 
 			invoiceItemList 	: invoiceItemDS,
 			vatList 			: vatDS,
-			estimateList 		: estimateDS,
-			gdnList 			: gdnDS,
-			soList 				: soDS,
-			paymentTermList		: paymentTermDS,						
+			referenceList 		: referenceDS,			
+			paymentTermList		: paymentTermDS,
+			paymentMethodList	: paymentMethodDS,
+			cashAccountList 	: cashAccountDS,						
 			classList 			: classDS,
 							
-			pageLoad 			: function(customer_id){
+			pageLoad 			: function(type, customer_id){
 				var self = this;
 
+				this.set("type", type);
+				this.set("reference", 0);
+				this.set("reference_id", 0);
+				this.set("bolReference", false);
+				this.set("payment_term_id", 0);
+				this.set("cash_account_id", "");						
+		    	this.set("class_id", "");
+		    	this.set("address", "");
+				this.set("memo", "");
+				this.set("memo2", "");
+				this.set("sub_total", "");
+				this.set("vat_id", "");
+				this.set("vat", "");	
+				this.set("total", "");
+
+				this.setNumber(type);
+				this.setDueDate();
+				this.setExpectedDate();				
+				
+				this.addNewRow();							
+			  	
 				var curr_customer_id = this.get("customer_id");
 				if(curr_customer_id!==customer_id){
 					this.set("customer_id", customer_id);
 
-					this.set("so_id", 0);
-					this.set("estimate_id", 0);
-					this.set("gdn_id", 0);			
-			    	this.set("class_id", "");
-					this.set("memo", "");
-					this.set("memo2", "");
-					this.set("sub_total", "");
-					this.set("vat_id", "");
-					this.set("vat", "");	
-					this.set("total", "");
-
-					currencyRateDS.fetch();
-					this.setNumber("Invoice");
-					this.setDueDate();
+					currencyRateDS.fetch();				
 
 					//Promise ^_^
 					this.loadCustomer(customer_id).then(
@@ -15839,30 +15878,28 @@
 							var d = data[0];					  	
 						  	self.set("customer", d);		  	
 						  	self.set("address", d.address);					  						  	
-						  	self.set("sub_code", d.currencies.sub_code);
-						  	self.set("company_code", d.companies.based_currency);
-						  	self.set("class_id", d.class_id);					  	
+						  	self.set("sub_code", d.currencies.sub_code);						  					  	
 
 						  	var company_id = d.companies.id;
 						  	if(d.companies.parent_id>0){
 						  		compnay_id = d.companies.parent_id;					  		
 						  	}
 
-						  	self.setItemSource(company_id);
-						  	self.loadReferences(company_id, d.id);
+						  	self.loadClass(company_id);
+						  	self.setItemSource(company_id);						  	
 						  	self.setRate(d.companies.based_currency, d.currency_code);
-
-						  	if(invoiceItemDS.data().length<1){
-						  		self.addNewRow();
-						  	}
-						}				
+						  	
+						  	self.set("class_id", d.class_id);						  							  	
+						}							
 					);
 				}															
-			},
+			},			
 			closeX 				: function(){
 				kendo.fx($("#slide-form")).slideIn("up").play();				
 				window.history.go(-1);
-			},												
+			},
+			
+			//Setup
 		    setItemSource 		: function(company_id){
 		    	var self = this;
 
@@ -15948,29 +15985,33 @@
 						no++;
 					}
 											
-					var number = headerWithDate + kendo.toString(no, "00000");
-
+					var number = headerWithDate + kendo.toString(no, "00000");					
 					self.set("number", number);
 				});											   	
 		    },		    	    	    	    
-		    setNextNumber 		: function(last_no){
+		    setNextNumber 		: function(last_no){		    	
 		    	var d = new Date();
 		    	var no = 0;
 		    	var header = "";
 		    	if(last_no.length>5){
-		    		header = last_no.substr(0, last_no.length - 9);
+		    		header = last_no.substr(0, last_no.length - 5);
 					no = parseInt(last_no.substr(last_no.length - 5));								
 				}
 				no++;
 				
 				var number = header + kendo.toString(no, "00000");
-				
+
 				this.set("number", number);
 		    },
 		    setDueDate 			: function(){
 				var duedate = new Date();
 				duedate.setDate(duedate.getDate()+7);
 				this.set("due_date", duedate);
+			},
+			setExpectedDate 	: function(){
+				var exdate = new Date();
+				exdate.setDate(exdate.getDate()+7);
+				this.set("expected_date", exdate);
 			},
 			setRate 			: function(company_code, customer_code){
 				var rate = 1;								
@@ -15984,69 +16025,44 @@
 		        }
 		        this.set("rate", rate);		        	        
 			},
-			loadReferences 		: function(company_id, customer_id){
-				currencyRateDS.fetch();
 
+			//References
+			loadClass 			: function(company_id){				
 				classDS.filter([
 						{ field: "type", value: "Class" },						
 						{ field: "company_id", value: company_id }
-				]);
-
-				estimateDS.filter({
-					filters: [
-						{ field: "customer_id", value: customer_id },
-						{ field: "status", value: 0 },
-						{ field: "type", value: "Estimate" }
-					]
-				});
-
-				gdnDS.filter({
-					filters: [
-						{ field: "customer_id", value: customer_id },
-						{ field: "status", value: 0 },
-						{ field: "type", value: "GDN" }
-					]
-				});
-
-				soDS.filter({
-					filters: [
-						{ field: "customer_id", value: customer_id },
-						{ field: "status", value: 0 },
-						{ field: "type", value: "SO" }
-					]
-				});				
+				]);				
 			},
-		    loadCustomer 		: function(id){
-		    	var self = this, dfd = $.Deferred();
+			loadReference 		: function(e){				
+				var type = e.sender._selectedValue;
 
-		    	peopleDS.filter({ field: "id", value: id });
-		    	peopleDS.bind("requestEnd", function(e){
-		    		var response = e.response;
-    				var type = e.type;
+				if(type!==""){
+					this.set("bolReference", true);
 
-					if(type==="read"){
-						dfd.resolve(response);											  												  
-				  	}			  	  			  	
-				});
+					var customer_id = this.get("customer").id;
+				
+					referenceDS.filter({
+						filters: [
+							{ field: "customer_id", value: customer_id },
+							{ field: "status", value: 0 },
+							{ field: "type", value: type }
+						]
+					});
+				}else{
+					this.set("bolReference", false);
+					this.set("reference_id", 0);
+					invoiceItemDS.data([]);
+				}								
+			},
+			
+			loadEdit 			: function(invoice_id){
+				var self = this;
 
-				return dfd;															    			  	    	
-		    },
-		    loadInvoice			: function(id){			  	
-			  	var self = this;
-			  	
-			  	this.setItemSource();			  	
-
-			  	invoiceDS.filter({ field: "id", value: id });
-			  	invoiceItemDS.filter({ field: "invoice_id", value: id });
-			 			  	
-			  	invoiceDS.bind("requestEnd", function(e){
-			  		var response = e.response;
-    				var type = e.type;
-
-			  		if(type==="read"){
-				  		var d = response[0];
-
-				  		if(d.vat_id>0){
+				//Promise ^_^
+				this.loadInvoice(invoice_id).then(
+					function(data){
+						var d = data[0];					  	
+					  	if(d.vat_id>0){
 				  			self.set("vat_id", d.vat_id);
 				  		}
 
@@ -16080,23 +16096,57 @@
 							self.set("paid", false);
 						}
 
-						//Load customer
-						customerDS.filter({ field: "id", value: d.customer_id });
-						customerDS.bind("requestEnd", function(e){
-					  		var response = e.response;
-		    				var type = e.type;
+						var company_id = d.company_id;
+					  	if(d.companies.parent_id>0){
+					  		compnay_id = d.companies.parent_id;					  		
+					  	}
 
-					  		if(type==="read"){
-						  		var d = response[0];
-						  		self.set("customer", d);
-						  	}
-						});
-						
-						self.loadReferences(d.customer_id);
-						self.autoIncreaseNo();
-					}																		
-			 	});				
-			},						
+						//Invoice items						
+			  			invoiceItemDS.filter({ field: "invoice_id", value: d.id });
+
+			  			self.setItemSource(company_id);
+
+			  			return d.customer_id;						  	
+					}									
+				).then(function(data){
+					var customer = self.loadCustomer(data);
+
+					return customer;
+				}).then(function(data){
+					self.set("customer", data);
+				});
+			},
+		    loadCustomer 		: function(id){
+		    	var self = this, dfd = $.Deferred();
+
+		    	peopleDS.filter({ field: "id", value: id });
+		    	peopleDS.bind("requestEnd", function(e){
+		    		var response = e.response;
+    				var type = e.type;
+
+					if(type==="read"){
+						dfd.resolve(response);											  												  
+				  	}			  	  			  	
+				});
+
+				return dfd;															    			  	    	
+		    },
+		    loadInvoice			: function(id){			  	
+			  	var self = this, dfd = $.Deferred();
+			  	
+			 	invoiceDS.filter({ field: "id", value: id });
+		    	invoiceDS.bind("requestEnd", function(e){
+		    		var response = e.response;
+    				var type = e.type;
+
+					if(type==="read"){
+						dfd.resolve(response);											  												  
+				  	}			  	  			  	
+				});
+
+				return dfd;				
+			},
+
 			autoIncreaseNo 		: function(){
 				$(".sno").each(function(index,element){                 
 				   $(element).text(index + 1); 
@@ -16166,6 +16216,56 @@
 		        	        
 		        this.change();	                	        	
 			},
+			referenceChange 	: function(e){				
+				var id = e.sender._selectedValue;
+				
+				if(id>0 || id!==""){					
+				 	var d = referenceDS.get(id);			
+				 	var items = d.invoice_items;
+
+				 	//Clear invoice item datasource
+					if(invoiceItemDS.total()>0){
+						invoiceItemDS.data([]);					
+					}				 	
+
+				 	$.each(items, function(index, data) {			 		
+				 		invoiceItemDS.add({
+							'invoice_id' 	: 0,
+							'item_id' 		: data.item_id,
+							'description' 	: data.description,				
+							'quantity' 		: data.quantity,
+							'unit_price' 	: data.unit_price,								
+							'amount' 		: data.memo,
+							'rate'			: data.rate,
+							'sub_code'		: data.sub_code,
+							'vat' 			: data.vat,
+							'so_id'			: data.so_id		
+						});			
+				 	});
+
+				 	if(d.vat_id>0){
+			  			this.set("vat_id", d.vat_id);
+			  		}
+
+			  		var t = kendo.parseFloat(d.amount)/d.rate;
+			  		var v = kendo.parseFloat(d.vat)/d.rate;
+
+				 	this.set("total", kendo.toString(t, "c", d.sub_code));
+				  	this.set("rate", d.rate);						
+					this.set("vat", kendo.toString(v, "c", d.sub_code));
+					this.set("sub_code", d.sub_code);
+					this.set("address", d.address);					
+					this.set("memo", d.memo);
+					this.set("memo2", d.memo2);
+
+				 	this.set("reference_id", id);				 				 				 				
+				}else{
+					invoiceItemDS.data([]);
+				}
+
+				this.change();				
+			},
+			
 			getCurrencyRateByCode 	: function(code){
 				var rate = 0;			
 				$.each(currencyRateDS.data(), function(index, value){	        	
@@ -16177,128 +16277,42 @@
 				
 		        return rate;
 			},
-			soChange 			: function(e){
-				var id = e.sender._selectedValue;
-				
-				//Clear invoice item datasource
-				if(invoiceItemDS.total()>0){
-					invoiceItemDS.data([]);					
-				}
 
-				if(id>0 || id!==""){
-				 	var d = soDS.get(id);			
-				 	var items = d.invoice_items;
-
-				 	$.each(items, function(index, data) {			 		
-				 		invoiceItemDS.add({
-							'invoice_id' 	: 0,
-							'item_id' 		: data.item_id,
-							'description' 	: data.description,				
-							'quantity' 		: data.quantity,
-							'unit_price' 	: data.unit_price,								
-							'amount' 		: data.memo,
-							'rate'			: data.rate,
-							'sub_code'		: data.sub_code,
-							'vat' 			: data.vat,
-							'so_id'			: data.so_id		
-						});			
-				 	});
-
-				 	this.set("estimate_id", 0);
-				 	this.set("gdn_id", 0);
-				 	this.set("so_id", id);			
-				}
-
-				this.change();			
-			},
-			estimateChange 		: function(e){				
-				var id = e.sender._selectedValue;
-				
-				//Clear invoice item datasource
-				if(invoiceItemDS.total()>0){
-					invoiceItemDS.data([]);					
-				}
-
-				if(id>0 || id!==""){
-				 	var d = estimateDS.get(id);			
-				 	var items = d.invoice_items;
-
-				 	$.each(items, function(index, data) {			 		
-				 		invoiceItemDS.add({
-							'invoice_id' 	: 0,
-							'item_id' 		: data.item_id,
-							'description' 	: data.description,				
-							'quantity' 		: data.quantity,
-							'unit_price' 	: data.unit_price,								
-							'amount' 		: data.memo,
-							'rate'			: data.rate,
-							'sub_code'		: data.sub_code,
-							'vat' 			: data.vat,
-							'so_id'			: data.so_id		
-						});			
-				 	});
-
-				 	this.set("estimate_id", id);
-				 	this.set("gdn_id", 0);
-				 	this.set("so_id", 0);				 				 				
-				}
-
-				this.change();				
-			},
-			gdnChange 			: function(e){
-				var id = e.sender._selectedValue;
-				
-				//Clear invoice item datasource
-				if(invoiceItemDS.total()>0){
-					invoiceItemDS.data([]);					
-				}
-
-				if(id>0 || id!==""){
-				 	var d = gdnDS.get(id);			
-				 	var items = d.invoice_items;
-
-				 	$.each(items, function(index, data) {			 		
-				 		invoiceItemDS.add({
-							'invoice_id' 	: 0,
-							'item_id' 		: data.item_id,
-							'description' 	: data.description,				
-							'quantity' 		: data.quantity,
-							'unit_price' 	: data.unit_price,								
-							'amount' 		: data.memo,
-							'rate'			: data.rate,
-							'sub_code'		: data.sub_code,
-							'vat' 			: data.vat,
-							'so_id'			: data.so_id		
-						});			
-				 	});
-
-				 	this.set("estimate_id", 0);
-				 	this.set("gdn_id", id);
-				 	this.set("so_id", 0);
-
-				 	
-				 	this.autoIncreaseNo();				
-				}
-
-				this.change();				
-			},
+			//Actions
 			save 				: function(){
 		    	var self = this;
 
-				this.add().then(
-					function(data){						
-						var invoice_id = data.invoice_id;
+				this.add()
+				.then(function(data){						
+					var invoice_id = data.invoice_id;
+					
+	    			self.updateReference();		    		   	
+			    					    
+				    return invoice_id;
+				}).then(function(data){
+					var type = self.get("type");
+					if(type==="Invoice" || type==="Receipt"){					
+						self.addJournal(data);
+						peopleDS.sync();
+					}
+					return true;									
+				}).then(function(data){					
+					self.clear();
+				});
+			},		    		    
+		    edit 				: function(id){		    	
+		    	this.update(id)
+				.then(function(data){
+					peopleDS.sync();	    								
+					invoiceItemDS.sync();
 
-						self.addJournal(invoice_id);
-		    			self.updateSO();		    		   	
-				    	self.updateEstimate();
-					    self.updateGDN();
-					    self.updateCustomerBalance();
+					return true;				    
+				}).then(function(data){					
+					self.clear();
+				});
+		    },
 
-					    return invoice_id;
-					}			
-				);
-			},
+		    //Create
 		    add 				: function(){
 		    	var self = this, dfd = $.Deferred();
 
@@ -16319,22 +16333,26 @@
 		        //Add invoice to datasource	
 		    	invoiceDS.add({
 		    		'number' 			: this.get("number"),
-				   	'type'				: "Invoice",				   					   				   	
+				   	'type'				: this.get("type"),
+				   	'quantity'			: this.get("quantity"),			   					   				   	
 				   	'amount'			: tt*rate,
 				   	'rate'				: rate,
 				   	'vat'				: vv*rate,
 				   	'vat_id'			: this.get("vat_id"),
 				   	'status' 			: 0,
 				   	'sub_code'			: this.get("sub_code"),
-				   	'biller' 			: this.get("biller"),
-				   	'customer_id' 		: this.get("customer").id,			   	
-				   	'address' 			: this.get("address"),
 				   	'issued_date' 		: kendo.toString(this.get("issued_date"),"yyyy-MM-dd"),
 				   	'due_date' 			: kendo.toString(this.get("due_date"),"yyyy-MM-dd"),
-				   	'so_id' 			: this.get("so_id"),
-				   	'estimate_id' 		: this.get("estimate_id"),
-					'gdn_id' 			: this.get("gdn_id"),
-					'payment_term_id'	: this.get("payment_term_id"),			   	
+				   	'expected_date' 	: kendo.toString(this.get("expected_date"),"yyyy-MM-dd"),			   	
+				   	'address' 			: this.get("address"),
+				   	'biller' 			: this.get("biller"),
+				   	'customer_id' 		: this.get("customer").id,
+				   	'reference_type'	: this.get("reference_type"),
+				   	'reference_id'  	: this.get("reference_id"),
+				   	'check_no' 			: this.get("check_no"),
+				   	'payment_method_id' : this.get("payment_method_id"),				   	
+					'payment_term_id'	: this.get("payment_term_id"),
+					'cash_account_id' 	: this.get("cash_account_id"),			   	
 				   	'class_id' 			: this.get("class_id"),
 				   	'memo' 				: this.get("memo"),
 				   	'memo2'				: this.get("memo2"),
@@ -16342,6 +16360,10 @@
 				   	
 				   	'invoice_items'		: invoiceItemDS.data()
 		    	});
+	
+				var cus = peopleDS.get(this.get("customer").id);
+				var balance = kendo.parseFloat(cus.balance) + tt;
+				cus.set("balance", balance);
 	
 		    	invoiceDS.sync();
 			    invoiceDS.bind("requestEnd", function(e){
@@ -16354,49 +16376,9 @@
 			    });
 
 			    return dfd;	    		    	
-		    },		    
-		    update 				: function(id){
-		    	var d = invoiceDS.get(id);
-		    	var rate = this.get("rate");
-
-		    	var t = this.get("total");
-		        var tt = Number(t.replace(/[^0-9\.]+/g,""));
-
-		        var v = this.get("vat");
-		        var vv = Number(v.replace(/[^0-9\.]+/g,""));
-
-		    	//Update customer balance
-		    	var oldBalance = kendo.parseFloat(d.amount);
-		    	var cus = customerDS.get(d.customer_id);
-		    	var cusBalance = kendo.parseFloat(cus.balance);
-		    	var newBalance = (cusBalance - oldBalance) + tt;
-		    	cus.set("balance", newBalance);
-			  					   				   	
-			   	d.set("amount", tt*rate);
-			   	d.set("vat", vv*rate);			   	
-			   	d.set("vat_id",  this.get("vat_id"));				  	  
-				d.set("issued_date", kendo.toString(new Date(this.get("issued_date")),"yyyy-MM-dd"));
-				d.set("due_date", kendo.toString(new Date(this.get("due_date")),"yyyy-MM-dd"));
-				d.set("address", this.get("address"));	
-				d.set("so_id", this.get("so_id"));
-				d.set("estimate_id", this.get("estimate_id"));
-				d.set("gdn_id", this.get("gdn_id"));
-				d.set("payment_term_id", this.get("payment_term_id"));
-				d.set("class_id", this.get("class_id"));			
-				d.set("memo", this.get("memo"));
-				d.set("memo2", this.get("memo2"));				
-
-				//Adding invoice id to invoice item
-		        $.each(invoiceItemDS.data() ,function(index, data){
-		        	data.set("invoice_id", id);
-		        });
-				
-				customerDS.sync();
-				invoiceDS.sync();
-				invoiceItemDS.sync();						
 		    },	    	  
 		    addJournal 			: function(invoice_id){
-		    	var self = this;				
+		    	var self = this, dfd = $.Deferred();				
 				
 				var journalEntries = [];				
 				var saleList = {};			
@@ -16602,7 +16584,8 @@
 				//Calcualte customer deposit
 				if(depositAmount>0){				
 					var deposit = kendo.parseFloat(this.get("customer").deposit_amount) + kendo.parseFloat(depositAmount);
-					this.updateCustomerDeposit(deposit);
+					var cus = peopleDS.get(this.get("customer").id);
+					cus.set("deposit_amount", deposit);
 				}
 				
 				//Add journal to datasource
@@ -16632,64 +16615,83 @@
 			 	journalDS.sync();
 			 	journalDS.bind("requestEnd", function(e){
 					dfd.resolve(e.response);
-				});			 						 	
-			},				
-			updateSO			: function(){
-				var id = this.get("so_id");
-				
-				if(id>0){
-					var d = soDS.get(id);
-					d.set("status", 1);
-					soDS.sync();
-				}								
-			},
-			updateEstimate		: function(){
-				var id = this.get("estimate_id");
-				
-				if(id>0){
-					var d = estimateDS.get(id);
-					d.set("status", 1);
-					estimateDS.sync();
-				}								
-			},
-			updateGDN			: function(){
-				var id = this.get("gdn_id");
-				
-				if(id>0){
-					var d = gdnDS.get(id);
-					d.set("status", 1);
-					gdnDS.sync();
-				}								
-			},
-			updateCustomerDeposit : function(amount){				
-				var cus = customerDS.get(this.get("customer").id);				
-				$.ajax({
-					type: "PUT",
-					url: banhji.baseUrl + "api/people_api/deposit",			
-					data: { id: customer_id, amount: amount },
-					dataType: "json",
-					success: function (response) {
-						//var data = response.d;			  
-					}
-				});								
-			},
-			updateCustomerBalance: function(){
-				var cus = customerDS.get(this.get("customer").id);
-				var t = this.get("total");
-		        var tt = Number(t.replace(/[^0-9\.]+/g,""));		        
+				});
 
-				var balance = kendo.parseFloat(cus.balance) + tt;
-				cus.set("balance", balance);
-
-				customerDS.sync();
+				return dfd;			 						 	
 			},
-		    clear 				: function(){
+
+			//Update
+			update 				: function(id){
+				var self = this, dfd = $.Deferred();
+
+		    	var d = invoiceDS.get(id);
+		    	var rate = this.get("rate");
+
+		    	var t = this.get("total");
+		        var tt = Number(t.replace(/[^0-9\.]+/g,""));
+
+		        var v = this.get("vat");
+		        var vv = Number(v.replace(/[^0-9\.]+/g,""));
+
+		    	//Update customer balance
+		    	var oldBalance = kendo.parseFloat(d.amount);
+		    	var cus = peopleDS.get(d.customer_id);
+		    	var cusBalance = kendo.parseFloat(cus.balance);
+		    	var newBalance = (cusBalance - oldBalance) + tt;
+		    	cus.set("balance", newBalance);
+			  					   				   	
+			   	d.set("amount", tt*rate);
+			   	d.set("vat", vv*rate);			   	
+			   	d.set("vat_id",  this.get("vat_id"));				  	  
+				d.set("issued_date", kendo.toString(new Date(this.get("issued_date")),"yyyy-MM-dd"));
+				d.set("due_date", kendo.toString(new Date(this.get("due_date")),"yyyy-MM-dd"));
+				d.set("address", this.get("address"));	
+				d.set("so_id", this.get("so_id"));
+				d.set("estimate_id", this.get("estimate_id"));
+				d.set("gdn_id", this.get("gdn_id"));
+				d.set("payment_term_id", this.get("payment_term_id"));
+				d.set("class_id", this.get("class_id"));			
+				d.set("memo", this.get("memo"));
+				d.set("memo2", this.get("memo2"));				
+
+				//Adding invoice id to invoice item
+		        $.each(invoiceItemDS.data() ,function(index, data){
+		        	data.set("invoice_id", id);
+		        });
+				
+				invoiceDS.sync();
+			    invoiceDS.bind("requestEnd", function(e){
+			    	var response = e.response;
+    				var type = e.type;
+
+    				if(type==="update"){
+    					dfd.resolve(response);    					
+    				}
+			    });
+
+			    return dfd;						
+		    },			
+			updateReference		: function(){
+				var id = this.get("reference_id");
+				
+				if(id>0){
+					var d = referenceDS.get(id);
+					d.set("status", 1);
+					referenceDS.sync();
+				}								
+			},			
+
+			//clear
+		    clear 				: function(){		    	
 		    	this.setNextNumber(this.get("number"));
 
-		    	this.set("so_id", 0);
-				this.set("estimate_id", 0);
-				this.set("gdn_id", 0);			
+		    	this.set("reference", 0);
+				this.set("reference_id", 0);
+				this.set("bolReference", false);
+				this.set("payment_term_id", 0);
+				this.set("cash_account_id", "");			
 		    	this.set("class_id", "");
+		    	this.set("address", "");
 				this.set("memo", "");
 				this.set("memo2", "");
 				this.set("sub_total", "");
@@ -17680,7 +17682,7 @@
 			 	journalDS.sync();			  	
 				this.clear();	 	
 			},			
-			updateSO		: function(){
+			updateSO			: function(){
 				var id = this.get("so_id");
 				
 				if(id>0){
@@ -18462,7 +18464,7 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
@@ -18949,7 +18951,7 @@
 		var classDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/classes/class",
+					url: banhji.baseUrl + "api/classes/class_dropdown",
 					type: "GET",
 					dataType: "json"
 				}
@@ -24475,10 +24477,10 @@
 		var customerS = new kendo.View("#customerSingle", {model: banhji.customer.viewModel});
 		
 		var invoice = new kendo.View("#invoice", {model: banhji.invoice.viewModel});
-		var receipt = new kendo.View("#receipt", {model: banhji.receipt.viewModel});
-		var so = new kendo.View("#so", {model: banhji.so.viewModel});
-		var estimate = new kendo.View("#estimate", {model: banhji.estimate.viewModel});
-		var gdn = new kendo.View("#gdn", {model: banhji.gdn.viewModel});
+		var receipt = new kendo.View("#receipt", {model: banhji.invoice.viewModel});		
+		var estimate = new kendo.View("#estimate", {model: banhji.invoice.viewModel});
+		var so = new kendo.View("#so", {model: banhji.invoice.viewModel});
+		var gdn = new kendo.View("#gdn", {model: banhji.invoice.viewModel});
 		var statement = new kendo.View("#statement", {model: banhji.statement.viewModel});
 		
 		var eMeter = new kendo.View("#eMeter", {model: banhji.eMeter.viewModel});
@@ -24824,11 +24826,15 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.invoice);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
 
+		var grid = $("#grid").data("kendoGrid");
+		grid.dataSource.data([]);	        
+        grid.refresh();
+
 		if(id!==undefined){
-			banhji.invoice.viewModel.loadInvoice(id);
+			banhji.invoice.viewModel.loadEdit(id);
 		}else{
-			var customer_id = banhji.customer.viewModel.get("customer").id;			
-			banhji.invoice.viewModel.pageLoad(customer_id);
+			var customer_id = banhji.customer.viewModel.get("customer").id;					
+			banhji.invoice.viewModel.pageLoad("Invoice",customer_id);			
 		}
 								
 		var validator = $("#example").kendoValidator().data("kendoValidator"),
@@ -24839,9 +24845,9 @@
 						
             if(validator.validate()){
             	if(id!==undefined){            		
-            		banhji.invoice.viewModel.update(id);            		
+            		banhji.invoice.viewModel.edit(id);            		
             	}else{
-            		banhji.invoice.viewModel.add();
+            		banhji.invoice.viewModel.save();
             	}            	
 
 	            status.text("កត់ត្រាបានសំរេច")
@@ -24859,11 +24865,15 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.receipt);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
 
+		var grid = $("#grid").data("kendoGrid");
+		grid.dataSource.data([]);	        
+        grid.refresh();
+
 		if(id!==undefined){
-			banhji.receipt.viewModel.loadInvoice(id);
+			banhji.invoice.viewModel.loadEdit(id);
 		}else{
-			var customer_id = banhji.customer.viewModel.get("customer").id;		
-			banhji.receipt.viewModel.pageLoad(customer_id);
+			var customer_id = banhji.customer.viewModel.get("customer").id;			
+			banhji.invoice.viewModel.pageLoad("Receipt",customer_id);
 		}
 								
 		var validator = $("#example").kendoValidator().data("kendoValidator"),
@@ -24874,44 +24884,9 @@
 						
             if(validator.validate()){
             	if(id!==undefined){            		
-            		banhji.receipt.viewModel.update(id);            		
+            		banhji.invoice.viewModel.edit(id);            		
             	}else{
-            		banhji.receipt.viewModel.add();
-            	} 
-            	
-	            status.text("កត់ត្រាបានសំរេច")
-		            .removeClass("alert alert-error")
-		            .addClass("alert alert-success");
-	        }else{		        	
-	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
-	                .removeClass("alert alert-success")
-		            .addClass("alert alert-error");
-	        }
-		});		
-	});
-
-	banhji.router.route("so(/:id)", function(id){
-		banhji.view.layout.showIn("#layout-view", banhji.view.so);				
-		kendo.fx($("#slide-form")).slideIn("down").play();
-
-		if(id!==undefined){
-			banhji.so.viewModel.loadInvoice(id);
-		}else{
-			var customer_id = banhji.customer.viewModel.get("customer").id;		
-			banhji.so.viewModel.pageLoad(customer_id);
-		}
-								
-		var validator = $("#example").kendoValidator().data("kendoValidator"),
-			status = $("#status");
-
-		$("#save").click(function(e){
-			e.preventDefault();
-						
-            if(validator.validate()){
-            	if(id!==undefined){            		
-            		banhji.so.viewModel.update(id);            		
-            	}else{
-            		banhji.so.viewModel.add();
+            		banhji.invoice.viewModel.save();
             	} 
             	
 	            status.text("កត់ត្រាបានសំរេច")
@@ -24929,11 +24904,15 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.estimate);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
 
+		var grid = $("#grid").data("kendoGrid");
+		grid.dataSource.data([]);	        
+        grid.refresh();
+
 		if(id!==undefined){
-			banhji.estimate.viewModel.loadInvoice(id);
+			banhji.invoice.viewModel.loadEdit(id);
 		}else{
 			var customer_id = banhji.customer.viewModel.get("customer").id;			
-			banhji.estimate.viewModel.pageLoad(customer_id);
+			banhji.invoice.viewModel.pageLoad("Estimate",customer_id);
 		}
 								
 		var validator = $("#example").kendoValidator().data("kendoValidator"),
@@ -24944,10 +24923,49 @@
 						
             if(validator.validate()){
             	if(id!==undefined){            		
-            		banhji.estimate.viewModel.update(id);            		
+            		banhji.invoice.viewModel.edit(id);            		
             	}else{
-            		banhji.estimate.viewModel.add();
+            		banhji.invoice.viewModel.save();
             	}            	
+	            status.text("កត់ត្រាបានសំរេច")
+		            .removeClass("alert alert-error")
+		            .addClass("alert alert-success");
+	        }else{		        	
+	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
+	                .removeClass("alert alert-success")
+		            .addClass("alert alert-error");
+	        }
+		});		
+	});
+
+	banhji.router.route("so(/:id)", function(id){
+		banhji.view.layout.showIn("#layout-view", banhji.view.so);				
+		kendo.fx($("#slide-form")).slideIn("down").play();
+
+		var grid = $("#grid").data("kendoGrid");
+		grid.dataSource.data([]);	        
+        grid.refresh();
+
+		if(id!==undefined){
+			banhji.invoice.viewModel.loadEdit(id);
+		}else{
+			var customer_id = banhji.customer.viewModel.get("customer").id;		
+			banhji.invoice.viewModel.pageLoad("SO",customer_id);
+		}
+								
+		var validator = $("#example").kendoValidator().data("kendoValidator"),
+			status = $("#status");
+
+		$("#save").click(function(e){
+			e.preventDefault();
+						
+            if(validator.validate()){
+            	if(id!==undefined){            		
+            		banhji.invoice.viewModel.edit(id);            		
+            	}else{
+            		banhji.invoice.viewModel.save();
+            	} 
+            	
 	            status.text("កត់ត្រាបានសំរេច")
 		            .removeClass("alert alert-error")
 		            .addClass("alert alert-success");
@@ -24963,11 +24981,15 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.gdn);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
 
+		var grid = $("#grid").data("kendoGrid");
+		grid.dataSource.data([]);	        
+        grid.refresh();
+
 		if(id!==undefined){
-			banhji.gdn.viewModel.loadInvoice(id);
+			banhji.invoice.viewModel.loadEdit(id);
 		}else{
 			var customer_id = banhji.customer.viewModel.get("customer").id;			
-			banhji.gdn.viewModel.pageLoad(customer_id);
+			banhji.invoice.viewModel.pageLoad("GDN",customer_id);
 		}
 								
 		var validator = $("#example").kendoValidator().data("kendoValidator"),
@@ -24978,9 +25000,9 @@
 						
             if(validator.validate()){
             	if(id!==undefined){            		
-            		banhji.gdn.viewModel.update(id);            		
+            		banhji.invoice.viewModel.edit(id);            		
             	}else{
-            		banhji.gdn.viewModel.add();
+            		banhji.invoice.viewModel.save();
             	}            	
 
 	            status.text("កត់ត្រាបានសំរេច")

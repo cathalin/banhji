@@ -68,7 +68,8 @@ class Invoices extends REST_Controller {
 					$extra = array(	'total_paid' 		=> $totalPaid,   
 								   	'total' 			=> $total,
 								   	'pay_amount'		=> $total,
-								   	'invoice_items'     => $this->invoice_item->get_many_by('invoice_id', $row->id)
+								   	'invoice_items'     => $this->invoice_item->get_many_by('invoice_id', $row->id),
+								   	'companies' 		=> $this->company->get($row->company_id)
 							  );
 
 					//Cast object to array
@@ -88,7 +89,8 @@ class Invoices extends REST_Controller {
 	//POST
 	function invoice_post() {
 		$data = array('number' 			=> $this->post('number'),
-				   	'type'				=> $this->post('type'),				   	
+				   	'type'				=> $this->post('type'),
+				   	'quantity' 			=> $this->post('quantity'),				   	
 				   	'amount'			=> $this->post('amount'),
 				   	'rate'				=> $this->post('rate'),
 				   	'vat'				=> $this->post('vat'),
@@ -107,7 +109,9 @@ class Invoices extends REST_Controller {
 				   	'ship_to'			=> $this->post('ship_to'),
 				   	'biller' 			=> $this->post('biller'),
 				   	'customer_id' 		=> $this->post('customer_id'),				   	
-				   	'vendor_id' 		=> $this->post('vendor_id'),				   	
+				   	'vendor_id' 		=> $this->post('vendor_id'),
+				   	'reference_type' 	=> $this->post('reference_type'),
+				   	'reference_id' 		=> $this->post('reference_id'),				   	
 				   	'po_id' 			=> $this->post('po_id'),
 				   	'so_id' 			=> $this->post('so_id'),
 				   	'estimate_id' 		=> $this->post('estimate_id'),
@@ -183,6 +187,7 @@ class Invoices extends REST_Controller {
 	function invoice_put(){
 		$data = array('number' 			=> $this->put('number'),
 				   	'type'				=> $this->put('type'),				   	
+				   	'quantity'			=> $this->put('quantity'),
 				   	'amount'			=> $this->put('amount'),
 				   	'rate'				=> $this->put('rate'),
 				   	'vat'				=> $this->put('vat'),
@@ -200,7 +205,9 @@ class Invoices extends REST_Controller {
 				   	'ship_to'			=> $this->put('ship_to'),
 				   	'biller' 			=> $this->put('biller'),
 				   	'customer_id' 		=> $this->put('customer_id'),				   	
-				   	'vendor_id' 		=> $this->put('vendor_id'),				   	
+				   	'vendor_id' 		=> $this->put('vendor_id'),
+				   	'reference_type' 	=> $this->put('reference_type'),
+				   	'reference_id' 		=> $this->put('reference_id'),				   	
 				   	'po_id' 			=> $this->put('po_id'),
 				   	'so_id' 			=> $this->put('so_id'),
 				   	'estimate_id' 		=> $this->put('estimate_id'),
