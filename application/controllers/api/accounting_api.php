@@ -51,10 +51,10 @@ class Accounting_api extends REST_Controller {
 				}				
 				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
 			} else {				
-				$this->response(array('error'=>'false','code'=>404,'message'=>'no data found.', 'results'=>array()), 404);	
+				$this->response(array('error'=>'true','code'=>404,'message'=>'no data found.', 'results'=>array()), 200);	
 			}	
 		}else{
-			$this->response(array('error'=>'false','code'=>401,'message'=>'no query passed.', 'results'=>array()), 401);		
+			$this->response(array('error'=>'true','code'=>401,'message'=>'no query passed.', 'results'=>array()), 200);		
 		}		
 	}
 
@@ -765,16 +765,10 @@ class Accounting_api extends REST_Controller {
 					'name' 			 => $name
 				
 				);
-			}	
-											
-			
-			
+			}
 		}						
 		$this->response($arr, 200);		
 	}
-
-
-
 
 	//journal section
 
@@ -825,6 +819,7 @@ class Accounting_api extends REST_Controller {
 				}
 				$journals[] = array(
 					"id" 				=> $row->id,
+					"company_id"		=> $row->company_id,
 					"entries"			=> $entries,
 					"journalEntries"	=> $journalEntries,	
 					"number"			=> $row->number,
@@ -840,6 +835,7 @@ class Accounting_api extends REST_Controller {
 					'people_id' 		=> $row->people_id,
 					'employee_id' 		=> $row->employee_id,						
 					'invoice_id' 		=> $row->invoice_id,
+					'payment_term_id'	=> $row->payment_term_id,
 					'payment_id' 		=> $row->payment_id,
 					'amount_billed'		=> $row->amount_billed,
 					'amount_due' 		=> $row->amount_due,
@@ -882,14 +878,14 @@ class Accounting_api extends REST_Controller {
 					'donor_id' 			=> $this->post('donor_id'),
 					'location_id' 		=> $this->post('location_id'),				
 					'transaction_type'  => $this->post('transaction_type'),
-					'people_id' 		=> $this->post('vendor_id'),	
+					'people_id' 		=> $this->post('people_id'),	
 					'employee_id' 		=> $this->post('employee_id'),				
 					'invoice_id' 		=> $this->post('invoice_id'),
 					'check_no'			=> $this->post('check_no') ? $this->post('check_no') : "",
 					'payment_id' 		=> $this->post('payment_id') ? $this->post('payment_id') : 0,
 					'number' 			=> $this->post('number') ? $this->post('number') : "",
 					'date' 				=> $this->post('date'),
-					'due_date'			=> $this->post('due_date'),
+					'due_date'			=> $this->post('dueDate'),
 					'address'			=> $this->post('address') ?	$this->post('address') : "",
 					'ship_to' 			=> $this->post('ship_to') ?	$this->post('ship_to') : "",
 					'status'			=> $this->post('status'),
@@ -899,7 +895,7 @@ class Accounting_api extends REST_Controller {
 		if($this->db->affected_rows() > 0) {
 			$journal_Entries = $this->post("journalEntries");
 			if($journal_Entries){
-				foreach($journal_Entries as $k => $v) :
+				foreach($journal_Entries as $k => $v) {
 			 		//Find last balance of this account
 					$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
 			 		$entries[] = array(
@@ -913,15 +909,15 @@ class Accounting_api extends REST_Controller {
 					 				"balance"		=> $balance,
 					 				"exchange_rate" => $v['exchange_rate'],
 					 				"main"			=> $v['main']
-					 			); 		
-	 			endforeach;
+					 			); 
+				// $entries[] = array("account_id"=>$v['account_id']);		
+	 			}
 
 	 			$this->j_entry->insert_many($entries, FALSE);
 			}
- 			// if($this->db->affected_rows() === count(journal_Entries)) {
+ 			if($this->db->affected_rows()>0) {
  				$query = $this->journal->get($arr['id']);
- 					 if(count($query) > 0) {
- 					// 	foreach($query as $row) {
+ 					if(count($query) > 0) {
  							$journals[] = array(
 								"id" 				=> $query->id,
 								'number' 			=> $query->number,			
@@ -942,25 +938,25 @@ class Accounting_api extends REST_Controller {
 								'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
 								"entries"			=> $this->j_entry->get_many_by("journal_id", $query->id)
 							);
- 						}
- 					// } 				
-				$this->response(array("status"=>"OK", "message"=>"Data found ".count($journals), "results"=>$journals), 200);
-			// } else {
-			// 	$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
-			// }
+ 					}				
+				$this->response(array("status"=>"OK", "message"=>"Data found.","entry"=>$entries, "results"=>$query), 201);
+			} else {
+				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
+			}
 		} else {
 			$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 400);
 		}
 	}
 
 	public function journals_put() {
-		$journal_Entries = $this->put("journalEntries");
-
-		//Find last balance of this account
-		//$balance = $this->j_entry->calculate_account_balance($this->post('account_id'),$this->post('dr'),$this->post('cr'));
-		
-		$arr = array(		
-					'memo' 				=> $this->put('memo'),		 							
+		$arr = array(
+					// 'id'  				=> $id,	
+					'company_id'		=> $this->put('company_id'),
+					'amount_billed'		=> $this->put('amount_billed'),
+					'amount_due'		=> $this->put('amount_due'),
+					'amount_paid'		=> $this->put('amount_paid'),
+					'memo' 				=> $this->put('memo'),
+					'payment_method'	=> $this->put('payment_method'),		 							
 					'voucher' 	    	=> $this->put('voucher'),			
 					'class_id' 		    => $this->put('class_id'),
 					'budget_id' 		=> $this->put('budget_id'),
@@ -968,70 +964,23 @@ class Accounting_api extends REST_Controller {
 					'location_id' 		=> $this->put('location_id'),				
 					'transaction_type'  => $this->put('transaction_type'),
 					'people_id' 		=> $this->put('people_id'),	
-					'employee_id' 		=> $this->session->userdata('user_id'),				
+					'employee_id' 		=> $this->put('employee_id'),				
 					'invoice_id' 		=> $this->put('invoice_id'),
-					'check_no'			=> $this->put('check_no'),
-					'payment_id' 		=> $this->put('payment_id'),
-					'number' 			=> $this->put('bill_id'),
+					'check_no'			=> $this->put('check_no') ? $this->put('check_no') : "",
+					'payment_id' 		=> $this->put('payment_id') ? $this->put('payment_id') : 0,
+					'number' 			=> $this->put('number') ? $this->put('number') : "",
 					'date' 				=> $this->put('date'),
-					'archived' 			=> $this->put('archived')												
-		);	
-
-		$this->journal->update($this->put('id'),$arr);
-		if($this->db->affected_rows() > 0) {
-
-		//  	foreach($journal_Entries as $k => $v) :
-		//  		//Find last balance of this account
-		// 		$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
-		//  		$entries[] = array(
-		// 		 				"journal_id" 	=> $transID,
-		// 		 				"account" 		=> $v['account_id'],
-		// 		 				"dr"			=> $v['dr'],
-		// 		 				"cr"			=> $v['cr'],
-		// 		 				"memo"			=> $v['memo'],
-		// 		 				"balance"		=> $balance
-		// 		 			); 
-		//  		$entry_IDs[] = $this->j_entry->update($this->put('id'), $entries, FALSE);		
- 	// 		endforeach;
-
- 			
-
- 	// 		if($entry_IDs > 0) {
- 	// 			$query = $this->journal->get($this->put('id'));
- 	// 				if(count($query) > 0) {
- 	// 					//foreach($query as $row) {
- 	// 						$journals[] = array(
-		// 						"id"=> $query->id,
-		// 						"journalEntries"	=> $this->j_entry->get_many_by("journal_id", $query->id),				
-		// 						'memo' 				=> $query->memo,						
-		// 						'voucher' 	    	=> $query->voucher,			
-		// 						'class_id' 			=> $query->class_id,
-		// 						'budget_id' 		=> $query->budget_id,
-		// 						'donor_id' 			=> $query->donor_id,
-		// 						'location_id' 		=> $query->location_id,				
-		// 						'transaction_type' 	=> $query->transaction_type,
-		// 						'people_id' 		=> $query->people_id,
-		// 						'employee_id' 		=> $query->employee_id,						
-		// 						'invoice_id' 		=> $query->invoice_id,
-		// 						'payment_id' 		=> $query->payment_id,
-		// 						'receipt_id' 		=> $query->receipt_id,
-		// 						'item_receipt_id' 	=> $query->item_receipt_id,
-		// 						'class_name'		=> $this->classes->get_by('id', $query->class_id),
-		// 						'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
-		// 						'donor_name'		=> $this->classes->get_by('id', $query->donor_id),
-		// 						'location_name'		=> $this->classes->get_by('id', $query->location_id),
-		// 						'people_name'		=> $this->people->get_by('id', $query->people_id),
-		// 						'employee_name'		=> $this->employee->get_by('id', $query->employee_id)
-		// 					);
- 	// 					//}
- 	// 				} 				
-				$this->response(array("status"=>"OK", "message"=>"Data found ", "results"=>$this->journal->get($this->put('id'))), 301);
-			} else {
-				$this->response(array("status"=>"Error", "message"=>$this->db->_error_message(), "results"=>array()), 404);
-			}
-		// } else {
-		//  	$this->response(array("status"=>"Server Error"), 500);
-		// }
+					'due_date'			=> $this->put('dueDate'),
+					'address'			=> $this->put('address') ?	$this->put('address') : "",
+					'ship_to' 			=> $this->put('ship_to') ?	$this->put('ship_to') : "",
+					'status'			=> $this->put('status')								
+		);
+		// $this->journal->update($this->put('id'), $arr);
+		$whatever = $this->j_entry->get_many_by(array('journal_id'=>$this->put('id')));
+		if(count($whatever) === count($this->put('journalEntries'))) {
+			$this->response("kflds", 200);
+		}
+		
 	}
 
 	public function journals_delete() {
