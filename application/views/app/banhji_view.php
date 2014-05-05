@@ -8307,10 +8307,10 @@
         	getBy 		: function(criteria) {},
 	       	cancel 		: function() {
 
-        		classCollection.cancelChanges();
+        		this.dataSource.cancelChanges();
         	},
         	addNew 		: function() {
-        		classCollection.insert(0, {
+        		this.dataSource.insert(0, {
         			company_id: banhji.config.userData['company'],
         			name: "ឈ្មោះ",
         			type: "class",
@@ -8318,7 +8318,7 @@
         		});
         	},
         	save 		: function() {
-        		classCollection.sync();
+        		this.dataSource.sync();
         	},
         	update 		: function(id, data) {
         		var dfd = $.Deferred();
@@ -9605,7 +9605,7 @@
 					} else {
 						banhji.accounts.filterBy([
 							{ field: "company_id", value: banhji.config.userData['company']},
-							{ field: "account_type_id", value: 7}
+							{ field: "account_type_id", value: 11}
 						])
 						.then(function(data){
 							$.each(data, function(i,v){
@@ -9616,7 +9616,6 @@
 
 					return "ថ្ងៃបង់ប្រាក់";
 				}
-				console.log(banhji.vendor.get('current'));
 			},
 			type 		: null,
 			vendor 		: null,
@@ -9648,8 +9647,7 @@
 			payTax 		: function(){},
 			reset 		: function(){
 				this.set('account', null);
-				this.set('type', null);
-				this.set('vendor', null);
+				this.set('description', "");
 				this.set('paymentMethod', null);
 				this.set('paymentTerm', null);
 				this.set('class', null);
@@ -9657,7 +9655,9 @@
 				this.set('invoice', null);
 				this.set('po', null);
 				this.set('currency', null);
+				banhji.voucher.set("cashPayment", true);
 				this.cart.splice(0, this.cart.length);
+				this.journalEntries.splice(0,this.journalEntries.length);
 				$(".alert").hide();
 			},
 			change 		: function(e){
@@ -9812,6 +9812,7 @@
 				return num;
 			},
 			save 		: function() {
+				this.journalEntries.splice(0, this.journalEntries.length);
 				if(!this.get('current')) {
 					this.journalEntries.push({
 				 		account_id: this.get("account").id, 
@@ -9823,7 +9824,7 @@
 					 	main: 1
 				 	});
 					for(var i=0; i < this.cart.length; i++) {
-						journalEntries.push({
+						this.journalEntries.push({
 					 		account_id: this.cart[i].account_id,
 					 		dr: this.cart[i].amount, 
 					 		cr: 0,
@@ -13031,7 +13032,8 @@
 	        schema: {
 	        	model: {
 	        		id: "id"
-	        	}
+	        	},
+	        	data: "results"
 	        }
 	    });
 
@@ -23590,6 +23592,8 @@
 					});			
 				}
 			});
+		} else {
+			banhji.voucher.reset();
 		}
 	});
 
@@ -23631,7 +23635,7 @@
 				});			
 			});
 		} else {
-			//new bill
+			banhji.voucher.reset();
 		}
 	});
 
