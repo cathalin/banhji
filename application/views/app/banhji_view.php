@@ -624,11 +624,7 @@
 			# if (transaction_type !== "purchase" && transaction_type !== "expense") { #	
 				<a href="\\##=transaction_type#/#=id#"><i class="icon-eye-open"></i></a>
 			#} else { #
-				#if(status === 1) {#
-					<a href="\\##=transaction_type#/#=id#"><i class="icon-eye-open"></i></a>
-				#} else {#
-					<a href="\\##=transaction_type#/#=id#"><i class="icon-eye-open"></i></a> | <a href="\\#">Pay</a>
-				#}#	
+				<a href="\\##=transaction_type#/#=id#"><i class="icon-eye-open"></i></a>
 			# } #
 		</td>
 	</tr>
@@ -739,7 +735,12 @@
 				<table class="table">
 					<tr>
 						<td width="150">អ្នកផ្គត់ផ្គង់ៈ</td>
-						<td><input class="k-widget k-input" type="text" data-bind="value: vendor.company"><button data-bind="click: popupVendor"><i class="icon-search"></i></button></td>
+						<td>
+							<div class="input-append">
+								<input class="span10" type="text" data-bind="value: vendor.company" placeholder="រកអ្នកផ្គត់ផ្គង">
+								<button data-bind="click: popupVendor" class="btn"><i class="icon-search"></i></button>
+							</div>		
+						</td>
 						<td width="150">កាលបរិច្ឆេទ:</td>
 						<td><input type="date" style="width: 220px;" data-role="datepicker" data-bind="value: date"></td>
 					</tr>
@@ -748,15 +749,21 @@
 						<td><input type="text" style="width: 220px;" data-role="combobox" 
 																	 data-bind="source: classDS, value: class" 
 																	 data-text-field="name" 
+																	 data-placeholder="--រើសមួយ--"
 																	 data-value-field="id"></td>
 						<td>ពិពណ៏នាៈ</td>
 						<td><input type="text" data-bind="value: description"></td>
 					</tr>
 					<tr>
 						<td>លេខសក្ខីបត្រ័</td>
-						<td><input type="text" data-bind="value: voucher"></td>
+						<td><input type="text" data-bind="value: voucher" placeholder="ឧ. VC1212"></td>
 						<td>លិខិតបញ្ជាទិញៈ</td>
-						<td><input type="text" data-bind="value: po"></td>
+						<td>
+							<div class="input-append">
+								<input type="text" data-bind="value: po.number" class="span10" placeholder="រកលេខបញ្ជាិញ">
+								<button class="btn" data-bind="click: popupPO"><i class="icon-search"></i></button>
+							</div>
+						</td>
 					</tr>
 					<tr>
 						<td width="150">គណនីៈ</td>
@@ -764,7 +771,8 @@
 											   data-text-field="name" 
 											   data-value-field="id"
 											   data-role="combobox"
-											   data-place-holder="--រើសមួយ--"
+											   data-template="myAcctListTmpl"
+											   data-placeholder="--រើសមួយ--"
 											   style="width: 220px;"></td>
 						<td width="150">វិក្កយប័ត្រៈ</td>
 						<td><input type="text" data-bind="value: invoice"></td>
@@ -775,6 +783,7 @@
 											   data-bind="source: pmtMethods, value: paymentTerm, events: {change: dueDate}" 
 											   data-text-field="term" 
 											   data-value-field="id"
+											   data-placeholder="--រើសមួយ--"
 											   style="width: 220px;"></td>
 						<td><span data-bind="text: showCheck"></span></td>
 						<td>
@@ -795,6 +804,7 @@
 									   data-bind="source: vatDS, value: vat, events: {change: selectTax}" 
 									   data-text-field="name" 
 									   data-value-field="id"
+									   data-placeholder="---រើសមួយ---"
 									   style="width: 100%"></td>
 						</tr>
 						<tr>
@@ -820,6 +830,12 @@
 			</div>
 		</div>
 	</div>	
+</script>
+<script id="myAcctListTmpl" type="text/x-kendo-template">
+	<div>#=code# #=name#</div>
+</script>
+<script id="myItemListTmpl" type="text/x-kendo-template">
+	<div>#=item_sku# #=name#</div>
 </script>
 <script id="purchase" type="text/x-kendo-template">
 	<div data-role="grid" 
@@ -948,7 +964,9 @@
 																				 data-bind="source: items, value: item_id, events: {change: change}" 
 																				 data-role="combobox" 
 																				 data-text-field="name" 
-																				 data-value-field="id" 
+																				 data-value-field="id"
+																				 data-placeholder="---រើសមួយ---"
+																				 data-template="myItemListTmpl" 
 																				 style="width: 130px;"></td>
 		<td style="padding-bottom: 1px;"><input type="text" style='width: 93%; margin-bottom:3px;' placeholder="Description" style="width: 145px;" 
 																				 data-bind="value: description"></td>
@@ -973,7 +991,14 @@
 <script id="expenseCart" type="text/x-kendo-template">
 	<tr>
 		<td><i class="icon-trash" data-bind="click: rmFromCart"></i></td>
-		<td><input style="width: 100%" type="text" placeholder="Select One" data-bind="source: acctList, value: account_id, events: {change: change}" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 130px;"></td>
+		<td><input style="width: 100%" type="text" placeholder="Select One" 
+								       data-bind="source: acctList, value: account_id, events: {change: change}" 
+								       data-role="combobox" 
+								       data-text-field="name" 
+								       data-value-field="id" 
+								       data-template="myAcctListTmpl"
+								       data-placeholder="---រើសមួយ---"
+								       style="width: 130px;"></td>
 		<td><input style='width: 93%; margin-bottom:3px;' type="text" data-bind="value: amount" data-format="{0:c}"></td>
 		<td><input style='width: 93%; margin-bottom:3px;' type="text" placeholder="Description" data-bind="value: memo"></td>
 		<td><input style='width: 93%; margin-bottom:3px;' type="text" placeholder="Select One" data-bind="source: classDS, value: class_id" data-role="combobox" data-text-field="name" data-value-field="id" style="width: 130px;"></td>
@@ -1326,19 +1351,20 @@
 <script type="text/x-kendo-template" id="reports">
 	<div  class="row-fluid">
 		<div class="span3">
-			<h3>Accounting</h3>
+			<h3>របាយការណ៍គណនេយ្យ</h3>
 			<a href="\\#" data-bind="click: balanceSheet">តារាងតុល្យការ</a><br>
 			<a href="\\#" data-bind="click: journal">ទិន្នានុប្បវត្តិ</a><br>
 			<a href="\\#" data-bind="click: generalLedger">លំអិតតាមគណនី</a><br>
 			<a href="\\#" data-bind="click: pl">របាយការណ៍លទ្ធិផល</a>
 		</div>
 		<div class="span3">
-			<h3>Vendors</h3>
+			<h3>អ្នកផ្គត់ផ្គង់</h3>
 			<a href="\\#" data-bind="click: vendorAging">តារាងតាមដានបំនុល</a><br>
-			<a href="\\#">តារាងតាមដានបញ្ជាទិញ</a><br>
+			<a href="<?php echo base_url();?>app\#pomonitoring">តារាងតាមដានបញ្ជាទិញ</a><br>
+			<a href="\\#">ទិញតាមអ្នកផ្គត់ផ្គង់</a>
 		</div>
 		<div class="span3">
-			<h3>Customers</h3>
+			<h3>របាយការណ៍អតិថិជន</h3>
 			<div class="row">
 				<div class="span3">
 					fsdfsd
@@ -1349,7 +1375,8 @@
 			</div>
 		</div>
 		<div class="span3">
-			<h3>Inventory</h3>
+			<h3>របាយការណ៍សន្និធិ</h3>
+			<a href="\\#">ទិញតាមសន្និធិ</a><br>
 			<div class="row">
 				<div class="span3">
 					fsdfsd
@@ -7404,176 +7431,178 @@
 
 <!-- New company -->
 <script id="newCompany" type="text/x-kendo-template">
-	<div class="row-fluid">
-		<div class="span12">
-			<div id="example" class="k-content">
-				<h1>ចុះឈ្មោះជាមួយ BANHJI <span>ដោយឥតគិតថ្លៃ</span></h1>
+	<div class="container-960">
+		<div class="row-fluid">
+			<div class="span12">
+				<div id="example" class="k-content">
+					<h1>ចុះឈ្មោះជាមួយ BANHJI <span>ដោយឥតគិតថ្លៃ</span></h1>
 
-				<br>
+					<br>
 
-				<div class="row-fluid">
-					<div class="span4">
-						<table>
-							<tr>
-								<td>ប្រភេទក្រុមហ៊ុន</td>
-								<td>
-									<select id="companyType" name="companyType" data-role="dropdownlist" 
-										data-text-field="name" data-value-field="id" 
-		              					data-bind="source: companyTypeList, value: company_type_id"
-		              					data-option-label="(--- ជ្រើសរើស ---)"	              					
-		              					required data-required-msg="ត្រូវការ ប្រភេទក្រុមហ៊ុន"></select>
-								</td>
-							</tr>
-							<tr>
-								<td>ឈ្មោះក្រុមហ៊ុន</td>
-								<td>
-									<input id="name" name="name" class="k-textbox" data-bind="value: name" required data-required-msg="ត្រូវការ ឈ្មោះក្រុមហ៊ុន" />
-								</td>
-							</tr>
-							<tr>
-								<td>ឈ្មោះជាទំរង់ខ្លី</td>
-								<td>
-									<input id="abbr" name="abbr" class="k-textbox" data-bind="value: abbr" required data-required-msg="ត្រូវការ ឈ្មោះជាទំរង់ខ្លី" />						
-								</td>						
-							</tr>
-							<tr>
-								<td>ឆ្នាំបង្កើត</td>
-								<td>
-									<input id="year_founded" name="year_founded" data-role="numerictextbox" data-format="#" data-bind="value: year_founded" required data-required-msg="ត្រូវការ ឆ្នាំបង្កើត" />						
-								</td>						
-							</tr>
-							<tr>
-								<td>លេខអាជ្ញាប័ណ្ណ</td>
-								<td>
-									<input id="operation_license" name="operation_license" class="k-textbox" data-bind="value: operation_license" required data-required-msg="ត្រូវការ លេខអាជ្ញាប័ណ្ណ" />	
-								</td>						
-							</tr>
-							<tr>
-								<td>លេខទូរស័ព្ទដៃ</td>
-								<td>
-									<input id="mobile" name="mobile" class="k-textbox" data-bind="value: mobile" required data-required-msg="ត្រូវការ លេខទូរស័ព្ទដៃ" />
-								</td>						
-							</tr>
-							<tr>
-								<td>លេខទូរស័ព្ទតុ</td>
-								<td>
-									<input id="phone" name="phone" class="k-textbox" data-bind="value: phone" required data-required-msg="ត្រូវការ លេខទូរស័ព្ទតុ" />
-								</td>						
-							</tr>
-							<tr>
-								<td>អីុមែល</td>
-								<td>
-									<input id="email" name="email" class="k-textbox" data-bind="value: email" required data-required-msg="ត្រូវការ អីុមែល" />
-								</td>						
-							</tr>
-							<tr>
-								<td valign="top">អាសយដ្ឋាន</td>
-								<td>
-									<input id="address" name="address" class="k-textbox" data-bind="value: address" 
-											required data-required-msg="ត្រូវការ អាសយដ្ឋាន"></input>
-								</td>						
-							</tr>
-							<tr>
-								<td>អ្នកតំណាង</td>
-								<td>
-									<input id="representative" name="representative" class="k-textbox" data-bind="value: representative" required data-required-msg="ត្រូវការ អ្នកតំណាង" />
-								</td>
-							</tr>
-							<tr>
-								<td>ឆ្នាំសារពើពន្ធ</td>
-								<td>
-									<input id="fiscalYear" name="fiscalYear" data-role="datepicker" data-format="dd-MM-yyyy" 
-											data-bind="value: fiscal_year" required data-required-msg="ត្រូវការ ឆ្នាំសារពើពន្ធ" />
-								</td>						
-							</tr>
-							<tr>
-								<td>រូបិយ​ប័ណ្ណ</td>
-								<td>
-									<input id="currencyCBB" name="currencyCBB" 
-											data-bind="value: based_currency" 
-					            			required data-required-msg="ត្រូវការ រូបិយ​ប័ណ្ណ"/>
-								</td>
-							</tr>
-							<tr>
-								<td>VAT NO.</td>
-								<td>
-									<input id="vatNo" name="vatNo" class="k-textbox" data-bind="value: vat_no" />
-								</td>						
-							</tr>
-							<tr>
-								<td>ក្រុមហ៊ុនមេ</td>
-								<td>
-									<select id="parents" name="parents" data-role="dropdownlist" data-text-field="name" data-value-field="id" 
-				                			data-bind="source: parentList, value: parent_id" data-option-label="(--- ជ្រើសរើស ---)"></select>
-							    </td>
-							    <td></td>
-							</tr>
-							<tr>
-								<td>Logo</td>
-								<td>
-									<input name="userfile" id="userfile" type="file" />
-									ទំហំតូចជាង 1MB | 1024*768 pixels
-								</td>
-							</tr>
-						</table>
+					<div class="row-fluid">
+						<div class="span4">
+							<table>
+								<tr>
+									<td>ប្រភេទក្រុមហ៊ុន</td>
+									<td>
+										<select id="companyType" name="companyType" data-role="dropdownlist" 
+											data-text-field="name" data-value-field="id" 
+			              					data-bind="source: companyTypeList, value: company_type_id"
+			              					data-option-label="(--- ជ្រើសរើស ---)"	              					
+			              					required data-required-msg="ត្រូវការ ប្រភេទក្រុមហ៊ុន"></select>
+									</td>
+								</tr>
+								<tr>
+									<td>ឈ្មោះក្រុមហ៊ុន</td>
+									<td>
+										<input id="name" name="name" class="k-textbox" data-bind="value: name" required data-required-msg="ត្រូវការ ឈ្មោះក្រុមហ៊ុន" />
+									</td>
+								</tr>
+								<tr>
+									<td>ឈ្មោះជាទំរង់ខ្លី</td>
+									<td>
+										<input id="abbr" name="abbr" class="k-textbox" data-bind="value: abbr" required data-required-msg="ត្រូវការ ឈ្មោះជាទំរង់ខ្លី" />						
+									</td>						
+								</tr>
+								<tr>
+									<td>ឆ្នាំបង្កើត</td>
+									<td>
+										<input id="year_founded" name="year_founded" data-role="numerictextbox" data-format="#" data-bind="value: year_founded" required data-required-msg="ត្រូវការ ឆ្នាំបង្កើត" />						
+									</td>						
+								</tr>
+								<tr>
+									<td>លេខអាជ្ញាប័ណ្ណ</td>
+									<td>
+										<input id="operation_license" name="operation_license" class="k-textbox" data-bind="value: operation_license" required data-required-msg="ត្រូវការ លេខអាជ្ញាប័ណ្ណ" />	
+									</td>						
+								</tr>
+								<tr>
+									<td>លេខទូរស័ព្ទដៃ</td>
+									<td>
+										<input id="mobile" name="mobile" class="k-textbox" data-bind="value: mobile" required data-required-msg="ត្រូវការ លេខទូរស័ព្ទដៃ" />
+									</td>						
+								</tr>
+								<tr>
+									<td>លេខទូរស័ព្ទតុ</td>
+									<td>
+										<input id="phone" name="phone" class="k-textbox" data-bind="value: phone" required data-required-msg="ត្រូវការ លេខទូរស័ព្ទតុ" />
+									</td>						
+								</tr>
+								<tr>
+									<td>អីុមែល</td>
+									<td>
+										<input id="email" name="email" class="k-textbox" data-bind="value: email" required data-required-msg="ត្រូវការ អីុមែល" />
+									</td>						
+								</tr>
+								<tr>
+									<td valign="top">អាសយដ្ឋាន</td>
+									<td>
+										<input id="address" name="address" class="k-textbox" data-bind="value: address" 
+												required data-required-msg="ត្រូវការ អាសយដ្ឋាន"></input>
+									</td>						
+								</tr>
+								<tr>
+									<td>អ្នកតំណាង</td>
+									<td>
+										<input id="representative" name="representative" class="k-textbox" data-bind="value: representative" required data-required-msg="ត្រូវការ អ្នកតំណាង" />
+									</td>
+								</tr>
+								<tr>
+									<td>ឆ្នាំសារពើពន្ធ</td>
+									<td>
+										<input id="fiscalYear" name="fiscalYear" data-role="datepicker" data-format="dd-MM-yyyy" 
+												data-bind="value: fiscal_year" required data-required-msg="ត្រូវការ ឆ្នាំសារពើពន្ធ" />
+									</td>						
+								</tr>
+								<tr>
+									<td>រូបិយ​ប័ណ្ណ</td>
+									<td>
+										<input id="currencyCBB" name="currencyCBB" 
+												data-bind="value: based_currency" 
+						            			required data-required-msg="ត្រូវការ រូបិយ​ប័ណ្ណ"/>
+									</td>
+								</tr>
+								<tr>
+									<td>VAT NO.</td>
+									<td>
+										<input id="vatNo" name="vatNo" class="k-textbox" data-bind="value: vat_no" />
+									</td>						
+								</tr>
+								<tr>
+									<td>ក្រុមហ៊ុនមេ</td>
+									<td>
+										<select id="parents" name="parents" data-role="dropdownlist" data-text-field="name" data-value-field="id" 
+					                			data-bind="source: parentList, value: parent_id" data-option-label="(--- ជ្រើសរើស ---)"></select>
+								    </td>
+								    <td></td>
+								</tr>
+								<tr>
+									<td>Logo</td>
+									<td>
+										<input name="userfile" id="userfile" type="file" />
+										ទំហំតូចជាង 1MB | 1024*768 pixels
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="span8">						
+							<div class="row-fluid">
+								<div class="widget widget-heading-simple widget-body-white">
+								    <div class="widget-body">
+								        <div class="innerL">
+								            <div class="separator bottom"></div>
+								            <div class="glyphicons glyphicon-large group">
+							                	<i></i>
+							                	<h4>Multi-Company</h4>
+								                <p>AAAAA</p>
+								            </div>
+								        </div>
+								    </div>
+								</div>
+								<div class="widget widget-heading-simple widget-body-white">
+								    <div class="widget-body">
+								        <div class="innerL">
+								            <div class="separator bottom"></div>
+								            <div class="glyphicons glyphicon-large phone">
+							                	<i></i>
+							                	<h4>No Installation</h4>
+								                <p>BBBBB</p>
+								            </div>
+								        </div>
+								    </div>
+								</div>
+								<div class="widget widget-heading-simple widget-body-white">
+								    <div class="widget-body">
+								        <div class="innerL">
+								            <div class="separator bottom"></div>
+								            <div class="glyphicons glyphicon-large display">
+							                	<i></i>
+							                	<h4>Free</h4>
+								                <p>BBBBB</p>
+								            </div>
+								        </div>
+								    </div>
+								</div>
+							</div>						
+						</div>
 					</div>
-					<div class="span8">						
-						<div class="row-fluid">
-							<div class="widget widget-heading-simple widget-body-white">
-							    <div class="widget-body">
-							        <div class="innerL">
-							            <div class="separator bottom"></div>
-							            <div class="glyphicons glyphicon-large group">
-						                	<i></i>
-						                	<h4>Multi-Company</h4>
-							                <p>AAAAA</p>
-							            </div>
-							        </div>
-							    </div>
-							</div>
-							<div class="widget widget-heading-simple widget-body-white">
-							    <div class="widget-body">
-							        <div class="innerL">
-							            <div class="separator bottom"></div>
-							            <div class="glyphicons glyphicon-large phone">
-						                	<i></i>
-						                	<h4>No Installation</h4>
-							                <p>BBBBB</p>
-							            </div>
-							        </div>
-							    </div>
-							</div>
-							<div class="widget widget-heading-simple widget-body-white">
-							    <div class="widget-body">
-							        <div class="innerL">
-							            <div class="separator bottom"></div>
-							            <div class="glyphicons glyphicon-large display">
-						                	<i></i>
-						                	<h4>Free</h4>
-							                <p>BBBBB</p>
-							            </div>
-							        </div>
-							    </div>
-							</div>
-						</div>						
-					</div>
-				</div>
-				
-				<br>
-				
-				<h5 class="heading glyphicons warning_sign" style="background-color: Orange;color: Black;">
-						<i></i>សូមចុចប៊ូតុងខាងក្រោម, ដើម្បីយល់ព្រមជាមួយនឹងលក្ខខណ្ឌរបស់ក្រុមហ៊ុនយើងខ្ញុំ។</h5>
+					
+					<br>
+					
+					<h5 class="heading glyphicons warning_sign" style="background-color: Orange;color: Black;">
+							<i></i>សូមចុចប៊ូតុងខាងក្រោម, ដើម្បីយល់ព្រមជាមួយនឹងលក្ខខណ្ឌរបស់ក្រុមហ៊ុនយើងខ្ញុំ។</h5>
 
-				<br><br>
-					           
-				<div id="status"></div>
-				
-				<span id="save" class="btn btn-icon-stacked btn-block btn-success glyphicons lock" style="width:260px">
-						<i></i><span>ចុះឈ្មោះជាមួយ BANHJI ដែលមាន</span><span class="strong">ប្រព័ន្ធសុវត្ថិភាពលំដាប់ពិភពលោក</span></span>
-				
-			</div><!-- //End div example-->
-		</div><!-- //End div span12-->
-	</div><!-- //End div row-fluid-->	
+					<br><br>
+						           
+					<div id="status"></div>
+					
+					<span id="save" class="btn btn-icon-stacked btn-block btn-success glyphicons lock" style="width:260px">
+							<i></i><span>ចុះឈ្មោះជាមួយ BANHJI ដែលមាន</span><span class="strong">ប្រព័ន្ធសុវត្ថិភាពលំដាប់ពិភពលោក</span></span>
+					
+				</div><!-- //End div example-->
+			</div><!-- //End div span12-->
+		</div><!-- //End div row-fluid-->
+	</div>
 </script>
 <script id="users" type="text/x-kendo-template">
 	<div class="row-fluid">
@@ -9572,7 +9601,7 @@
 			items 		: [],
 			cashPayment : true,
 			taxAmount 	: 0,
-			vat 		: 0,
+			vat 		: "",
 			paymentTerm : null,
 			journalEntries: [],
 			showCheck 	: function(){
@@ -9707,6 +9736,46 @@
 						// wnd.close();
 					}
 				});
+			},
+			popupPO: function(e) {
+				e.preventDefault();
+				var parent = $("body").append('<div id="popupPO"><div id="poListItem1" class="table"></div></div>');
+				var wnd = $("#popupPO").kendoWindow({
+					title: "បញ្ជាទិញ",
+					width: "400px",
+					height: "300px",
+					modal: true,
+					close: function(e) {
+						// parent.remove();
+					}
+				}).data("kendoWindow");
+				wnd.center().open();
+				banhji.transaction.getBy([
+					{field: "company_id", value: banhji.config.userData['company']},
+					{field: "transaction_type", value: "po"}
+				])
+				.then(function(data){
+					if(data.status === "OK") {
+						$("#poListItem1").kendoGrid({
+							dataSource: data.results,
+							columns: [
+								{field: "number", title: "លេខលិខិតបញ្ជាទិញ"}
+							],
+							height: "266px",
+							selectable: true,
+							change: function(e) {
+								var selected = this.select();
+								var vendor = this.dataItem(selected);
+								viewModel.set("po", vendor);
+								console.log(viewModel.get("po"));
+								// wnd.close();
+							}
+						});
+					} else {
+						wnd.content("មិនមានទិន្ន័យទេ។");
+					}
+				});
+				
 			},
 			addToCart 	: function() {
 				if(this.get("type") === "purchase") {
@@ -23834,15 +23903,7 @@
 		// if(banhji.vendor.get("current").id === null){
 		// 	banhji.view.vendor.showIn("#vendorDetail", banhji.view.vendorInfo);
 		// }
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
+		
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.balanceSheet);
 
@@ -24050,15 +24111,7 @@
 	banhji.router.route("pl", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 
-		var template = kendo.template($("#menu").html());
-			var menu = [];
-			for(var i=0;i<banhji.km.length; i++) {
-				var current = banhji.km[i];
-				if(banhji.config.userData.allowedModules[i]) {
-					menu.push(current);
-				}
-			}
-			$("#header").html(template(menu));
+		
 		$("#secondary-menu").html("<li><a href='\#new_vendor'>អ្នកផ្គត់ផ្គង់ថ្មី</a></li><li><a href='\#pomonitoring'>តាមដានបញ្ជាទិញ</a></li><li><a href='\#payables'>តាមដានបំណុលអ្នកផ្គត់ផ្គង់</a></li><li><a href='\#reports'>របាយការណ៍</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.plReport);
 
