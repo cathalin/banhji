@@ -1906,48 +1906,92 @@
     </tr>
 </script>
 <script id="userList" type="text/x-kendo-template">
-	<div class="row-fluid">    
-		<div class="span12">
-			<div id="example" class="k-content">			
-
-				<div class="relativeWrap" data-toggle="source-code" style="overflow: visible;">
-					<div class="widget widget-tabs widget-tabs-double widget-tabs-vertical row-fluid row-merge widget-tabs-gray">
-						<div class="widget-body span12">
-							<div class="tab-content">						
-								<!-- Tab content -->
-								<div class="tab-pane active" id="tab1-1">								
-									<button onClick="javascript:addNew();">ថែមថ្មី</button>
-					                <div id="credentials"></div>
-					                <div id="credDialogEdit">
-					                	<label for="role">តួនាទី</label>
-					                	<input type="text" data-role="dropdownlist" 
-					                					   data-bind="source: role, value: role_id" 
-					                					   data-text-field="name" 
-					                					   data-value-field="id"
-					                					   data-option-label="Choose One">
-					                	<label for="username" data-bind="visible: isShown">Username</label>
-					                	<input type="text" data-bind="value: username, visible: isShown">
-					                	<label for="password">Password</label>
-					                	<input type="password" data-bind="value: password">
-					                	<label for="passwordCon">Confirm Password</label>
-					                	<input type="password" data-bind="value: passwordCon"><br>
-					                	<button data-bind="click: update, invisible: isShown">កែ</button><button data-bind="click: save, visible: isShown">រក្សាទុក</button>
-					                </div>
-
-
-								</div>
-								<!-- // Tab content END -->							
-							</div>						
-						</div>
-
-					</div>
-				</div>			
-
-			</div> <!--end div example-->            
-		</div> <!--End div span12-->		
-	</div> <!--End div row-fluid-->
+	<div class="container-960">
+		<div class="row-fluid">    
+			<div class="span12">
+				<div class="widget widget-heading-simple widget-body-white">
+				    <div class="widget-head">
+				        <h4 class="heading glyphicons magic"><i></i>បញ្ជីអ្នកប្រើប្រាស់  <a href="#usernew">new</a></h4>
+				    </div>
+				    <div class="widget-body">
+				        <div id="userGrid" data-role="grid" data-bind="source: dataSource"
+				        				   data-columns="[
+				        				   		{title: 'ឈ្មោះ'},
+				        				   		{},
+				        				   		{title: 'ថ្ងៃបង្កើត'},
+				        				   		{title: 'ថ្ងៃកែ'},
+				        				   		{}
+				        				   	]"
+				        				   data-row-template="userListTmpl"></div>
+				    </div>
+				</div>           
+			</div> <!--End div span12-->		
+		</div> <!--End div row-fluid-->
+	</div>	
 </script>
-
+<script id="userListTmpl" type="text/x-kendo-template">
+	<tr>
+		<td>#=username#</td>
+		<td>#=role.name#</td>
+		<td>#=created_at#</td>
+		<td>#=updated_at#</td>
+		<td>
+			<button class="btn" data-bind="click: update"><i class="icon-unlock-alt"></i></button>
+			<button class="btn" data-bind="click: remove"><i class="icon-remove-sign"></i></button>
+		</td>
+	</tr>
+</script>
+<script id="userUpdate" type="text/x-kendo-template">
+	<div class="container-960">
+		<div class="row-fluid">
+			<div class="span4 offset4">
+				<h2>អ្នកប្រើប្រាស់</h2>
+				<hr>
+				<div class="well">
+					<label for="password">លេខសំងាត់</label>
+					<input type="password" class="span12" name="password" data-bind="value: password">
+					<label for="confirmpassword">បញ្ជាក់លេខសំងាត់</label>
+					<input type="password" class="span12" name="confirmpassword" data-bind="value: confirmPassword">
+					<input type="submit" class="btn" value="រក្សាទុក" data-bind="click: save">
+					<input type="reset" class="btn" value="បោះបង់" data-bind="click: cancel">
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script id="userNew" type="text/x-kendo-template">
+	<div class="container-960">
+		<div class="row-fluid">
+			<div class="span4 offset4">
+				<h2>អ្នកប្រើប្រាស់</h2>
+				<hr>
+				<div class="well" style="height: 400xp; overflow: hidden">
+					
+						<label for="username">អ៉ីម៉េល</label>
+						<input type="text" class="span12" name="username" data-bind="value: current.username">
+						<label for="password">លេខសំងាត់</label>
+						<input type="password" class="span12" name="password" data-bind="value: current.password">
+						<label for="confirmpassword">បញ្ជាក់លេខសំងាត់</label>
+						<input type="password" class="span12" name="confirmpassword" data-bind="value: confirmPassword">
+						<label for="role">តួនាទី</label>
+						<input type="text" style="width: 100%" name="role" 
+										   data-role="dropdownlist"
+										   data-placeholder="---រើសមួយ---"
+										   data-bind="source: roles, value: current.role"
+										   data-text-field="name"
+										   data-value-field="id"><br>
+						<div class="span5 pull-left">
+							<input type="submit" class="btn btn-block" value="រក្សាទុក" data-bind="click: save">
+						</div>
+						<div class="span5 pull-right">
+							<input type="reset" class="btn btn-block" value="បោះបង់" data-bind="click: cancel">
+						</div>
+					
+				</div>				
+			</div>
+		</div>
+	</div>
+</script>
 <script type="text/x-kendo-template" id="accounting">
 	<div class="widget widget-heading-simple widget-body-gray widget-employees">	
 		<div class="widget-body padding-none">	
@@ -7604,26 +7648,7 @@
 		</div><!-- //End div row-fluid-->
 	</div>
 </script>
-<script id="users" type="text/x-kendo-template">
-	<div class="row-fluid">
-		<div class="span12">
-			<div id="example" class="k-content">
-				<h3>អ្នកប្រើប្រាស់</h3>
 
-				<div id="grid" class="span6"></div>
-
-				<div class="row-fluid">
-					<div class="span2">
-						
-					</div>
-					<div class="span2 offset8" align="right">
-						<a href="#currency_rates" class="btn btn-reverse btn-large btn-icon glyphicons right_arrow"><i></i> បន្តទៅមុខ</a>
-					</div>						
-				</div>
-			</div><!-- //End div example-->
-		</div><!-- //End div span12-->
-	</div><!-- //End div row-fluid-->
-</script>
 <script id="currencyRates" type="text/x-kendo-template">
 	<div class="row-fluid">
 		<div class="span12">
@@ -7987,6 +8012,138 @@
 			model: {
 				id: "id"
 			}
+		}
+	});
+
+	banhji.user = kendo.observable({
+		dataSource: new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: ARNY.baseUrl + "api/credentials",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: ARNY.baseUrl + "api/credentials",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url: ARNY.baseUrl + "api/credentials",
+					type: "PUT",
+					dataType: "json"
+				},
+				destroy: {
+					url: ARNY.baseUrl + "api/credentials",
+					type: "DELETE",
+					dataType: "json"
+				},
+				parameterMap: function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringify(options.models) };
+					}
+					return options;
+				}
+			},
+			pageSize: 20,
+			serverFiltering: true,
+			filter: {field: "company_id", value: banhji.config.userData['company']},
+			//autSync: true,
+			schema: {
+				model: {
+					id: "id",
+					fields: {
+						username: { type: "string", validation: { required: true } }
+					}
+				},
+				data: "results"
+			}
+		}),
+		roles: new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: ARNY.baseUrl + "api/employees/roles",
+					type: "GET",
+					dataType: "json"
+				},
+				parameterMap: function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringify(options.models) };
+					}
+					return options;
+				}
+			},
+			schema: {
+				model: {
+					id: "id"
+				}
+			}
+		}),
+		password: "fsdfds",
+		confirmPassword: "",
+		addNew: function(){
+			this.dataSource.insert(0,{
+				company_id: banhji.config.userData['company'],
+				username: "",
+				password: "",
+				role: "5"
+			});
+			this.setCurrent(this.dataSource.at(0));
+		},
+		setCurrent: function(user) {
+			this.set("current", user);
+		},
+		update: function(e) {
+			banhji.router.navigate('users/' + e.data.id, false);
+		},
+		remove: function(e) {
+			var model = this.dataSource.get(e.data.id);
+			var conf = confirm("តើអ្នកពិតជាចង់លុបអ្នកប្រើប្រាស់នេះឬ?");
+			if(conf) {
+				this.dataSource.remove(model);
+				this.dataSource.sync();
+			}
+			
+		},
+		cancel: function(){
+			this.dataSource.cancelChanges();
+			this.set("password", "");
+			this.set("confirmPassword", "");
+			this.set("role", 5);
+			window.history.go(-1);
+		},
+		save: function() {
+			var errors = [], self = this;
+			if(this.get('current').isNew()) {				
+				if(this.get('current').password !== this.get('confirmPassword') && this.get('current').password === "") {
+					errors.push("check password");
+				}
+				if(this.get('current').username === "") {
+					errors.push("empty username");
+				}
+				if(errors.length > 0) {
+					console.log(errors);
+				} else {
+					this.dataSource.sync();
+				}
+			} else {
+				if(this.get("password") === this.get("confirmPassword")) {
+					this.get("current").set('password', this.get("password"));
+					this.dataSource.sync();
+				} else {
+					errors.push("check password");
+				}			
+			}
+			this.dataSource.bind('requestEnd', function(e){
+				if(e.response.status === "OK" && e.type === "create" || e.type === "update") {
+					self.set("password", "");
+					self.set("confirmPassword", "");
+					self.set("role", 5);
+					self.set("current", "");
+				} else {
+					console.log(errors);
+				}
+			});
 		}
 	});
 
@@ -10179,53 +10336,6 @@
 				});
 			});
 		}());
-
-		return viewModel;
-	}());
-
-	banhji.user = (function() {
-		var userModel = kendo.data.Model.define({
-			id: 'id',
-			fields: {
-				token: {type: "string"},
-				username: {type: "string"},
-				company: { type: "string"}
-			}
-		});
-		var localDS = new kendo.data.extensions.LocalStorageDataSource({
-			itemBase: 'banhji-user',
-			schema: {
-				model: userModel
-			}
-		});
-		var viewModel = kendo.observable({
-			credentials: {},
-			createUser: function(newUserData) {},
-			logIn: function(username, password){},
-			logOut: function(){},
-			editPassword: function(oldPassword, newPassword) {},
-			loggedIn: function(){
-				// check if use session is created and cached locally
-				var login;
-				function getLoggedIn(value) {
-					login = value;
-				}
-				localDS.fetch(function(){
-					if(this.data()>0) {
-						getLoggedIn(true);
-					} else {
-						getLoggedIn(false);
-					}
-				});
-				return login;
-			},
-			getToken: function(){
-				// return user id if it is cached and existed
-				if(this.loggedIn()) {
-					//get user id
-				}
-			}
-		});
 
 		return viewModel;
 	}());
@@ -22083,7 +22193,7 @@
 		var glReport = new kendo.View("#glReport");
 		var poTracker = new kendo.View("#poTracking");
 		var company = new kendo.View("#companyList");
-		var users = new kendo.View("#userList");
+		var users = new kendo.View("#userList", { model: banhji.user});
 		var reports = new kendo.View("#reports", {model: banhji.report});
 		var electricity = new kendo.Layout("#transformer");
 		var electricityReport = new kendo.Layout("#electricityReport");
@@ -22140,7 +22250,7 @@
 		var eInvoicePreview = new kendo.View("#eInvoicePreview", {model: banhji.eInvoicePreview.viewModel});
 
 		var newCompany = new kendo.View("#newCompany", {model: banhji.newCompany.viewModel});
-		var users = new kendo.View("#users");
+		// var users = new kendo.View("#users");
 		var currencyRates = new kendo.View("#currencyRates");
 		var customerTypes = new kendo.View("#customerTypes");
 		var classes = new kendo.View("#classes");
@@ -22255,7 +22365,6 @@
 			eInvoicePreview : eInvoicePreview,
 
 			newCompany 		: newCompany,
-			users 			: users,
 			currencyRates 	: currencyRates,
 			customerTypes 	: customerTypes,
 			classes 		: classes,
@@ -23265,10 +23374,6 @@
 		            .addClass("alert alert-error");
 	        }
 		});			
-	});
-
-	banhji.router.route("users", function(){
-		banhji.view.layout.showIn("#layout-view", banhji.view.users);		
 	});
 
 	banhji.router.route("currency_rates", function(){
@@ -25147,192 +25252,137 @@
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		$("#secondary-menu").html("<li><a href='\#company'>ក្រុមហ៊ុន</a></li><li><a href='\#users'>User</a></li>");
 		banhji.view.index.showIn("#content", banhji.view.users);
-		var credDS = new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: ARNY.baseUrl + "api/credentials",
-					type: "GET",
-					dataType: "json"
-				},
-				create: {
-					url: ARNY.baseUrl + "api/credentials",
-					type: "POST",
-					dataType: "json"
-				},
-				update: {
-					url: ARNY.baseUrl + "api/credentials",
-					type: "PUT",
-					dataType: "json"
-				},
-				destroy: {
-					url: ARNY.baseUrl + "api/credentials",
-					type: "DELETE",
-					dataType: "json"
-				},
-				parameterMap: function(options, operation) {
-					if( operation !== "read" && options.models ) {
-						return { models: kendo.stringify(options.models) };
-					}
-					return options;
-				}
-			},
-			pageSize: 20,
-			//autSync: true,
-			schema: {
-				model: {
-					id: "id"
-				}
-			}
-		});
 
-		var credentials = new kendo.observable({
-				setCurrent: function(id) {
-					this.set("current", credDS.get(id));
-				},
-				role 		: new kendo.data.DataSource({
-					transport: {
-						read: {
-							url: ARNY.baseUrl + "api/employees/roles",
-							type: "GET",
-							dataType: "json"
-						},
-						parameterMap: function(options, operation) {
-							if( operation !== "read" && options.models ) {
-								return { models: kendo.stringify(options.models) };
-							}
-							return options;
-						}
-					},
-					schema: {
-						model: {
-							id: "id"
-						}
-					}
-				}),
-				isShown 	: false,
-				enabled 	: false,
-				role_id 	: "",
-				username 	: "",
-				password 	: "",
-				passwordCon : "",
-				edit 		: function(id) {
-					this.setCurrent(id);
-					if(this.get("isShown")) {
-						this.set("isShown", false);
-					}
-					this.set("role_id", this.get("current").role.id);
-					wnd.center().open();
-				},
-				addNew 		: function() {
-					this.set("isShown", true);
-					this.set("role_id", "");
-					wnd.center().open();
-				},
-				update 		: function() {
-					if(!this.get("enabled")) {
-						alert("You don't have permission to edit or delete!");
-					} else {
-						this.get("current").set("role", this.get("role").get(this.get("role_id")));
-						if(this.get("password") !== "" && this.get("passwordCon") !== "") {
-							if(this.get("password") !== this.get("passwordCon")) {
-								alert("Password does not match!");
-							} else {
-								this.sync();
-							}
-						} else {
-							if(this.get("current").role.id === MYAPP.setting.user_role) {
-								alert("You can't change your role!");
-							} else {
-								this.sync();
-							}
-						}
-						
-					}	
-				},
-				save 		: function() {
-					//if(!this.get("enabled")) {
-						//alert("You don't have permission to create!");
-					//} else {
-						if(this.get("password") === this.get("passwordCon") && this.get("username") !== "") {
-							if(this.get("role_id") === "") {
-								this.set("role_id", 5);
-							}
-							credDS.add({
-								role: this.get("role").get(this.get("role_id")),
-								username: this.get("username"),
-								password: this.get("password")
-							});
-							this.sync();
-						} else {
-							// do something
-							alert("Username is empty or Password does not match!");
-						}
-					//}			
-				},
-				sync 		: function() {
-					credDS.sync();
-				}
-		});
 
-		var wnd = $("#credDialogEdit").kendoWindow({
-			title: "Edit",
-			modal: true,
-			visible: false
-		}).data("kendoWindow");
-		function addNew(){
-			credentials.addNew();
-		}
-		kendo.bind("#credDialogEdit", credentials);
-		var cred = $("#credentials").kendoGrid({
-			dataSource: credDS,
-			pageable: true,
-			columns: [
-				{ title: "តួនាទី", field: "role.id", template: "#=role.name#" },
-				{ title: "ឈ្មោះអ្នកប្រើប្រាស់", field: "username" },
-				{ title: "ពេលបង្កើត", field: "created_at" },
-				{ title: "ពេលកំនែ", field: "updated_at" },
-				{ command: [
-						{ 
-							name: "edit",
-							text: "កែ",
-							click: function(e) {
-								var uid = $(e.target).closest("tr");
-								var data = this.dataItem(uid);
-								// if(MYAPP.setting.username === data.username) {
-								// 	credentials.set("enabled", true);
-								// } else if( MYAPP.setting.username === data.username && MYAPP.setting.user_role === data.id) {
-								// 	credentials.set("enabled", true);
-								// } else {
-								// 	credentials.set("enabled", false);
-								// }
-								credentials.edit(data.id);
-								credentials.set("enabled", true);
-								// console.log(MYAPP.setting.username);
-							},
-							template: "<a href='\\#' class='btn-action glyphicons pencil btn-success k-grid-edit'><i></i></a>"
-						},
-						{
+		// var userGrid = $("#userGrid").kendoGrid({
+		// 	dataSource: new kendo.data.DataSource({
+		// 		transport: {
+		// 			read: {
+		// 				url: ARNY.baseUrl + "api/credentials",
+		// 				type: "GET",
+		// 				dataType: "json"
+		// 			},
+		// 			create: {
+		// 				url: ARNY.baseUrl + "api/credentials",
+		// 				type: "POST",
+		// 				dataType: "json"
+		// 			},
+		// 			update: {
+		// 				url: ARNY.baseUrl + "api/credentials",
+		// 				type: "PUT",
+		// 				dataType: "json"
+		// 			},
+		// 			destroy: {
+		// 				url: ARNY.baseUrl + "api/credentials",
+		// 				type: "DELETE",
+		// 				dataType: "json"
+		// 			},
+		// 			parameterMap: function(options, operation) {
+		// 				if( operation !== "read" && options.models ) {
+		// 					return { models: kendo.stringify(options.models) };
+		// 				}
+		// 				return options;
+		// 			}
+		// 		},
+		// 		pageSize: 20,
+		// 		serverFiltering: true,
+		// 		filter: {field: "company_id", value: banhji.config.userData['company']},
+		// 		//autSync: true,
+		// 		schema: {
+		// 			model: {
+		// 				id: "id",
+		// 				fields: {
+		// 					username: { type: "string" }
+		// 				}
+		// 			},
+		// 			data: "results"
+		// 		}
+		// 	}),
+		// 	columns: [
+		// 		{ field: "username", title: "ឈ្មោះ"},
+		// 		{ field: "role", title: "តួនាទី", template: "#=role.name#"},
+		// 		{ field: "created_at"},
+		// 		{ field: "updated_at"},
+		// 		{ title: "&nbsp;", template:'<a href="<?php echo base_url(); ?>app/\\#users/#=id#">កែ</a>'}
+		// 	]
+		// });
+
+		// var wnd = $("#credDialogEdit").kendoWindow({
+		// 	title: "Edit",
+		// 	modal: true,
+		// 	visible: false
+		// }).data("kendoWindow");
+		// function addNew(){
+		// 	credentials.addNew();
+		// }
+		// kendo.bind("#credDialogEdit", credentials);
+		// var cred = $("#credentials").kendoGrid({
+		// 	dataSource: credDS,
+		// 	pageable: true,
+		// 	columns: [
+		// 		{ title: "តួនាទី", field: "role.id", template: "#=role.name#" },
+		// 		{ title: "ឈ្មោះអ្នកប្រើប្រាស់", field: "username" },
+		// 		{ title: "ពេលបង្កើត", field: "created_at" },
+		// 		{ title: "ពេលកំនែ", field: "updated_at" },
+		// 		{ command: [
+		// 				{ 
+		// 					name: "edit",
+		// 					text: "កែ",
+		// 					click: function(e) {
+		// 						var uid = $(e.target).closest("tr");
+		// 						var data = this.dataItem(uid);
+		// 						// if(MYAPP.setting.username === data.username) {
+		// 						// 	credentials.set("enabled", true);
+		// 						// } else if( MYAPP.setting.username === data.username && MYAPP.setting.user_role === data.id) {
+		// 						// 	credentials.set("enabled", true);
+		// 						// } else {
+		// 						// 	credentials.set("enabled", false);
+		// 						// }
+		// 						credentials.edit(data.id);
+		// 						credentials.set("enabled", true);
+		// 						// console.log(MYAPP.setting.username);
+		// 					},
+		// 					template: "<a href='\\#' class='btn-action glyphicons pencil btn-success k-grid-edit'><i></i></a>"
+		// 				},
+		// 				{
 							
-							text: "del",
-							click: function(e) {
-								var uid = $(e.target).closest("tr");
-								var data = this.dataItem(uid);
-								var model = credDS.get(data.id);
-								var ask = confirm("តើអ្នកពិតជាចង់លុបមែនទេ?");
-								if( ask ) {
-									credDS.remove(model);
-									credDS.sync();
-								}
-								//console.log(model.id);
+		// 					text: "del",
+		// 					click: function(e) {
+		// 						var uid = $(e.target).closest("tr");
+		// 						var data = this.dataItem(uid);
+		// 						var model = credDS.get(data.id);
+		// 						var ask = confirm("តើអ្នកពិតជាចង់លុបមែនទេ?");
+		// 						if( ask ) {
+		// 							credDS.remove(model);
+		// 							credDS.sync();
+		// 						}
+		// 						//console.log(model.id);
 								
-							},						
-							template: "&nbsp;<a href='\\#' class='btn-action glyphicons remove_2 btn-danger k-grid-del'><i></i></a>"
-						}
-					],
-					width: "80px"
-				}
-			]	
+		// 					},						
+		// 					template: "&nbsp;<a href='\\#' class='btn-action glyphicons remove_2 btn-danger k-grid-del'><i></i></a>"
+		// 				}
+		// 			],
+		// 			width: "80px"
+		// 		}
+		// 	]	
+		// });
+	});
+	
+	banhji.router.route("users/:id", function(id){
+		var updateView = new kendo.View("#userUpdate", { model: banhji.user });
+		banhji.view.layout.showIn("#layout-view", updateView);
+		banhji.user.dataSource.fetch(function(){
+			var model = banhji.user.dataSource.get(id);
+			banhji.user.setCurrent(model);
 		});
+		
+		
+	});
+
+	banhji.router.route("usernew", function(){
+		var newView = new kendo.View("#userNew", { model: banhji.user });
+		banhji.view.layout.showIn("#layout-view", newView);
+		banhji.user.addNew();
 	});
 
 	banhji.router.route("accounting", function(){
