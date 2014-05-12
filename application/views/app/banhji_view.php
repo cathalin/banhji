@@ -939,6 +939,68 @@
 	</div>	
 </script>
 
+<script id="salesView" type="text/x-kendo-template">
+	
+</script>
+<script id="salesListView" type="text/x-kendo-template">
+	
+</script>
+
+<script id="salesCardView" type="text/x-kendo-template">
+	
+</script>
+
+<script id="requestView" type="text/x-kendo-template">
+	<div class="container-960">
+		<div class="row-fluid">
+			<div class="span12">
+				<button class="btn btn-inverse pull-right" data-bind="click: closeX"><i class="icon-remove"></i></button><br><br>
+				<div class="well">
+					<table>
+						<tr>
+							<td width="150">លេខៈ</td>
+							<td><input type="text" class="k-input" data-bind="value: current.number"></td>
+							<td width="150">កាលបរិច្ឆេទៈ</td>
+							<td><input type="date" data-role="datepicker" 
+												   data-bind="value: current.expected_date"></td>
+							<td width="150">កំពុងស្នើៈ</td>
+							<td><input type="text" data-role="dropdownlist" 
+												   data-bind="source: status, value: current.status"
+												   data-value-field="id"
+												   data-text-field="status"></td>
+						</tr>
+					</table>
+				</div>
+				<div data-role="grid" data-bind="source: current.items"
+									  data-columns="[
+									  	{ title: '&nbsp;', width: '25px' },
+										{ title: 'វត្ថុ' },
+										{ title: 'ពិពណ៏នា' },
+										{ title: 'តំលៃ' },
+										{ title: 'ចំនួន'}
+									  ]"									  
+									  data-row-template="requestListView">
+				</div>
+				<button data-bind="click: addToCart"><i class="icon-plus"></i></button>
+				<button data-bind="click: save">រក្សាទុក</button>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script id="requestListView" type="text/x-kendo-template">
+	<tr>
+		<td><i class="icon-trash" data-bind="click: rmFromCart"></i></td>
+		<td><input type="text" data-role="combobox" name="item_id" data-bind="source: itemList, value: item_id, events: {change: onItemChange, onFieldChange}" 
+													data-text-field="name"
+													data-value-field="id"
+													data-placeholder="---រើសមួយ---"></td>
+		<td><input type="text" class='ke-textbox k-input' name="description" data-bind="value: description, events: {change: onFieldChange}"></td>
+		<td><input type="text" data-role="numerictextbox" name="cost" data-bind="value: cost, events: {change: onFieldChange}"></td>
+		<td><input type="text" data-role="numerictextbox" name="quantity" data-bind="value: quantity, events: {change: onFieldChange}"></td>
+	</tr>
+</script>
+
 <script id="purchase-return-list" type="text/x-kendo-template">
 	<tr>
 		<td><span class="glyphicons bin" style="margin: 1px 8px 11px 8px;" data-bind="click: removeItemFromList"><i></i></span></td>
@@ -2866,8 +2928,8 @@
 </script>
 <script type="text/x-kendo-template" id="itemsRecordView">
 	<tr>
-		<td>#=kendo.toString(created_at, 'dd-MM-yyyy')#</td>
-		<td><a href="<?php echo base_url();?>app\##:type.type ? type.type : "request"#/#=type.id#">#:type.type ? type.type : "request"#</a></td>
+		<td>#=kendo.toString(new Date(created_at), 'dd-MM-yyyy')#</td>
+		<td><a href="<?php echo base_url();?>app\##:type.type ? type.type : "requests"#/#=type.id#">#:type.type ? type.type : "request"#</a></td>
 		<td>#:kendo.toString(quantity, 'n2')#</td>
 	</tr>
 </script>
@@ -3587,90 +3649,92 @@
 
 <!-- Goods Reciept Note -->
 <script id="grnView" type="text/x-kendo-template">
-	<div class="row-fluid">
-		<div class="span12">
-			<button class="btn btn-inverse pull-right" data-bind="click: closeX">X</button>
-			<div id="grnVa">
-				<h4 align="center">លិខិតដឹកជញ្ជូន</h4>
-				<div class="row-fluid">
-					<div class="span8">						
-						អ្នក់ផ្គត់ផ្គង់
-						<input type="text" id="vendor" name="vendor" placeholder="---ជ្រើសយកមួយ---" data-bind="value: vendor.company" required data-required-msg="ត្រូវការអ្នកផ្គត់ផ្គង់មួយ">
-						<br/><br/>
-						អាសយដ្ឋាន
-						<br>
-						<textarea readonly id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: vendor.address"></textarea>								
-					</div>
-
-					<div class="span4">			
-						<table>
-							<tr>
-								<td>
-									លេខលិខិតដឹកជញ្ជូន
-								</td>
-								<td>
-									<input class="k-textbox" data-bind="value: number" style="width:138px;" readonly />
-								</td>
-							</tr>							
-							<tr>
-								<td>
-									កាលបរិច្ឆេទ
-								</td>
-								<td>
-									<input data-role="datepicker" data-bind="value: date" data-format="dd-MM-yyyy" />
-								</td>
-							</tr>
-							<tr>
-				                <td>Class</td>
-				              	<td><select id="classes" name="classes" data-role="combobox" 
-				              				data-text-field="name" data-value-field="id" 
-				              				data-bind="source: classDS, value: class_id"
-				              				required data-required-msg="ត្រូវការ Class" placeholder="---ជ្រើសយកមួយ---" ></select>
-				              	</td>
-				            </tr>					
-						</table>
-					</div>							         		          	
-			    </div>			
-				
-				<br>
-
-				<div data-role="grid" data-bind="source: itemsList"
-			        data-auto-bind="false"				        
-			        data-row-template="grnRowTemplate"				                        
-			        data-columns='[{ title: "", width: 20 },
-			        	{ title: "ល.រ", width: 35 },
-			            { title: "ទំនិញ", width: 200 },
-			            { title: "តំលៃ", width: 85 },                
-			            { title: "ចំនួនបញ្ជាទិញ", width: 200 },
-			            { title: "ចំនួនទទួល", width: 85 }           	                    
-			            ]'>
-				</div>
-				<br/>
-				<button class="btn btn-inverse" data-bind="click: addRow"><i class="icon-plus icon-white"></i></button>
-				
-				<div class="row-fluid">
-					<div class="span8">
-						<br/>
-						<b>សំគាល់:</b>
-						<br>
-						<textarea id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo" placeholder="សំគាល់ 1 (សំរាប់អតិថិជន)"></textarea>
-						<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: remark" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
-						<br/><br/>
-						<span id="status"></span>
-					</div>
-					<div class="span4" align="left">
-						<div class="right">
-							ចំនួនសរុប:
-							<span bgcolor="#00BFFF" data-bind="text: totalQuantity"></span>								
+	<div class="container-960">
+		<div class="row-fluid">
+			<div class="span12">
+				<button class="btn btn-inverse pull-right" data-bind="click: closeX">X</button>
+				<div id="grnVa">
+					<h4 align="center">លិខិតដឹកជញ្ជូន</h4>
+					<div class="row-fluid">
+						<div class="span8">						
+							អ្នក់ផ្គត់ផ្គង់
+							<input type="text" id="vendor" name="vendor" placeholder="---ជ្រើសយកមួយ---" data-bind="value: vendor.company" required data-required-msg="ត្រូវការអ្នកផ្គត់ផ្គង់មួយ">
+							<br/><br/>
+							អាសយដ្ឋាន
+							<br>
+							<textarea readonly id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: vendor.address"></textarea>								
 						</div>
-						<p></p>			
-						<button id="save" class="btn btn-primary" data-bind="click: save"><i class="icon-hdd icon-white"></i> កត់ត្រា</button> 					
-					</div>		
-				</div>
-			</div>
 
+						<div class="span4">			
+							<table>
+								<tr>
+									<td>
+										លេខលិខិតដឹកជញ្ជូន
+									</td>
+									<td>
+										<input class="k-textbox" data-bind="value: number" style="width:138px;" readonly />
+									</td>
+								</tr>							
+								<tr>
+									<td>
+										កាលបរិច្ឆេទ
+									</td>
+									<td>
+										<input data-role="datepicker" data-bind="value: date" data-format="dd-MM-yyyy" />
+									</td>
+								</tr>
+								<tr>
+					                <td>Class</td>
+					              	<td><select id="classes" name="classes" data-role="combobox" 
+					              				data-text-field="name" data-value-field="id" 
+					              				data-bind="source: classDS, value: class_id"
+					              				required data-required-msg="ត្រូវការ Class" placeholder="---ជ្រើសយកមួយ---" ></select>
+					              	</td>
+					            </tr>					
+							</table>
+						</div>							         		          	
+				    </div>			
+					
+					<br>
+
+					<div data-role="grid" data-bind="source: itemsList"
+				        data-auto-bind="false"				        
+				        data-row-template="grnRowTemplate"				                        
+				        data-columns='[{ title: "", width: 20 },
+				        	{ title: "ល.រ", width: 35 },
+				            { title: "ទំនិញ", width: 200 },
+				            { title: "តំលៃ", width: 85 },                
+				            { title: "ចំនួនបញ្ជាទិញ", width: 200 },
+				            { title: "ចំនួនទទួល", width: 85 }           	                    
+				            ]'>
+					</div>
+					<br/>
+					<button class="btn btn-inverse" data-bind="click: addRow"><i class="icon-plus icon-white"></i></button>
+					
+					<div class="row-fluid">
+						<div class="span8">
+							<br/>
+							<b>សំគាល់:</b>
+							<br>
+							<textarea id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo" placeholder="សំគាល់ 1 (សំរាប់អតិថិជន)"></textarea>
+							<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: remark" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
+							<br/><br/>
+							<span id="status"></span>
+						</div>
+						<div class="span4" align="left">
+							<div class="right">
+								ចំនួនសរុប:
+								<span bgcolor="#00BFFF" data-bind="text: totalQuantity"></span>								
+							</div>
+							<p></p>			
+							<button id="save" class="btn btn-primary" data-bind="click: save"><i class="icon-hdd icon-white"></i> កត់ត្រា</button> 					
+						</div>		
+					</div>
+				</div>
+
+			</div>
 		</div>
-	</div>		
+	</div>	
 </script>
 
 <script id="grnRowTemplate" type="text/x-kendo-tmpl">		
@@ -12130,6 +12194,76 @@
 		return viewModel;
 	}());
 
+	banhji.purchaseOrder = kendo.observable({
+		baseUrl 	: banhji.baseUrl + "api/purchaseOrders/",
+		data 		: "",
+		url 		: function() {
+			return this.get("baseUrl");
+		},
+		dataSource 	: new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: function(option) {
+						return banhji.purchaseOrder.url();
+					},
+					dataType: "json",
+					type: "GET"
+				},
+				create: {
+					url: function(option) {
+						return banhji.purchaseOrder.url();
+					},
+					dataType: "json",
+					type: "POST"
+				},
+				update: {
+					url: function(option) {
+						return banhji.purchaseOrder.url();
+					},
+					dataType: "json",
+					type: "PUT"
+				},
+				destroy: {
+					url: function(option) {
+						return banhji.purchaseOrder.url();
+					},
+					dataType: "json",
+					type: "DELETE"
+				},
+				parameterMap: function(data, type) {
+					if(type === "read") {
+						return { fields: "test, name" }
+					}
+				}
+			},
+			schema: {
+				model: {
+					id: 'id'
+				},
+				data: 'results'
+			},
+			serverFiltering: true
+		}),
+		setCurrent 	: function(model) {
+			this.set('current', model);
+		},
+		newPO 		: function(){
+			this.dataSource.insert(0, {});
+			this.setCurrent(this.dataSource.at(0));
+		},
+		getById 	: function(id){
+			var self = this;
+			this.set("id", id);
+			this.dataSource.fetch(function(){
+				self.setCurrent(this.data());
+			});
+		},
+		save 		: function(){
+			this.dataSource.sync();
+		}
+	});
+	banhji.purchaseOrder.get('dataSource').read();
+
 	banhji.po = (function(){		
 		var companyDS = new kendo.data.DataSource({
 			transport: {
@@ -12879,7 +13013,130 @@
 	}());
 
 	banhji.requests = (function(){
+		var Item = kendo.Class.extend({
+			dataSource: new kendo.data.DataSource({
+				transport: {
+					read: {
+						url: banhji.baseUrl + "api/inventory_api/items",
+						type: "GET",
+						dataType: "json"
+					}
+				},
+				filter: [
+					{ field: "status", value: 1 },
+					{ field: "parent_id >", value: 0},
+					{ field: "item_type_id", value: 1}
+				],
+				serverFiltering: true
+			}),
+			list: [],
+			init: function() {
+				var self = this;
+				this.dataSource.fetch(function(){
+					$.each(this.data(), function(i,v){
+						viewModel.itemList.push(v);
+					});
+				});
+			}
+		});
+		var item = new Item;
+		var itemRecords = kendo.observable({
+			idFilter: "",
+			resourceFilter: "",
+			baseUrl: banhji.baseUrl + "api/inventory_api/item_record",
+			url: function () {
+				if(this.get('idFilter') !== "" || this.get('resourceFilter') !== "") {
+					return this.get("baseUrl") + this.get("idFilter") + this.get("resourceFilter");
+				} else {
+					return this.get("baseUrl");
+				}
+				
+			},
+			dataSource: new kendo.data.DataSource({
+		        transport: {
+		        	read: {
+				        url : function(options){
+				        	return itemRecords.url();
+				        },
+				        type: "GET",
+				        dataType: "json"
+			        },
+			        create: {
+				        url : banhji.baseUrl + "api/inventory_api/item_record",
+				        type: "POST",
+				        dataType: "json"
+			        },
+			        parameterMap: function(options, operation) {
+			    		if (operation !== "read" && options.models) {
+			    			  	 return {models: kendo.stringify(options.models)};
+			  			}
+						return options;				   
+			  		}
+				},
+				batch: false,
+				serverFiltering: true,	                            
+			 	schema: {
+					model: {
+						id : "id"
+					},
+					data: "results"		 
+				}
+			}),
+			getByJournal: function(journalId) {
+				var dfd = $.Deferred();
+				this.get("dataSource").filter({ 
+					field: "bill_id", 
+					value: journalId
+				});
+				this.get("dataSource").bind('requestEnd', function(e){
+					if(e.response.error !== true) {
+						dfd.resolve(e.response.results);
+					} else {
+						dfd.reject("រកមិនមានទិន្ន័យ។");
+					}
+				});
+				return dfd.promise();
+			},
+			save: function(data) {
+				var dfd = $.Deferred();
+				if(data === undefined) {
+					dfd.reject("សូមផ្ដល់ទិន្ន័យ!");
+				} else {
+					itemRecords.dataSource.add(data);
+					itemRecords.dataSource.sync();
+					itemRecords.dataSource.bind('requestEnd', function(e){
+						if(e.response.error !== true) {
+							dfd.resolve(e.response.results);
+						} else {
+							dfd.reject("រកមិនមានទិន្ន័យ។");
+						}
+					});
+				}
+				return dfd.promise();
+			}
+		});
 		var viewModel = kendo.observable({
+			itemList 	: [],
+			_status		: 1,
+			setCurrent 	: function(model) {
+				this.set("current", model);
+			},
+			closeX: function() {
+				window.history.go(-1);
+			},
+			addNew 		: function() {
+				this.dataSource.insert(0, {
+					user: banhji.config.userData['userId'],
+					company_id: banhji.config.userData['company'],
+					number: "1545",
+					expected_date: new Date(),
+					status: 1,
+					items: [{item_id: "", description: "", cost: "", quantity: ""}]
+				});
+				this.setCurrent(this.dataSource.at(0));
+			},
+			itemList 	: [{item: "", description: "", cost: "", unit: ""}],
+			status 		: [{id: 0, status: 'មិនម៉ែន'},{id:1, status: 'ម៉ែន'}],
 			dataSource 	: new kendo.data.DataSource({
 				transport: {
 		            read: {
@@ -12956,6 +13213,47 @@
 	            serverFiltering: true,
 	            serverSorting: true
 			}),
+			onItemChange: function(e){
+				var item = this.itemList[e.sender.selectedIndex];
+				for(var i=0; i< this.get('current').items.length; i++) {
+					var current = this.get('current').items[i];
+					if(e.data === current) {
+						current.set("cost", item.purchase_description);
+						current.set("cost", item.cost);
+						break;
+					}
+				}
+			},
+			onFieldChange: function(e) {
+				var field = "";
+				if(e.currentTarget !== undefined) {
+					field = e.currentTarget.name;
+				} else {
+					field = e.sender.element[0].name;
+				}
+				var self = this;
+				
+				$.each(this.get('current').items, function(i,v){
+					if(v === e.data) {
+						var _field = 'items['+i+']["'+field+'"]';
+						self.get('current').set(_field, e.data[field]);
+						self.get('current').set('dirty', true);
+						return false;
+					}
+				});
+			},
+			addToCart 	: function() {
+				this.get('current').items.push({item: "", description: "", cost: "", unit: ""});
+			},
+			rmFromCart 	: function(e) {
+				for (var i = 0; i < this.get('current').items.length; i ++) {
+		            var current = this.get('current').items[i];
+		            if (current === e.data) {
+		                this.get('current').items.splice(i, 1);
+		                break;
+		            }
+		        }
+			},
 			getItem 	: function(itemId) {
 				var dfd = $.Deferred();
 				this.dataSource.filter({ field: item_id, value: itemId});
@@ -13007,6 +13305,14 @@
 					}
 				});
 				return dfd.promise();
+			},
+			save 		: function() {
+				this.dataSource.sync();
+				this.dataSource.bind('requestEnd', function(e){
+					if(e.response.status === "OK") {
+						console.log(e.response);
+					}
+				});
 			}
 		});
 
@@ -14322,6 +14628,12 @@
 					dataType: "json"
 				}
 			},
+			schema: {
+				model: {
+					id: "id"
+				},
+	            data: "results"
+			},
 			filter: { field: "type", value: "Class" },
 			serverFiltering: true		
 		});
@@ -14519,31 +14831,6 @@
 								});
 							});
 							console.log(self.itemsList);
-						}
-					});
-				},
-				getFromPO 	: function(poId) {
-					var self = this;
-					var date = new Date();
-					var month= date.getMonth()+1;
-					var year = date.getFullYear();
-					this.set("number", "GRN0"+month+""+year+"0000");
-					banhji.transaction.getById(poId).then(function(data){
-						if(data.status === "OK" && data.results[0].status === "0") {
-							var po = data.results[0];
-							self.set("vendor", po.people_name);
-							self.set("reference", po.id);
-							self.set("address", po.address);
-							self.set("class_id", po.class_id);
-							self.set("po_id", poId);
-							$.each(po.entries, function(i,v){
-								self.get("itemsList").push({
-									item_id 	: v.item_id,
-									unit_price 	: v.unit_price,
-									qty_ordered	: v.quantity,
-									quantity	: 0
-								});
-							});	
 						}
 					});
 				}
@@ -23717,9 +24004,6 @@
 	});
 
 	// Bills Section
-	banhji.router.route("bills", function(){
-		console.log(["Bill section", "Create new bill"].join(" "));
-	});
 
 	banhji.router.route("purchase(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.purchase);
@@ -23892,41 +24176,56 @@
 	});
 
 	banhji.router.route("po/:id/grn", function(id){
-		// banhji.purchase.viewModel.set("po_id", id);
 		banhji.view.layout.showIn("#layout-view", banhji.view.grnView);
 		// kendo.fx($("#purchase-form")).slideIn("down").play();
 
-
-		if(id!==undefined){
+		if(id!== "undefined"){
 			banhji.grn.viewModel.empty();
-			banhji.grn.viewModel.getFromPO(id);
-		}else{
+			banhji.transaction.getById(id).then(function(data){
+				if(data.status === "OK" && data.results[0].status === "0") {
+					var po = data.results[0];
+					banhji.grn.viewModel.set("vendor", po.people_name);
+					banhji.grn.viewModel.set("reference", po.id);
+					banhji.grn.viewModel.set("address", po.address);
+					banhji.grn.viewModel.set("class_id", po.class_id);
+					banhji.grn.viewModel.set("po_id", id);
+					// $.each(po.entries, function(i,v){
+					// 	banhji.grn.viewModel.get("itemsList").push({
+					// 		item_id 	: v.item_id,
+					// 		unit_price 	: v.unit_price,
+					// 		qty_ordered	: v.quantity,
+					// 		quantity	: 0
+					// 	});
+					// });
+				}
+			});
+		} else {
 			// var vendor_id = banhji.grn.viewModel.get("customer").id;			
 			// banhji.grn.viewModel.pageLoad();
 		}
 								
-		var validator = $("#grnVa").kendoValidator().data("kendoValidator"),
-			status = $("#status");
+		// var validator = $("#grnVa").kendoValidator().data("kendoValidator"),
+		// 	status = $("#status");
 
-		$("#add").click(function(e){
-			e.preventDefault();
+		// $("#add").click(function(e){
+		// 	e.preventDefault();
 						
-            if(validator.validate()){
-            	if(id!==undefined){            		
-            		banhji.grn.viewModel.update(id);            		
-            	}else{
-            		banhji.grn.viewModel.createGRN();
-            	}            	
+  //           if(validator.validate()){
+  //           	if(id!==undefined){            		
+  //           		banhji.grn.viewModel.update(id);            		
+  //           	}else{
+  //           		banhji.grn.viewModel.createGRN();
+  //           	}            	
 
-	            status.text("កត់ត្រាបានសំរេច")
-		            .removeClass("alert alert-error")
-		            .addClass("alert alert-success");
-	        }else{		        	
-	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
-	                .removeClass("alert alert-success")
-		            .addClass("alert alert-error");
-	        }
-		});
+	 //            status.text("កត់ត្រាបានសំរេច")
+		//             .removeClass("alert alert-error")
+		//             .addClass("alert alert-success");
+	 //        }else{		        	
+	 //            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
+	 //                .removeClass("alert alert-success")
+		//             .addClass("alert alert-error");
+	 //        }
+		// });
 	});
 
 	banhji.router.route("po(/:id)", function(id){
@@ -25789,10 +26088,6 @@
 		banhji.items.addNew();
 	});
 
-	banhji.router.route("requests(/:id)", function(requestId){
-		console.log("request section");
-	});
-
 	banhji.router.route("inventories(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.items);
@@ -25866,6 +26161,7 @@
 						});
 						$("#itemTransDetail").kendoGrid({
 							dataSource: items,
+							height: "600px",
 							columns: [
 								{ field: "កាលបរិច្ឆេទ", width: "150px" },
 								{ field: "ប្រភេទ" },
@@ -26220,6 +26516,23 @@
 	banhji.router.route("load_adjustment", function(){
 		banhji.view.layout.showIn("#layout-view", banhji.view.index);
 		banhji.view.index.showIn("#content", banhji.view.loadAdjustment);
+	});
+
+	banhji.router.route("sales", function(){
+		console.log("sales");
+	});
+	banhji.router.route("requests", function(){
+		var requestView = new kendo.View("#requestView", { model: banhji.requests });
+		banhji.view.layout.showIn("#layout-view", requestView);
+		banhji.requests.addNew();
+	});
+	banhji.router.route("requests/:id", function(id){
+		var requestView = new kendo.View("#requestView", { model: banhji.requests });
+		banhji.view.layout.showIn("#layout-view", requestView);
+		banhji.requests.dataSource.filter({field: 'id', value: id});
+		banhji.requests.dataSource.fetch(function(){
+			banhji.requests.setCurrent(this.data()[0]);
+		});
 	});
 
 	$(function(){

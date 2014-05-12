@@ -17,6 +17,11 @@ class Items extends REST_Controller {
 		$this->load->model('accounting/invoice_model', 'invoice');
 		$this->load->model('accounting/journal_model', 'journal');
 	}
+	function number_get() {
+		
+		$this->response(array('status'=>$this->_numberGeneration(1)), 200);
+		
+	}
 
 	// requests section
 	function requests_get() {
@@ -38,7 +43,9 @@ class Items extends REST_Controller {
 			foreach($query as $row) {
 				$data[] = array(
 					"id" 			=> $row->id,
+					"company_id"	=> $row->company_id,	
 					"user" 			=> $this->people->get($row->user_id),
+					"number"		=> $row->number,
 					"items"			=> $this->requestItems->get_many_by(array("purchase_request_id"=>$row->id)),
 					"expected_date" => $row->expected_date,
 					"status"		=> $row->status,
@@ -54,58 +61,96 @@ class Items extends REST_Controller {
 
 	function requests_post() {
 		$postedData = $this->post();
-		foreach( $postedData as $value ) {
-			$data[] = array(
-				"user_id" => $value->user,
-				"expected_date" => $value->expected_date,
-				"status" => $value->status
-			);
-		}
+		$data = array(
+			"user_id" => $postedData['user'],
+			"company_id" => $postedData['company_id'],
+			"number" => 'REQ'.$this->_numberGeneration($postedData['company_id']),
+			"expected_date" => Date('Y-m-d', strtotime($postedData['expected_date'])),
+			"status" => $postedData['status']
+		);
 		$this->db->trans_start();
 		$insertRequest = $this->requests->insert($data);
 		if($insertRequest) {
-			foreach($postedData['items'] as $item) {
+			foreach($postedData['items'] as $row => $item) {
 				$items[] = array(
 					"purchase_request_id" => $insertRequest,
-					"item_id" => $item->item_id,
-					"cost" => $item->cost,
-					"quantity" => $item->quanity
+					"item_id" => $item['item_id'],
+					"cost" => $item['cost'],
+					"quantity" => $item['quantity']
 				);
 			}
 			$query = $this->requestItems->insert_many($items);
 
 		}
-		$this->trans_complete();
+		$this->db->trans_complete();
 
 		if($this->db->trans_status() === FALSE) {
 			$this->response(array("status"=>"ERROR", "message"=>"Cannot create request.","count"=>0, "results"=>array()), 400);
 		} else {
-			$requstQuery = $this->requests->get($insertRequest);
-			foreach($query as $row) {
+			$requestQuery = $this->requests->get($insertRequest);
+			if(count($requestQuery) > 0) {
 				$dataRequest[] = array(
-					"id" 			=> $row->id,
-					"user" 			=> $this->people->get($row->user_id),
-					"items"			=> $this->requestItems->get_many_by(array("purhcase_request_id"=>$row->id)),
-					"expected_date" => $row->expected_date,
-					"status"		=> $row->status,
-					"created_at"	=> $row->created_at
+					"id" 			=> $requestQuery->id,
+					"number" 		=> $requestQuery->number,
+					"user" 			=> $this->people->get($requestQuery->user_id),
+					"items"			=> $this->requestItems->get_many_by(array("purchase_request_id"=>$requestQuery->id)),
+					"expected_date" => date('m-d-Y', $requestQuery->expected_date),
+					"status"		=> $requestQuery->status
 				);
-			}
-			$this->response(array("status"=>"OK", "count"=>count($requstQuery), "results"=>$dataRequest), 200);
+			}			
+			$this->response(array("status"=>"OK", "results"=>$dataRequest), 200);
 		}
+		
 	}
 
 	function requests_put() {
 		$postedData = $this->put();
 
+		$data = array(
+			"user_id" => $postedData['user'],
+			"company_id" => $postedData['company_id'],
+			"number" => 'REQ'.$this->_numberGeneration($postedData['company_id']),
+			"expected_date" => Date('Y-m-d', strtotime($postedData['expected_date'])),
+			"status" => $postedData['status']
+		);
 		$this->db->trans_start();
-		$query = $this->requests->update($postedData['id'], array("status"=>$postedData['status']));
+		$insertRequest = $this->requests->update($this->put('id'), $data);
+		if($insertRequest) {
+			foreach($postedData['items'] as $row => $item) {
+				$items[] = array(
+					"purchase_request_id" => $insertRequest,
+					"item_id" => $item['item_id'],
+					"cost" => $item['cost'],
+					"quantity" => $item['quantity']
+				);
+				$this->requestItems->update_by(array("purchase_requet_id"=>$this->put('id')), 
+					array(
+						"item_id" => $item['item'],
+						"cost" => $item['cost'],
+						"quantity" => $item['unit']
+					)
+				);
+			}
+			
+
+		}
 		$this->db->trans_complete();
 
 		if($this->db->trans_status() === FALSE) {
-			$this->response(array("status"=>"ERROR", "count"=>0, "message"=>"Cannot updated."), 400);
+			$this->response(array("status"=>"ERROR", "message"=>"Cannot create request.","count"=>0, "results"=>array()), 400);
 		} else {
-			$this->response(array("status"=>"OK", "count"=>1, "message"=>"Updated successfully."), 200);
+			$requestQuery = $this->requests->get($insertRequest);
+			if(count($requestQuery) > 0) {
+				$dataRequest[] = array(
+					"id" 			=> $requestQuery->id,
+					"number" 		=> $requestQuery->number,
+					"user" 			=> $this->people->get($requestQuery->user_id),
+					"items"			=> $this->requestItems->get_many_by(array("purchase_request_id"=>$requestQuery->id)),
+					"expected_date" => $requestQuery->expected_date,
+					"status"		=> $requestQuery->status
+				);
+			}			
+			$this->response(array("status"=>"OK", "results"=>$dataRequest), 200);
 		}
 	}
 
@@ -457,6 +502,26 @@ class Items extends REST_Controller {
 			return TRUE;
 		} else {
 			return FALSE;
+		}
+	}
+
+	private function _numberGeneration($company) {
+		$lastRecord = $this->requests->order_by("number", "DESC")->limit(1)->get_many_by(array("company_id"=>1));
+		if(count($lastRecord) > 0) {
+			foreach($lastRecord as $record) {
+				$number = $record->number;
+			}
+			$fFour = substr($number, 5, 2);
+			$current = date('m');
+			if($current > $fFour) {
+				$test = "true";
+			} else {
+				if((substr($number, 7, 3) + 1) < 10) {
+					return date('ym').'00'.(substr($number, 7, 3) + 1);
+				} else {
+					return date('ym').'0'.(substr($number, 7, 3) + 1);
+				}
+			}
 		}
 	}
 }
