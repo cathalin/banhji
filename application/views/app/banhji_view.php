@@ -12196,7 +12196,8 @@
 
 	banhji.purchaseOrder = kendo.observable({
 		baseUrl 	: banhji.baseUrl + "api/purchaseOrders/",
-		data 		: "",
+		data 		: "test=hi",
+		id 			: null,
 		url 		: function() {
 			return this.get("baseUrl");
 		},
@@ -12231,9 +12232,10 @@
 					type: "DELETE"
 				},
 				parameterMap: function(data, type) {
-					if(type === "read") {
-						return { fields: "test, name" }
+					if(type !== "read" && data.models) {
+						return { models: kendo.stringify(data.models)}
 					}
+					return data;
 				}
 			},
 			schema: {
@@ -12242,27 +12244,79 @@
 				},
 				data: 'results'
 			},
-			serverFiltering: true
+			serverFiltering: true,
+			filter:	{ field: "company_id", value: banhji.config.userData['company']}
 		}),
 		setCurrent 	: function(model) {
 			this.set('current', model);
 		},
 		newPO 		: function(){
-			this.dataSource.insert(0, {});
+			this.dataSource.insert(0, {
+				company: banhji.config.userData['company'],
+				class: null,
+				data: new Date(),
+				expected_date: new Date(),
+				address: null,
+				shipping_address: null,
+				items: [{id: null, item_id: null, description: null, cost: 0, unit: 0, taxable: false}],
+				memo_01: null,
+				memo_02: null,
+				created_by: banhji.config.userData['userId'],
+				updated_by: banhji.config.userData['userId'],
+			});
 			this.setCurrent(this.dataSource.at(0));
 		},
 		getById 	: function(id){
 			var self = this;
-			this.set("id", id);
+			this.dataSource.filter({field: 'id', value: id});
 			this.dataSource.fetch(function(){
 				self.setCurrent(this.data());
 			});
 		},
+		total 		: function() {
+			var amount = 0;
+			$.each(this.get("current").items, function(i, v){
+				amount += kendo.parseFloat(v.cost) * kendo.parseFloat(v.unit);
+			});
+
+			return kendo.toString(amount, '0,000.00');
+		},
 		save 		: function(){
-			this.dataSource.sync();
-		}
+			if(kendo.parseFloat(this.total()) > 0) {
+				this.dataSource.sync();
+			}
+		},
+		popupVendor: function(e) {
+				e.preventDefault();
+				var parent = $("body").append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
+				var wnd = $("#popupVendor").kendoWindow({
+					title: "Vendor",
+					width: "400px",
+					height: "300px",
+					modal: true,
+					close: function(e) {
+						// parent.remove();
+					}
+				}).data("kendoWindow");
+				wnd.center().open();
+				$("#vendorListItem1").kendoGrid({
+					dataSource: banhji.vendor.vendorsList,
+					columns: [
+						{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
+					],
+					height: "266px",
+					selectable: true,
+					change: function(e) {
+						var selected = this.select();
+						var vendor = this.dataItem(selected);
+						viewModel.set("vendor", vendor);
+						// wnd.close();
+					}
+				});
+			},
 	});
-	banhji.purchaseOrder.get('dataSource').read();
+	banhji.purchaseOrder.getById(6);
+	banhji.purchaseOrder.save();
 
 	banhji.po = (function(){		
 		var companyDS = new kendo.data.DataSource({
