@@ -2603,13 +2603,15 @@
 							<table cellpadding="2" cellspacing="2">					          
 								<tr>				
 									<td>លេខបញ្ជាទិញ</td>
-									<td><input class="k-textbox" data-bind="value: number" style="width:140px;" readonly /></td>
+									<td><input class="k-textbox" data-bind="value: current.number" style="width:140px;" readonly /></td>
 								</tr>									                      
 								<tr>
 					                <td>Class</td>
 					              	<td><select id="classes" name="classes" data-role="combobox" 
 					              				data-text-field="name" data-value-field="id" 
-					              				data-bind="source: classList, value: class_id"
+					              				data-bind="source: classes, value: current.class"
+					              				data-placeholder="---រើសមួយ---"
+					              				data-value-primitive="true"
 					              				required data-required-msg="ត្រូវការ Class"></select>
 					              	</td>
 					            </tr>            
@@ -2617,7 +2619,7 @@
 									<td colspan="2">
 										អាសយដ្ឋាន
 										<br>
-										<textarea id="address" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: address"></textarea>
+										<textarea id="address" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: current.address"></textarea>
 									</td>
 								</tr>
 							</table>
@@ -2635,7 +2637,7 @@
 									<td>កាលបរិច្ឆេទ</td>
 									<td>
 										<input id="issuedDate" name="issuedDate" data-role="datepicker" 
-												data-bind="value: issued_date" data-format="dd-MM-yyyy" 
+												data-bind="value: current.date" data-format="dd-MM-yyyy" 
 												required data-required-msg="ត្រូវការ កាលបរិច្ឆេទ" />
 									</td>
 								</tr>				
@@ -2643,7 +2645,7 @@
 									<td>ថ្ងៃរំពឹងទុក</td>
 									<td>
 										<input id="expectedDate" name="expectedDate" data-role="datepicker" 
-												data-bind="value: expected_date" data-format="dd-MM-yyyy" 
+												data-bind="value: current.expected_date" data-format="dd-MM-yyyy" 
 												required data-required-msg="ត្រូវការ ថ្ងៃរំពឹងទុក" />
 									</td>
 								</tr>					            
@@ -2651,16 +2653,16 @@
 									<td colspan="2">
 										ការដឹកជញ្ជូនទៅកាន់
 										<br>
-										<textarea id="shipTo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: ship_to"></textarea>
+										<textarea id="shipTo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: current.shipping_address"></textarea>
 									</td>
 								</tr>
 							</table>           		          	
 					    </div>
 					</div>
 								
-					<div data-role="grid" data-bind="source: invoiceItemList"
+					<div data-role="grid" data-bind="source: current.items"
 				        data-auto-bind="false"				        
-				        data-row-template="invoiceRowTemplate"				                        
+				        data-row-template="poRowTemplate"				                        
 				        data-columns='[{ title: "", width: 20 },
 				        	{ title: "ល.រ", width: 35 },
 				            { title: "ទំនិញ", width: 200 },	                     
@@ -2671,7 +2673,7 @@
 				            { title: "vat", width: 30 }	                    	                    
 				            ]'>
 					</div>
-					<button class="btn btn-inverse" data-bind="click: addNewRow"><i class="icon-plus icon-white"></i></button>
+					<button class="btn btn-inverse" data-bind="click: addItems"><i class="icon-plus icon-white"></i></button>
 					
 					<br>
 					
@@ -2679,26 +2681,26 @@
 						<div class="span8">
 							សំគាល់:
 							<br>
-							<textarea id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo" placeholder="សំគាល់ 1 (សំរាប់អតិថិជន)"></textarea>
-							<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: memo2" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
+							<textarea id="memo" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: current.memo_01" placeholder="សំគាល់ 1 (សំរាប់អតិថិជន)"></textarea>
+							<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: current.memo_02" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
 						</div>
 
 						<div class="span4">
 							<table width="100%">
 								<tr align="right">
 									<td>សរុបរង:</td>
-									<td width="50%"><span data-bind="text: sub_total"></span></td>
+									<td width="50%"><span data-bind="text: total"></span></td>
 								</tr>
 								<tr align="right">
 									<td align="top">
 										<select data-role="combobox" data-text-field="name" data-value-field="id" 
-												data-bind="source: vatList, value: vat_id, events: {change: change}" placeholder="VAT" style="width:90px"></select>								
+												data-bind="source: vatList, value: vat, events: {change: selectTax}" placeholder="VAT" style="width:90px"></select>								
 									</td>
-									<td><span data-bind="text: vat"></span></td>
+									<td><span data-bind="text: taxAmount"></span></td>
 								</tr>
 								<tr align="right">
 									<td>សរុប:</td>
-									<td bgcolor="#00BFFF"><span data-bind="text: total"></span></td>
+									<td bgcolor="#00BFFF"><span data-bind="text: grandTotal"></span></td>
 								</tr>						
 							</table>
 						</div>													
@@ -2710,13 +2712,52 @@
 						<div class="span12" align="right">
 							<div id="status"></div>
 							<span class="btn btn-primary btn-icon glyphicons print" data-bind="click: linkPrint, visible: isUpdate"><i></i> បោះពុម្ព</span>						
-							<button id="save" type="submit" class="btn btn-icon btn-primary glyphicons cart_in"><i></i> រៀបចំវិក្កយបត្រ</button>
+							<button id="save" data-bind="click: save" type="submit" class="btn btn-icon btn-primary glyphicons cart_in"><i></i> កត់ត្រាទុក</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</script>
+<script id="poRowTemplate" type="text/x-kendo-tmpl">		
+	<tr>		
+		<td>
+			<i class="icon-trash" data-bind="events: { click: rmItem }"></i>			
+		</td>
+		<td class="sno">1</td>
+		<td>
+			<select id="item" name="item" data-role="combobox" 
+					data-text-field="name" data-value-field="id"
+					data-placeholder="---រើសមួយ---"
+					data-bind="source: itemList, value: item_id, events: {change : onItemChange}"
+					required data-required-msg="ត្រូវការ ទំនិញ" style="width:200px">
+			</select>
+		</td>		
+		<td>
+			<input id="description" name="description" type="text" 
+					data-bind="value: description" style="margin-bottom: 0;" 
+					required data-required-msg="ត្រូវការ ពណ៌នា" />
+		</td>
+		<td>
+			<input id="quantity" name="quantity" data-role="numerictextbox" 
+					data-format="n0" data-min="1"
+					data-bind="value: unit, events: {change : change}"
+					required data-required-msg="ត្រូវការ ចំនួន" style="width: 80px;" />
+		</td>				
+		<td>
+			<input id="price" name="price" data-role="numerictextbox" 
+					data-format="c" data-culture=#:#
+					data-bind="value: cost, events: {change : change}" 
+					required data-required-msg="ត្រូវការ តំលៃ" style="width: 110px;" />
+		</td>		
+		<td align="right">
+			#:kendo.toString(kendo.parseFloat(unit)*(kendo.parseFloat(cost)), "c2")#			
+		</td>
+		<td>
+			<input type="checkbox" data-bind="checked: taxed, events: {change: taxable}"/>			
+		</td>		
+    </tr>   
 </script>
 <!--   Class Section -->
 <script type="text/x-kendo-template" id="classesTmpl">
@@ -12194,129 +12235,271 @@
 		return viewModel;
 	}());
 
-	banhji.purchaseOrder = kendo.observable({
-		baseUrl 	: banhji.baseUrl + "api/purchaseOrders/",
-		data 		: "test=hi",
-		id 			: null,
-		url 		: function() {
-			return this.get("baseUrl");
-		},
-		dataSource 	: new kendo.data.DataSource({
-			transport: {
-				read: {
-					url: function(option) {
-						return banhji.purchaseOrder.url();
-					},
-					dataType: "json",
-					type: "GET"
-				},
-				create: {
-					url: function(option) {
-						return banhji.purchaseOrder.url();
-					},
-					dataType: "json",
-					type: "POST"
-				},
-				update: {
-					url: function(option) {
-						return banhji.purchaseOrder.url();
-					},
-					dataType: "json",
-					type: "PUT"
-				},
-				destroy: {
-					url: function(option) {
-						return banhji.purchaseOrder.url();
-					},
-					dataType: "json",
-					type: "DELETE"
-				},
-				parameterMap: function(data, type) {
-					if(type !== "read" && data.models) {
-						return { models: kendo.stringify(data.models)}
+	banhji.purchaseOrder = (function(){
+		var viewModel = kendo.observable({
+			baseUrl 	: banhji.baseUrl + "api/purchaseOrders/",
+			data 		: "test=hi",
+			itemListDS 	: new kendo.data.DataSource({
+				transport: {
+					read: {
+						url: banhji.baseUrl + "api/inventory_api/items",
+						type: "GET",
+						dataType: "json"
 					}
-					return data;
-				}
-			},
-			schema: {
-				model: {
-					id: 'id'
 				},
-				data: 'results'
+				filter: [
+					{ field: "status", value: 1 },
+					{ field: "parent_id >", value: 0},
+					{ field: "item_type_id", value: 1}
+				],
+				serverFiltering: true
+			}),
+			itemList		: [],
+			classes 	: banhji.class.dataSource,
+			id 			: null,
+			url 		: function() {
+				return this.get("baseUrl");
 			},
-			serverFiltering: true,
-			filter:	{ field: "company_id", value: banhji.config.userData['company']}
-		}),
-		setCurrent 	: function(model) {
-			this.set('current', model);
-		},
-		newPO 		: function(){
-			this.dataSource.insert(0, {
-				company: banhji.config.userData['company'],
-				class: null,
-				data: new Date(),
-				expected_date: new Date(),
-				address: null,
-				shipping_address: null,
-				items: [{id: null, item_id: null, description: null, cost: 0, unit: 0, taxable: false}],
-				memo_01: null,
-				memo_02: null,
-				created_by: banhji.config.userData['userId'],
-				updated_by: banhji.config.userData['userId'],
-			});
-			this.setCurrent(this.dataSource.at(0));
-		},
-		getById 	: function(id){
-			var self = this;
-			this.dataSource.filter({field: 'id', value: id});
-			this.dataSource.fetch(function(){
-				self.setCurrent(this.data());
-			});
-		},
-		total 		: function() {
-			var amount = 0;
-			$.each(this.get("current").items, function(i, v){
-				amount += kendo.parseFloat(v.cost) * kendo.parseFloat(v.unit);
-			});
-
-			return kendo.toString(amount, '0,000.00');
-		},
-		save 		: function(){
-			if(kendo.parseFloat(this.total()) > 0) {
-				this.dataSource.sync();
-			}
-		},
-		popupVendor: function(e) {
-				e.preventDefault();
-				var parent = $("body").append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
-				var wnd = $("#popupVendor").kendoWindow({
-					title: "Vendor",
-					width: "400px",
-					height: "300px",
-					modal: true,
-					close: function(e) {
-						// parent.remove();
+			vendor 		: null,
+			dataSource 	: new kendo.data.DataSource({
+				transport: {
+					read: {
+						url: function(option) {
+							return banhji.purchaseOrder.url();
+						},
+						dataType: "json",
+						type: "GET"
+					},
+					create: {
+						url: function(option) {
+							return banhji.purchaseOrder.url();
+						},
+						dataType: "json",
+						type: "POST"
+					},
+					update: {
+						url: function(option) {
+							return banhji.purchaseOrder.url();
+						},
+						dataType: "json",
+						type: "PUT"
+					},
+					destroy: {
+						url: function(option) {
+							return banhji.purchaseOrder.url();
+						},
+						dataType: "json",
+						type: "DELETE"
+					},
+					parameterMap: function(data, type) {
+						if(type !== "read" && data.models) {
+							return { models: kendo.stringify(data.models)}
+						}
+						return data;
 					}
-				}).data("kendoWindow");
-				wnd.center().open();
-				$("#vendorListItem1").kendoGrid({
-					dataSource: banhji.vendor.vendorsList,
-					columns: [
-						{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
-					],
-					height: "266px",
-					selectable: true,
-					change: function(e) {
-						var selected = this.select();
-						var vendor = this.dataItem(selected);
-						viewModel.set("vendor", vendor);
-						// wnd.close();
+				},
+				schema: {
+					model: {
+						id: 'id'
+					},
+					data: 'results'
+				},
+				serverFiltering: true,
+				filter:	{ field: "company_id", value: banhji.config.userData['company']}
+			}),
+			getItemList : function() {
+				var dfd = $.Deferred();
+				this.itemListDS.filter(
+					{field: "company_id", value: banhji.config.userData['company']}
+				);
+				this.itemListDS.bind('requestEnd', function(e){
+					if(e.response.length > 0) {
+						dfd.resolve(e.response);
+					} else {
+						dfd.reject("no data");
 					}
 				});
+				return dfd.promise();
 			},
-	});
-	banhji.purchaseOrder.getById(6);
-	banhji.purchaseOrder.save();
+			setCurrent 	: function(model) {
+				this.set('current', model);
+			},
+			addItems 	: function() {
+				this.get("current").items.push({
+					id: null,
+					item: null, 
+					item_id: null, 
+					description: null, 
+					cost: 0, 
+					unit: 0, 
+					taxed: false
+				});
+				this.myTotal();
+			},
+			change 		: function(e) {
+				this.myTotal();
+				this.get('current').dirty = true;
+			},
+			onItemChange: function(e){
+				$.each(this.get('current').items, function(i, v){
+					var current = viewModel.get('current').items[i];
+					if(current === e.data) {
+						current.item_id = e.data.item['id'];
+						current.description = e.data.item['purchase_description'];
+						current.cost = e.data.item['cost'];
+						return false;
+					}
+				});
+				this.get('current').dirty = true;
+			},
+			rmItem 		: function(e) {
+				for (var i = 0; i < this.get('current').items.length; i ++) {
+		            var current = this.get('current').items[i];
+		            if (current === e.data) {
+		                this.get('current').items.splice(i, 1);
+		                break;
+		            }
+		        }
+		        this.myTotal();
+			},
+			newPO 		: function(){
+				this.dataSource.insert(0, {
+					company: banhji.config.userData['company'],
+					class: null,
+					data: new Date(),
+					expected_date: new Date(),
+					address: null,
+					shipping_address: null,
+					items: [{id: null, item: null, item_id: null, description: null, cost: 0, unit: 0, taxed: false}],
+					memo_01: null,
+					memo_02: null,
+					created_by: banhji.config.userData['userId'],
+					updated_by: banhji.config.userData['userId'],
+				});
+				this.setCurrent(this.dataSource.at(0));
+			},
+			taxAmount 	: 0,
+			vatList 	: [],
+			vat 		: null,
+			taxable 	: function() {
+				var amount=0;
+				var cart = this.get("current").items;
+				if(cart.length > 0 && this.get('vat') !== null) {
+					for(var i = 0; i < cart.length; i++) {
+						if(cart[i].taxed === true) {
+							amount += parseFloat(cart[i].unit) * parseFloat(cart[i].cost);
+						}
+					}	
+					this.set("taxAmount", amount * this.get("vat").price);
+				}
+			},
+			selectTax 	: function(e) {
+				var model = this.itemListDS.get(e.sender._selectedValue);
+				this.set('vat', model);
+				console.log(model);		
+		    	var amount=0;
+				var cart = this.get("current").items;
+				if(cart.length > 0) {
+					for(var i = 0; i < cart.length; i++) {
+						if(cart[i].taxed === true) {
+							amount += parseFloat(cart[i].unit) * parseFloat(cart[i].cost);
+						}
+					}
+					amount = amount * kendo.parseFloat(this.get("vat").price);
+				}
+				this.get("current").items.push({
+					id: null,
+					item: null, 
+					item_id: model.id, 
+					description: model.purchase_description, 
+					cost: kendo.parseFloat(this.get("taxAmount")), 
+					unit: 1, 
+					taxed: false
+				});
+				
+				this.set("taxAmount", amount, '##,#.00');
+			},
+			getById 	: function(id){
+				var self = this;
+				this.dataSource.filter({field: 'id', value: id});
+				
+				this.dataSource.bind('change', function(e){
+					var data = this.view()[0];
+					$.each(data.items, function(i, v){
+						data.items[i].taxed = v.taxed === "1" ? true : false;
+					});
+					self.setCurrent(data);
+					self.set("vat", data.items[data.items.length -1].item_id);
+					self.myTotal();
+					self.taxable();
+					var amount=0;
+					var cart = self.get("current").items;
+					if(cart.length > 0) {
+						for(var i = 0; i < cart.length; i++) {
+							if(cart[i].taxed === true) {
+								amount += parseFloat(cart[i].unit) * parseFloat(cart[i].cost);
+							}
+						}
+						amount = amount * kendo.parseFloat(self.itemListDS.get(data.items[data.items.length -1].item_id).price);
+						// console.log(self.itemListDS.get(data.items[data.items.length -1].item_id).price);
+						// console.log(data.items[data.items.length -1].item_id);
+					}
+					self.set('taxAmount', kendo.toString(amount, 'C2'));
+				});
+			},
+			subTotal 	: 0,
+			total 		: 0,
+			grandTotal 	: function(){
+				var grandTotal = kendo.parseFloat(this.get('total')) + kendo.parseFloat(this.get("taxAmount"));
+				return kendo.toString(grandTotal, 'c2'); 
+			},
+			myTotal		: function() {
+				var amount = 0;
+				$.each(this.get("current").items, function(i, v){
+					amount += kendo.parseFloat(v.cost) * kendo.parseFloat(v.unit);
+				});
+
+				this.set('total', kendo.toString(amount, 'c2'));
+			},
+			save 		: function(){
+				if(kendo.parseFloat(this.grandTotal()) > 0) {
+					this.dataSource.sync();
+					// console.log(this.get('current').dirty);
+				}
+			},
+			popupVendor: function(e) {
+					e.preventDefault();
+					var parent = $("body").append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
+					var wnd = $("#popupVendor").kendoWindow({
+						title: "Vendor",
+						width: "400px",
+						height: "300px",
+						modal: true,
+						close: function(e) {
+							// parent.remove();
+						}
+					}).data("kendoWindow");
+					wnd.center().open();
+					$("#vendorListItem1").kendoGrid({
+						dataSource: banhji.vendor.vendorsList,
+						columns: [
+							{field: "company", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
+						],
+						height: "266px",
+						selectable: true,
+						change: function(e) {
+							var selected = this.select();
+							var vendor = this.dataItem(selected);
+							viewModel.set("vendor", vendor);
+							// wnd.close();
+						}
+					});
+			},
+		});
+		return viewModel;
+	}());
+	// banhji.purchaseOrder.getById(6);
+	// banhji.purchaseOrder.save();
 
 	banhji.po = (function(){		
 		var companyDS = new kendo.data.DataSource({
@@ -22538,7 +22721,7 @@
 		var reports = new kendo.View("#reports", {model: banhji.report});
 		var electricity = new kendo.Layout("#transformer");
 		var electricityReport = new kendo.Layout("#electricityReport");
-		var po = new kendo.View("#po", {model: banhji.po.viewModel});
+		var po = new kendo.View("#po", {model: banhji.purchaseOrder});
 
 		var cls= new kendo.View("#clsTmpl", {model: banhji.class});
 
@@ -24285,36 +24468,64 @@
 	banhji.router.route("po(/:id)", function(id){
 		banhji.view.layout.showIn("#layout-view", banhji.view.po);				
 		kendo.fx($("#slide-form")).slideIn("down").play();
-
+		if(banhji.purchaseOrder.get('itemList').length === 0) {
+			banhji.purchaseOrder.getItemList();
+		}
+		if(banhji.vendor.get('current')!== undefined) {
+			banhji.purchaseOrder.set("vendor", banhji.vendor.get('current'))
+		}
 		if(id!==undefined){
-			banhji.po.viewModel.loadInvoice(id);
+			banhji.purchaseOrder.getItemList()
+			.then(function(data){
+				banhji.purchaseOrder.itemList.splice(0,banhji.purchaseOrder.itemList.length);
+				$.each(data, function(i, v){
+					banhji.purchaseOrder.itemList.push(v);
+					if(v.item_type_id === "6") {
+						if(banhji.purchaseOrder.vatList.length < 1) {
+							banhji.purchaseOrder.vatList.push(v);
+						}						
+					}
+				});
+				banhji.purchaseOrder.getById(id);
+			});
 		}else{
-			var vendor_id = banhji.vendor.get('current').id;					
-			banhji.po.viewModel.pageLoad(vendor_id);
+			banhji.purchaseOrder.getItemList()
+			.then(function(data){
+				banhji.purchaseOrder.itemList.splice(0,banhji.purchaseOrder.itemList.length);
+				$.each(data, function(i, v){
+					banhji.purchaseOrder.itemList.push(v);
+					if(v.item_type_id === "6") {
+						if(banhji.purchaseOrder.vatList.length < 1) {
+							banhji.purchaseOrder.vatList.push(v);
+						}
+					}
+				});
+				banhji.purchaseOrder.newPO();
+			});
 		}
 								
-		var validator = $("#example").kendoValidator().data("kendoValidator"),
-			status = $("#status");
+		// var validator = $("#example").kendoValidator().data("kendoValidator"),
+		// 	status = $("#status");
 
-		$("#save").click(function(e){
-			e.preventDefault();
+		// $("#save").click(function(e){
+		// 	e.preventDefault();
 						
-            if(validator.validate()){
-            	if(id!==undefined){            		
-            		banhji.po.viewModel.update(id);            		
-            	}else{
-            		banhji.po.viewModel.add();
-            	}            	
+  //           if(validator.validate()){
+  //           	if(id!==undefined){            		
+  //           		banhji.po.viewModel.update(id);            		
+  //           	}else{
+  //           		banhji.po.viewModel.add();
+  //           	}            	
 
-	            status.text("កត់ត្រាបានសំរេច")
-		            .removeClass("alert alert-error")
-		            .addClass("alert alert-success");
-	        }else{		        	
-	            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
-	                .removeClass("alert alert-success")
-		            .addClass("alert alert-error");
-	        }
-		});		
+	 //            status.text("កត់ត្រាបានសំរេច")
+		//             .removeClass("alert alert-error")
+		//             .addClass("alert alert-success");
+	 //        }else{		        	
+	 //            status.text("សូមត្រួតពិនិត្រឪ្យបានត្រឹមត្រូវម្ដងទៀត")
+	 //                .removeClass("alert alert-success")
+		//             .addClass("alert alert-error");
+	 //        }
+		// });		
 	});
 
 	banhji.router.route("grn(/:id)", function(id){

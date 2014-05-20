@@ -71,10 +71,12 @@ class purchaseOrders extends REST_Controller {
 		$po = $this->po->update($this->put('id'), $data);
 		foreach($this->put('items') as $key => $value) {
 			$item = array(
+				"purchaseOrder_id" => $po,
 				"item_id" => $value['item_id'],
 				"description" => $value['description'],
 				"cost" => $value['cost'],
-				"unit" => $value['unit']
+				"unit" => $value['unit'],
+				"taxed"=> $value['taxed'] === "true" ? 1:0
 			);
 			$this->items->update($value['id'], $item);
 		}
@@ -87,8 +89,8 @@ class purchaseOrders extends REST_Controller {
 					"number" => $query->number,
 					"voucher" => $query->voucher,
 					"vendor" => $query->vendor_id,
-					"date" => $query->date,
-					"expected_date" => $query->expected_date,
+					"date" => date('Y-d-m', $q->date),
+					"expected_date" => date('Y-d-m', $q->expected_date),
 					"class" => $query->class_id,
 					"address" => $query->address,
 					"shipping_address" => $query->shipping_address,
@@ -112,8 +114,8 @@ class purchaseOrders extends REST_Controller {
 			"company_id" => $this->post('company'),
 			"number" => $this->post('number'),
 			"voucher" => $this->post('voucher'),
-			"date" => $this->post('date'),
-			"expected_date" => $this->post('expected_date'),
+			"date" => date('Y-d-m', $q->date),
+			"expected_date" => date('Y-d-m', $q->expected_date),
 			"address" => $this->post('address'),
 			"shipping_address" => $this->post('shipping_address'),
 			"memo_01" =>$this->post('memo_01'),
@@ -130,7 +132,8 @@ class purchaseOrders extends REST_Controller {
 				"item_id" => $value['item_id'],
 				"description" => $value['description'],
 				"cost" => $value['cost'],
-				"unit" => $value['unit']
+				"unit" => $value['unit'],
+				"taxed"=> $value['taxed'] === "true" ? 1:0
 			);
 		}
 		$this->items->insert_many($items, FALSE);
@@ -164,6 +167,21 @@ class purchaseOrders extends REST_Controller {
 		}
 	}
 
-	function index_delete(){}
+	function index_delete(){
+		$id = $this->delete('id');
+
+		if($id) {
+			$this->db->trans_start();
+			$this->po->delete($id);
+			$this->items->delete_by(array('purchaseOrder_id'=>$id));
+			$this->db->trans_complete();
+
+			if($this->db->trans_status() !== FALSE) {
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array()), 200);
+			} else {
+				$this->response(array("status"=>"Failed", "message"=>"Cannot delete Purchase Order.", "results"=>array()), 200);
+			}
+		}
+	}
 	
 }
