@@ -3,12 +3,12 @@
 
 require APPPATH.'/libraries/REST_Controller.php';
 
-class purchaseOrders extends REST_Controller {
+class grn extends REST_Controller {
 	
 	//CONSTRUCTOR
 	function __construct() {
 		parent::__construct();		
-		$this->load->model('PurchaseOrder_model', 'po');
+		$this->load->model('grn_model', 'po');
 		$this->load->model('inventory/purchaseorder_item_model', 'items');		
 	}
 		
@@ -55,7 +55,6 @@ class purchaseOrders extends REST_Controller {
 
 	function index_put(){
 		$data = array(
-			"number" => $this->put('number'),
 			"voucher" => $this->put('voucher'),
 			"date" => $this->put('date'),
 			"expected_date" => $this->put('expected_date'),
@@ -194,7 +193,7 @@ class purchaseOrders extends REST_Controller {
 
 		$_lastPO = $this->po->order_by("id", "DESC")->limit(1)->get_many_by(array('company_id'=>$company_id));
 		if(count($_lastPO) > 0) {
-			$number .= substr($_lastPO[0]->number, 2);
+			$number .= substr($_lastPO[0]->number, 3);
 			$four = date('ym');
 			if(substr($number, 0, 4) === $four) {
 				$pre = substr($number,4) + 1;
@@ -205,12 +204,14 @@ class purchaseOrders extends REST_Controller {
 				}
 				$var .= $pre;
 				$four .= $var;
-				return "PO".$four;
+				return "GRN".$four;
+				// $this->response("GRN".$four, 200);
 			} else {
-				return "PO".$four."001";
+				return "GRN".$four."001";
+				// $this->response("GRN".$four."001", 200);
 			}
+		} else {
+			return "GRN";
 		}
-
-		
 	}
 }

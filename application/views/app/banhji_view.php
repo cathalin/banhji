@@ -2685,22 +2685,28 @@
 							<textarea id="memo2" cols="0" rows="2" class="k-textbox" style="width:250px" data-bind="value: current.memo_02" placeholder="សំគាល់ 2 (សំរាប់ផ្ទៃក្នុង)"></textarea>
 						</div>
 
-						<div class="span4">
-							<table width="100%">
-								<tr align="right">
+						<div class="span3 pull-right">
+							<table width="100%" class="table">
+								<tr>
+									<td width="80">រើសពន្ធៈ</td>
+									<td>
+										<select data-role="combobox" data-text-field="name" data-value-field="id" 
+												data-bind="source: vatList, value: current.vat_id, events: {change: selectTax}" placeholder="VAT" style="width:90px"></select>
+									</td>
+								</tr>
+								<tr align="left">
 									<td>សរុបរង:</td>
-									<td width="50%"><span data-bind="text: total"></span></td>
+									<td  style="text-align:right;"><span data-bind="text: total"></span></td>
 								</tr>
 								<tr align="right">
 									<td align="top">
-										<select data-role="combobox" data-text-field="name" data-value-field="id" 
-												data-bind="source: vatList, value: vat, events: {change: selectTax}" placeholder="VAT" style="width:90px"></select>								
+										ពន្ធៈ								
 									</td>
-									<td><span data-bind="text: taxAmount"></span></td>
+									<td style="text-align:right;"><span data-bind="text: taxAmount"></span></td>
 								</tr>
 								<tr align="right">
-									<td>សរុប:</td>
-									<td bgcolor="#00BFFF"><span data-bind="text: grandTotal"></span></td>
+									<td>សរុបរួម:</td>
+									<td style="color: red; font-size: 15px; text-align:right;"><span data-bind="text: grandTotal"></span></td>
 								</tr>						
 							</table>
 						</div>													
@@ -2730,6 +2736,7 @@
 			<select id="item" name="item" data-role="combobox" 
 					data-text-field="name" data-value-field="id"
 					data-placeholder="---រើសមួយ---"
+					data-value-primitive="true"
 					data-bind="source: itemList, value: item_id, events: {change : onItemChange}"
 					required data-required-msg="ត្រូវការ ទំនិញ" style="width:200px">
 			</select>
@@ -2755,7 +2762,7 @@
 			#:kendo.toString(kendo.parseFloat(unit)*(kendo.parseFloat(cost)), "c2")#			
 		</td>
 		<td>
-			<input type="checkbox" data-bind="checked: taxed, events: {change: taxable}"/>			
+			<input type="checkbox" data-bind="checked: taxed, events:{change: taxable}">				
 		</td>		
     </tr>   
 </script>
@@ -12238,7 +12245,13 @@
 	banhji.purchaseOrder = (function(){
 		var viewModel = kendo.observable({
 			baseUrl 	: banhji.baseUrl + "api/purchaseOrders/",
-			data 		: "test=hi",
+			subTotal 	: 0,
+			total 		: 0,
+			itemList		: [],
+			vendor 		: null,
+			taxAmount 	: 0,
+			vatList 	: [],
+			vat 		: null,
 			itemListDS 	: new kendo.data.DataSource({
 				transport: {
 					read: {
@@ -12254,13 +12267,15 @@
 				],
 				serverFiltering: true
 			}),
-			itemList		: [],
 			classes 	: banhji.class.dataSource,
-			id 			: null,
 			url 		: function() {
 				return this.get("baseUrl");
 			},
-			vendor 		: null,
+			closeX 	: function () {
+				//kendo.fx($("#purchase-form")).slideIn("up").play();
+				this.dataSource.cancelChanges();
+				window.history.go(-1);
+			},
 			dataSource 	: new kendo.data.DataSource({
 				transport: {
 					read: {
@@ -12327,7 +12342,6 @@
 			addItems 	: function() {
 				this.get("current").items.push({
 					id: null,
-					item: null, 
 					item_id: null, 
 					description: null, 
 					cost: 0, 
@@ -12338,15 +12352,14 @@
 			},
 			change 		: function(e) {
 				this.myTotal();
-				this.get('current').dirty = true;
+				this.get('current').dirty = true;;
 			},
 			onItemChange: function(e){
 				$.each(this.get('current').items, function(i, v){
 					var current = viewModel.get('current').items[i];
 					if(current === e.data) {
-						current.item_id = e.data.item['id'];
-						current.description = e.data.item['purchase_description'];
-						current.cost = e.data.item['cost'];
+						current.description = viewModel.itemList[e.sender.selectedIndex].purchase_description;
+						current.cost = viewModel.itemList[e.sender.selectedIndex].cost;
 						return false;
 					}
 				});
@@ -12366,37 +12379,40 @@
 				this.dataSource.insert(0, {
 					company: banhji.config.userData['company'],
 					class: null,
-					data: new Date(),
+					date: new Date(),
 					expected_date: new Date(),
 					address: null,
 					shipping_address: null,
-					items: [{id: null, item: null, item_id: null, description: null, cost: 0, unit: 0, taxed: false}],
+					items: [{id: null, item_id: null, description: null, cost: 0, unit: 0, taxed: false}],
 					memo_01: null,
 					memo_02: null,
+					vat_id: null,
 					created_by: banhji.config.userData['userId'],
 					updated_by: banhji.config.userData['userId'],
 				});
 				this.setCurrent(this.dataSource.at(0));
 			},
-			taxAmount 	: 0,
-			vatList 	: [],
-			vat 		: null,
-			taxable 	: function() {
+			taxable 	: function(e) {
 				var amount=0;
-				var cart = this.get("current").items;
-				if(cart.length > 0 && this.get('vat') !== null) {
-					for(var i = 0; i < cart.length; i++) {
-						if(cart[i].taxed === true) {
-							amount += parseFloat(cart[i].unit) * parseFloat(cart[i].cost);
-						}
-					}	
-					this.set("taxAmount", amount * this.get("vat").price);
+				var $checked = $(e.currentTarget).is(':checked');
+				if($checked) {
+					var cart = this.get("current").items;
+					if(cart.length > 0 && this.get('vat') !== null) {
+						for(var i = 0; i < cart.length; i++) {
+							if(cart[i].taxed === true) {
+								amount += parseFloat(cart[i].unit) * parseFloat(cart[i].cost);
+							}
+						}	
+						this.set("taxAmount", kendo.toString(amount * this.get('vat').price, 'c2'));
+					}
+				} else {
+					this.set("taxAmount", kendo.toString(0,'c2'));
 				}
+
 			},
 			selectTax 	: function(e) {
 				var model = this.itemListDS.get(e.sender._selectedValue);
-				this.set('vat', model);
-				console.log(model);		
+				this.set('vat', model);	
 		    	var amount=0;
 				var cart = this.get("current").items;
 				if(cart.length > 0) {
@@ -12407,17 +12423,8 @@
 					}
 					amount = amount * kendo.parseFloat(this.get("vat").price);
 				}
-				this.get("current").items.push({
-					id: null,
-					item: null, 
-					item_id: model.id, 
-					description: model.purchase_description, 
-					cost: kendo.parseFloat(this.get("taxAmount")), 
-					unit: 1, 
-					taxed: false
-				});
-				
-				this.set("taxAmount", amount, '##,#.00');
+				this.get("current").vat_id = model.id;
+				this.set("taxAmount", amount, 'c2');
 			},
 			getById 	: function(id){
 				var self = this;
@@ -12429,9 +12436,8 @@
 						data.items[i].taxed = v.taxed === "1" ? true : false;
 					});
 					self.setCurrent(data);
-					self.set("vat", data.items[data.items.length -1].item_id);
+					self.set("vat", viewModel.itemListDS.get(data.vat_id));
 					self.myTotal();
-					self.taxable();
 					var amount=0;
 					var cart = self.get("current").items;
 					if(cart.length > 0) {
@@ -12440,22 +12446,18 @@
 								amount += parseFloat(cart[i].unit) * parseFloat(cart[i].cost);
 							}
 						}
-						amount = amount * kendo.parseFloat(self.itemListDS.get(data.items[data.items.length -1].item_id).price);
-						// console.log(self.itemListDS.get(data.items[data.items.length -1].item_id).price);
-						// console.log(data.items[data.items.length -1].item_id);
+						amount = amount * 0.1;
 					}
 					self.set('taxAmount', kendo.toString(amount, 'C2'));
 				});
 			},
-			subTotal 	: 0,
-			total 		: 0,
 			grandTotal 	: function(){
 				var grandTotal = kendo.parseFloat(this.get('total')) + kendo.parseFloat(this.get("taxAmount"));
 				return kendo.toString(grandTotal, 'c2'); 
 			},
 			myTotal		: function() {
 				var amount = 0;
-				$.each(this.get("current").items, function(i, v){
+				$.each(viewModel.get("current").items, function(i, v){
 					amount += kendo.parseFloat(v.cost) * kendo.parseFloat(v.unit);
 				});
 
@@ -12464,7 +12466,22 @@
 			save 		: function(){
 				if(kendo.parseFloat(this.grandTotal()) > 0) {
 					this.dataSource.sync();
-					// console.log(this.get('current').dirty);
+					this.dataSource.bind('requestEnd', function(e){
+						var res = e.response;
+						if(res.status === "OK") {
+							if(e.type === "create") {
+								alert("បញ្ជាទិញបានកត់ត្រាដែលមានលេខៈ "+ res.results[0].number);
+								viewModel.newPO();
+								viewModel.grandTotal();
+								viewModel.taxtable();
+							} else if(e.type === "update") {
+								alert("បញ្ជាទិញតរូវបានកែប្រែៈ "+ res.results[0].number);
+							}
+								
+						} else {
+							alert("cannot created PO");
+						}
+					});
 				}
 			},
 			popupVendor: function(e) {
