@@ -8,7 +8,7 @@
 	        </li>
 		</ul>
 		<ul class="topnav pull-right">
-			<li><a href="\#"><?php echo $this->session->userdata('username'); ?></a></li>
+			<li><a href="<?php echo base_url(); ?>app#myacct"><?php echo $this->session->userdata('username'); ?></a></li>
 			<li><a href="<?php echo base_url(); ?>auth/logout" class="glyphicons power"><i></i>ចាក់ចេញ</a></li>
 		</ul>
 		<ul class="topnav" id="secondary-menu">
@@ -853,7 +853,9 @@
 <script id="purchase-return" type="text/x-kendo-template">
 	<div class="container-960">
 		<div class="row-fluid">
+
 			<div class="well">
+				<button class="btn-inverse pull-right" data-bind="click: closeX">X</button>
 				<table class="table">
 					<tr>
 						<td>វិក្កយប័ត្រៈ</td>
@@ -2604,6 +2606,15 @@
 								<tr>				
 									<td>លេខបញ្ជាទិញ</td>
 									<td><input class="k-textbox" data-bind="value: current.number" style="width:140px;" readonly /></td>
+								</tr>
+								<tr>
+									<td width="150">អ្នកផ្គត់ផ្គង់ៈ</td>
+									<td>
+										<div class="input-append">
+											<input class="span9" type="text" data-bind="value: vendor.company" placeholder="រកអ្នកផ្គត់ផ្គង">
+											<button data-bind="click: popupVendor" class="btn"><i class="icon-search"></i></button>
+										</div>		
+									</td>
 								</tr>									                      
 								<tr>
 					                <td>Class</td>
@@ -2647,6 +2658,15 @@
 										<input id="expectedDate" name="expectedDate" data-role="datepicker" 
 												data-bind="value: current.expected_date" data-format="dd-MM-yyyy" 
 												required data-required-msg="ត្រូវការ ថ្ងៃរំពឹងទុក" />
+									</td>
+								</tr>
+								<tr>
+									<td width="150">បញ្ជាលក់ៈ</td>
+									<td>
+										<div class="input-append">
+											<input class="span9" type="text" data-bind="value: so.number" placeholder="រកអ្នកផ្គត់ផ្គង">
+											<button data-bind="click: popupSO" class="btn"><i class="icon-search"></i></button>
+										</div>		
 									</td>
 								</tr>					            
 								<tr>
@@ -9917,7 +9937,7 @@
 			},
 			type 		: null,
 			vendor 		: null,
-			date  : new Date(),
+			date  		: new Date(),
 			dueDate 	: function() {
 				var date;
 				if(this.get("cashPayment")) {
@@ -10019,14 +10039,15 @@
 					}
 				}).data("kendoWindow");
 				wnd.center().open();
-				banhji.transaction.getBy([
+				banhji.purchaseOrder.dataSource.filter([
 					{field: "company_id", value: banhji.config.userData['company']},
-					{field: "transaction_type", value: "po"}
-				])
-				.then(function(data){
-					if(data.status === "OK") {
+					{field: "status", value: "0"}
+				]);
+				banhji.purchaseOrder.dataSource.bind("change", function(e){
+					var data = this.data();
+					if(data.length > 0) {
 						$("#poListItem1").kendoGrid({
-							dataSource: data.results,
+							dataSource: data,
 							columns: [
 								{field: "number", title: "លេខលិខិតបញ្ជាទិញ"}
 							],
@@ -10034,17 +10055,35 @@
 							selectable: true,
 							change: function(e) {
 								var selected = this.select();
-								var vendor = this.dataItem(selected);
-								viewModel.set("po", vendor);
-								console.log(viewModel.get("po"));
+								var model = this.dataItem(selected);
+								viewModel.set("po", model);
+								viewModel.set("vendor", model.vendor);
+								viewModel.cart.splice(0, viewModel.cart.length);
+								$.each(model.items, function(i, v){
+									viewModel.cart.push({
+										bill_id: 0, 
+										item_id: v.item_id, 
+										description: v.description, 
+										quantity: v.unit, 
+										cost: v.cost, 
+										price: 0, 
+										amount: parseFloat(v.unit) * parseFloat(v.cost), 
+										account_id: 0, 
+										taxed: v.taxed === "1" ? true:false
+									});
+								});
 								// wnd.close();
 							}
 						});
-					} else {
-						wnd.content("មិនមានទិន្ន័យទេ។");
 					}
 				});
+				// .then(function(data){
+				// 	if(data.status === "OK") {
 				
+				// 	} else {
+				// 		wnd.content("មិនមានទិន្ន័យទេ។");
+				// 	}
+				// });
 			},
 			addToCart 	: function() {
 				if(this.get("type") === "purchase") {
@@ -11960,6 +11999,11 @@
 					amount: 0
 				}
 			],
+			closeX 	: function () {
+				//kendo.fx($("#purchase-form")).slideIn("up").play();
+				// this.dataSource.cancelChanges();
+				window.history.go(-1);
+			},
 			onInvoiceChange: function(e) {
 				var self = this;
 				if(this.get("invoice").amount_billed === this.get("invoice").amount_paid) {
@@ -12247,11 +12291,12 @@
 			baseUrl 	: banhji.baseUrl + "api/purchaseOrders/",
 			subTotal 	: 0,
 			total 		: 0,
-			itemList		: [],
-			vendor 		: null,
+			itemList	: [],
 			taxAmount 	: 0,
 			vatList 	: [],
 			vat 		: null,
+			vendor 		: null,
+			so 			: null,
 			itemListDS 	: new kendo.data.DataSource({
 				transport: {
 					read: {
@@ -12379,7 +12424,7 @@
 				this.dataSource.insert(0, {
 					company: banhji.config.userData['company'],
 					class: null,
-					date: new Date(),
+					date: kendo.toString(new Date(), 'dd-MM-yyyy'),
 					expected_date: new Date(),
 					address: null,
 					shipping_address: null,
@@ -12387,6 +12432,7 @@
 					memo_01: null,
 					memo_02: null,
 					vat_id: null,
+					vendor: null,
 					created_by: banhji.config.userData['userId'],
 					updated_by: banhji.config.userData['userId'],
 				});
@@ -12507,7 +12553,84 @@
 						change: function(e) {
 							var selected = this.select();
 							var vendor = this.dataItem(selected);
-							viewModel.set("vendor", vendor);
+							viewModel.get("current").vendor = vendor;
+							viewModel.set('vendor', viewModel.get("current").vendor);
+							// console.log(viewModel.get('current').vendor.company);
+							// wnd.close();
+						}
+					});
+			},
+			popupSO: function(e) {
+					e.preventDefault();
+					var parent = $("body").append('<div id="popupVendor"><div id="vendorListItem1" class="table"></div></div>');
+					var wnd = $("#popupVendor").kendoWindow({
+						title: "Vendor",
+						width: "400px",
+						height: "300px",
+						modal: true,
+						close: function(e) {
+							// parent.remove();
+						}
+					}).data("kendoWindow");
+					wnd.center().open();
+					$("#vendorListItem1").kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+							  	read: {
+								  	url : banhji.baseUrl + "api/invoices/invoice",		  
+								  	type: "GET",
+								  	dataType: "json"
+							  	},
+							  	create: {
+								  	url : banhji.baseUrl + "api/invoices/invoice",		  
+								  	type: "POST",
+								  	dataType: "json"
+							  	},
+							  	update: {
+								  	url : banhji.baseUrl + "api/invoices/invoice",		  
+								  	type: "PUT",
+								  	dataType: "json"
+							  	},
+						        parameterMap: function(options, operation) {
+						            if (operation !== "read" && options.models) {
+						                return {models: kendo.stringify(options.models)};
+						            }
+						            return options;
+						        }
+						  	},	  	    
+						  	schema: {
+							  	model: {
+								  	id : "id"
+							  	}		
+						  	},
+						  	serverFiltering : true,
+						  	filter: [
+						  		{field: "company_id", value: banhji.config.userData['company']},
+						  		{field: "type", value: "SO"}
+						  	] 
+						}),
+						columns: [
+							{field: "number", title: "ឈ្មោះអ្នកផ្គត់ផ្គង់"}
+						],
+						height: "266px",
+						selectable: true,
+						change: function(e) {
+							var selected = this.select();
+							var model = this.dataItem(selected);
+							viewModel.set('so', model);
+							viewModel.get('current').set("company", model.company_id);
+							viewModel.get('current').set("class", model.class_id);
+							viewModel.get('current').set("date", kendo.toString(new Date(model.due_date), 'dd-MM-yyyy'));
+							viewModel.get('current').set("expected_date", kendo.toString(new Date(model.expected_date), 'dd-MM-yyyy'));
+							viewModel.get('current').set("shipping_address", model.ship_to);
+							viewModel.get('current').set("vat_id", model.vat_id);
+							viewModel.get('current').set("memo_01", model.memo);
+							viewModel.get('current').set("memo_02", model.memo2);
+							if(model.invoice_items.length > 0) {
+								viewModel.get('current').items.splice(0,viewModel.get('current').items.length);
+							}
+							viewModel.set("vat", viewModel.itemListDS.get(model.vat_id));
+							// viewModel.get('current').items.push(model.invoice_items);
 							// wnd.close();
 						}
 					});
@@ -24488,9 +24611,6 @@
 		if(banhji.purchaseOrder.get('itemList').length === 0) {
 			banhji.purchaseOrder.getItemList();
 		}
-		if(banhji.vendor.get('current')!== undefined) {
-			banhji.purchaseOrder.set("vendor", banhji.vendor.get('current'))
-		}
 		if(id!==undefined){
 			banhji.purchaseOrder.getItemList()
 			.then(function(data){
@@ -24518,6 +24638,10 @@
 					}
 				});
 				banhji.purchaseOrder.newPO();
+				if(banhji.vendor.get('current').id !== null) {
+					banhji.purchaseOrder.get("current").vendor = banhji.vendor.get('current');
+					banhji.purchaseOrder.set('vendor', banhji.purchaseOrder.get("current").vendor);
+				}
 			});
 		}
 								
@@ -26815,6 +26939,10 @@
 		banhji.requests.dataSource.fetch(function(){
 			banhji.requests.setCurrent(this.data()[0]);
 		});
+	});
+
+	banhji.router.route("myacct", function(){
+		console.log("my Account");
 	});
 
 	$(function(){
