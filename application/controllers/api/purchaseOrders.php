@@ -36,7 +36,6 @@ class purchaseOrders extends REST_Controller {
 						"shipping_address" => $q->shipping_address,
 						"memo_01" => $q->memo_01,
 						"memo_02" => $q->memo_02,
-						"items" => $this->items->get_many_by(array('purchaseOrder_id'=>$q->id)),
 						"vat_id"=> $q->vat_id,
 						"created_by" => $q->created_by,
 						"updated_by" => $q->updated_by,
@@ -70,17 +69,6 @@ class purchaseOrders extends REST_Controller {
 
 		$this->db->trans_start();
 		$this->po->update($this->put('id'), $data);
-		foreach($this->put('items') as $key => $value) {
-			$item = array(
-				"purchaseOrder_id" => $this->put('id'),
-				"item_id" => $value['item_id'],
-				"description" => $value['description'],
-				"cost" => $value['cost'],
-				"unit" => $value['unit'],
-				"taxed"=> $value['taxed'] === "true" ? 1:0
-			);
-			$this->items->update($value['id'], $item);
-		}
 		$this->db->trans_complete();
 		if($this->db->trans_status() !== FALSE) {
 			$query = $this->po->get($this->put('id'));
@@ -97,7 +85,6 @@ class purchaseOrders extends REST_Controller {
 					"shipping_address" => $query->shipping_address,
 					"memo_01" => $query->memo_01,
 					"memo_02" => $query->memo_02,
-					"items" => $this->items->get_many_by('purchaseOrder_id',$query->id),
 					"vat_id" => $query->vat_id,
 					"created_by" => $query->created_by,
 					"updated_by" => $query->updated_by,
@@ -115,33 +102,21 @@ class purchaseOrders extends REST_Controller {
 		$data = array(
 			"company_id" => $this->post('company'),
 			"number" => $this->getNumber($this->post('company')),
-			"voucher" => $this->post('voucher'),
-			"date" => date('Y-d-m', strtotime($this->post('date'))),
-			"expected_date" => date('Y-d-m', strtotime($this->post('expected_date'))),
+			"date" => date('Y-m-d', strtotime($this->post('date'))),
+			"expected_date" => date('Y-m-d', strtotime($this->post('expected_date'))),
+			"vendor_id" => $this->post("vendor")['id'],
 			"address" => $this->post('address'),
 			"shipping_address" => $this->post('shipping_address'),
 			"memo_01" =>$this->post('memo_01'),
 			"memo_02" =>$this->post('memo_02'),
 			"class_id"=> $this->post('class'),
-			"vat_id" => $this->post('vat_id'),
+			"vat_id" => $this->post('vat_id') === "" ? 0: $this->post('vat_id')['id'],
 			"created_by" => $this->post('created_by'),
 			"updated_by" => $this->post('updated_by')
 		);
 
 		$this->db->trans_start();
 		$po = $this->po->insert($data);
-		foreach($this->post('items') as $key => $value) {
-			$items[] = array(
-				"purchaseOrder_id" => $po,
-				"item_id" => $value['item_id'],
-				"description" => $value['description'],
-				"cost" => $value['cost'],
-				"unit" => $value['unit'],
-				"taxed"=> $value['taxed'] === "true" ? 1:0
-			);
-		}
-		$this->items->insert_many($items, FALSE);
-
 		$this->db->trans_complete();
 		if($this->db->trans_status() !== FALSE) {
 			$query = $this->po->get($po);
@@ -149,7 +124,6 @@ class purchaseOrders extends REST_Controller {
 				$results[] = array(
 					"id" => $query->id,
 					"number" => $query->number,
-					"voucher" => $query->voucher === 0 ? "": $query->voucher,
 					"vendor" => $query->vendor_id,
 					"date" => $query->date,
 					"expected_date" => $query->expected_date,
@@ -158,7 +132,6 @@ class purchaseOrders extends REST_Controller {
 					"shipping_address" => $query->shipping_address,
 					"memo_01" => $query->memo_01,
 					"memo_02" => $query->memo_02,
-					"items" => $this->items->get_many_by('purchaseOrder_id',$query->id),
 					"vat_id" => $query->vat_id,
 					"created_by" => $query->created_by,
 					"updated_by" => $query->updated_by,
@@ -178,14 +151,138 @@ class purchaseOrders extends REST_Controller {
 		if($id) {
 			$this->db->trans_start();
 			$this->po->delete($id);
-			$this->items->delete_by(array('purchaseOrder_id'=>$id));
 			$this->db->trans_complete();
 
 			if($this->db->trans_status() !== FALSE) {
-				$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array()), 200);
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array("id"=>$id)), 200);
 			} else {
 				$this->response(array("status"=>"Failed", "message"=>"Cannot delete Purchase Order.", "results"=>array()), 200);
 			}
+		}
+	}
+
+	function items_get(){
+		// $q = $this->get('data');
+		$filter = $this->get("filter");	
+		if($filter) {		
+			$criteria = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			$filterQuery = $this->items->get_many_by($criteria);
+			if(count($filterQuery) > 0) {
+				foreach($filterQuery as $q) {
+					$data[] = array(
+						"id" => $q->id,
+						"purchaseOrder_id" => $q->purchaseOrder_id,
+						"item_id" => $q->item_id,
+						"description" => $q->description,
+						"cost" => $q->cost,
+						"unit" => $q->unit,
+						"taxed" => $q->taxed === "1" ? 'true':'false',
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+	 			}
+ 				$this->response(array("status"=>"OK", "results"=>$data), 200);
+			} else {
+				$this->response(array("status"=>"false", "message"=>"There is no result found.", "results"=>array()), 200);
+			}
+		} else {
+			$this->response(array("status"=>"false", "message"=>"company id is needed.", "results"=>array()), 200);
+		}		
+	}
+
+	function items_put(){
+		$postedData = json_decode($this->put("models"));
+		$this->db->trans_start();
+		foreach($postedData as $key=>$value) {
+			if(isset($value->id)) {
+				$this->items->update($value->id, $value);
+			} else {
+				$this->items->insert($value);
+			}
+			
+		}
+		$this->db->trans_complete();
+		if($this->db->trans_status() !== FALSE) {
+			$query= $this->items->get_many_by(array("purchaseOrder_id"=>$postedData[0]->purchaseOrder_id));
+			if(count($query) > 0) {
+				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"purchaseOrder_id" => $q->purchaseOrder_id,
+						"item_id" => $q->item_id,
+						"description" => $q->description,
+						"cost" => $q->cost,
+						"unit" => $q->unit,
+						"taxed" => $q->taxed === "1" ? 'true':'false',
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+			}
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 200);
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
+		}
+	}
+
+	function items_post(){
+		// $data = array(
+		// 	"company_id" => $this->post('company'),
+		// 	"number" => $this->getNumber($this->post('company')),
+		// 	"voucher" => $this->post('voucher'),
+		// 	"date" => date('Y-d-m', strtotime($this->post('date'))),
+		// 	"expected_date" => date('Y-d-m', strtotime($this->post('expected_date'))),
+		// 	"address" => $this->post('address'),
+		// 	"shipping_address" => $this->post('shipping_address'),
+		// 	"memo_01" =>$this->post('memo_01'),
+		// 	"memo_02" =>$this->post('memo_02'),
+		// 	"class_id"=> $this->post('class'),
+		// 	"vat_id" => $this->post('vat_id'),
+		// 	"created_by" => $this->post('created_by'),
+		// 	"updated_by" => $this->post('updated_by')
+		// );
+
+		// $this->db->trans_start();
+		// $po = $this->po->insert($data);
+		// $this->db->trans_complete();
+		// if($this->db->trans_status() !== FALSE) {
+		// 	$query = $this->po->get($po);
+		// 	if(count($query) > 0) {
+		// 		foreach($query as $q) {
+		// 			$results[] = array(
+		// 				"id" => $q->id,
+		// 				"purchaseOrder_id" => $q->purchaseOrder_id,
+		// 				"item_id" => $q->item_id,
+		// 				"description" => $q->description,
+		// 				"cost" => $q->cost,
+		// 				"unit" => $q->unit,
+		// 				"taxed" => $q->taxed,
+		// 				"created_at" => $q->created_at,
+		// 				"updated_at" => $q->updated_at
+		// 			);
+		// 		}
+		// 	}
+		// 	$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 200);
+		// } else {
+		// 	$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
+		// }
+	}
+
+	function items_delete(){
+		$ids = json_decode($this->delete('models'));
+		$this->db->trans_start();
+		foreach($ids as $key=>$value) {
+			$this->items->delete($value->id);
+		}	
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() !== FALSE) {
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array()), 200);
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"Cannot delete Purchase Order.", "results"=>array()), 200);
 		}
 	}
 	
@@ -209,8 +306,10 @@ class purchaseOrders extends REST_Controller {
 			} else {
 				return "PO".$four."001";
 			}
-		}
+		} else {
+			$four = date('ym');
 
-		
+			return "PO".$four."001";
+		}	
 	}
 }
