@@ -12471,7 +12471,6 @@
 			},
 			addItems 	: function() {
 				this.itemDS.insert(this.itemDS.data().length, {
-					id: null,
 					purchaseOrder_id: null,
 					item_id: null, 
 					description: null, 
@@ -12556,29 +12555,34 @@
 			},
 			save 		: function(){
 				if(kendo.parseFloat(this.grandTotal()) > 0) {
-					this.dataSource.sync();
-					this.dataSource.bind('requestEnd', function(e){
-						var res = e.response;
-						if(res.status === "OK") {
-							if(e.type === "create") {
-								alert("បញ្ជាទិញបានកត់ត្រាដែលមានលេខៈ "+ res.results[0].number);
-								$.each(viewModel.itemDS.data(), function(i, v){
-									v.set("purchaseOrder_id", res.results[0].id);
-								});
-								viewModel.newPO();
-								viewModel.set("total", 0);
-								viewModel.set("taxAmount", 0);
-							} else if(e.type === "update") {
-								alert("បញ្ជាទិញតរូវបានកែប្រែៈ "+ res.results[0].number);
+					if(this.get("current").dirty) {
+						this.dataSource.sync();
+						this.dataSource.bind('requestEnd', function(e){
+							var res = e.response;
+							if(res.status === "OK") {
+								if(e.type === "create") {
+									alert("បញ្ជាទិញបានកត់ត្រាដែលមានលេខៈ " + res.results[0].number);
+									$.each(viewModel.itemDS.data(), function(i, v){
+										v.set("purchaseOrder_id", res.results[0].id);
+									});
+									viewModel.newPO();
+									viewModel.set("total", 0);
+									viewModel.set("vendor", null);
+									viewModel.set("taxAmount", 0);
+								} else if(e.type === "update") {
+									alert("បញ្ជាទិញតរូវបានកែប្រែៈ "+ res.results[0].number);
+								}
+								viewModel.itemDS.sync();
+								viewModel.itemDS.read();		
+							} else {
+								alert("cannot created PO");
 							}
-							viewModel.itemDS.sync();
-							viewModel.itemDS.read();		
-						} else {
-							alert("cannot created PO");
-						}
-					});
-				}
-				
+						});
+					} else {
+						viewModel.itemDS.sync();
+					}
+						
+				}				
 			},
 			popupVendor: function(e) {
 					e.preventDefault();

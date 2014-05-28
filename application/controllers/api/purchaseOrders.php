@@ -197,12 +197,7 @@ class purchaseOrders extends REST_Controller {
 		$postedData = json_decode($this->put("models"));
 		$this->db->trans_start();
 		foreach($postedData as $key=>$value) {
-			if(isset($value->id)) {
-				$this->items->update($value->id, $value);
-			} else {
-				$this->items->insert($value);
-			}
-			
+				$this->items->update($value->id, $value);			
 		}
 		$this->db->trans_complete();
 		if($this->db->trans_status() !== FALSE) {
@@ -229,46 +224,33 @@ class purchaseOrders extends REST_Controller {
 	}
 
 	function items_post(){
-		// $data = array(
-		// 	"company_id" => $this->post('company'),
-		// 	"number" => $this->getNumber($this->post('company')),
-		// 	"voucher" => $this->post('voucher'),
-		// 	"date" => date('Y-d-m', strtotime($this->post('date'))),
-		// 	"expected_date" => date('Y-d-m', strtotime($this->post('expected_date'))),
-		// 	"address" => $this->post('address'),
-		// 	"shipping_address" => $this->post('shipping_address'),
-		// 	"memo_01" =>$this->post('memo_01'),
-		// 	"memo_02" =>$this->post('memo_02'),
-		// 	"class_id"=> $this->post('class'),
-		// 	"vat_id" => $this->post('vat_id'),
-		// 	"created_by" => $this->post('created_by'),
-		// 	"updated_by" => $this->post('updated_by')
-		// );
-
-		// $this->db->trans_start();
-		// $po = $this->po->insert($data);
-		// $this->db->trans_complete();
-		// if($this->db->trans_status() !== FALSE) {
-		// 	$query = $this->po->get($po);
-		// 	if(count($query) > 0) {
-		// 		foreach($query as $q) {
-		// 			$results[] = array(
-		// 				"id" => $q->id,
-		// 				"purchaseOrder_id" => $q->purchaseOrder_id,
-		// 				"item_id" => $q->item_id,
-		// 				"description" => $q->description,
-		// 				"cost" => $q->cost,
-		// 				"unit" => $q->unit,
-		// 				"taxed" => $q->taxed,
-		// 				"created_at" => $q->created_at,
-		// 				"updated_at" => $q->updated_at
-		// 			);
-		// 		}
-		// 	}
-		// 	$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 200);
-		// } else {
-		// 	$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
-		// }
+		$postedData = json_decode($this->post("models"));
+		$this->db->trans_start();
+		foreach($postedData as $key=>$value) {
+			$this->items->insert($value);
+		}
+		$this->db->trans_complete();
+		if($this->db->trans_status() !== FALSE) {
+			$query= $this->items->get_many_by(array("purchaseOrder_id"=>$postedData[0]->purchaseOrder_id));
+			if(count($query) > 0) {
+				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"purchaseOrder_id" => $q->purchaseOrder_id,
+						"item_id" => $q->item_id,
+						"description" => $q->description,
+						"cost" => $q->cost,
+						"unit" => $q->unit,
+						"taxed" => $q->taxed === "1" ? 'true':'false',
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+			}
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 200);
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
+		}
 	}
 
 	function items_delete(){
