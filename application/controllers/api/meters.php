@@ -71,26 +71,12 @@ class Meters extends REST_Controller {
 					'item_id' 				=> $this->post('item_id'),
 					'transformer_id' 		=> $this->post('transformer_id'),										
 					'electricity_box_id'	=> $this->post('electricity_box_id'),
-					'date_used' 			=> $this->post('date_used'),
+					'date_used' 			=> date('Y-m-d', strtotime($this->post('date_used'))),
 					'parent_id'				=> $this->post('parent_id')					
 		);			
-		$id = $this->meter->insert($data);
+		$id = $this->meter->insert($data);		
 
-		/*//Meter record
-		$date = new DateTime($this->post('date_used'));		
-		$m = $date->format('m');
-		$Y = $date->format('Y');
-		$date->setDate($Y , $m , 1);
-
-		$firstReading = array('meter_id'	=> $id,				   	
-				   	'month_of' 				=> $date->format('Y-m-d'),
-				   	'date_read_to'			=> $this->post('date_used'),
-				   	'date_read_from'		=> $this->post('date_used'),
-				   	'invoice_id'			=> -1			   				
-		);
-		$mrID = $this->meter_record->insert($firstReading);*/
-
-		$this->response($id, 200);					
+		$this->response($id, 201);					
 	}
 	
 	//PUT
@@ -108,16 +94,18 @@ class Meters extends REST_Controller {
 					 'item_id' 				=> $this->put('item_id'),
 					 'transformer_id' 		=> $this->put('transformer_id'),				 
 					 'electricity_box_id'	=> $this->put('electricity_box_id'),					 
-					 'date_used' 			=> $this->put('date_used'),					 
+					 'date_used' 			=> date('Y-m-d', strtotime($this->put('date_used'))),				 
 					 'parent_id'			=> $this->put('parent_id')					 
-		);		
-		$this->meter->update($this->put('id'), $data);
+		);				
+		$result = $this->meter->update($this->put('id'), $data);
+
+		$this->response($result, 200);
 	}
 	
 	//DELETE
-	function meter_delete() {
-		//$this->response(array("status"=>$this->delete('id')), 200);
-		$this->meter->delete($this->delete('id'));
+	function meter_delete() {		
+		$result = $this->meter->delete($this->delete('id'));
+		$this->response($result, 200);
 	}
 
 	//PARENT METER

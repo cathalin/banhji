@@ -28,7 +28,8 @@ class Breakers extends REST_Controller {
 			if(count($arr) >0){
 				foreach($arr as $row) {					
 				   	//Add extra fields
-					$extra = array('items'	=> $this->item->get($row->item_id)								   	
+					$extra = array(
+									'items'		=> $this->item->get($row->item_id)								    						   	
 							  );
 
 					//Cast object to array
@@ -38,8 +39,8 @@ class Breakers extends REST_Controller {
 					$data[] = array_merge($original, $extra);	
 				}
 				$this->response($data, 200);		
-			}else{
-				$this->response(FALSE, 200);
+			}else{				
+				$this->response(Array(), 200);
 			}
 		}else{
 			$data = $this->breaker->get_all();
@@ -53,7 +54,7 @@ class Breakers extends REST_Controller {
 					'status' 			=> $this->post('status'),
 					'customer_id' 		=> $this->post('customer_id'),
 					'item_id' 			=> $this->post('item_id'),					 
-					'date_used' 		=> $this->post('date_used')					 
+					'date_used' 		=> date('Y-m-d', strtotime($this->post('date_used')))				 
 		);		
 		$id = $this->breaker->insert($data);		
 		$this->response($id, 200);						
@@ -65,7 +66,7 @@ class Breakers extends REST_Controller {
 					'status' 			=> $this->put('status'),
 					'customer_id' 		=> $this->put('customer_id'),
 					'item_id' 			=> $this->put('item_id'),					 
-					'date_used' 		=> $this->put('date_used')
+					'date_used' 		=> date('Y-m-d', strtotime($this->post('date_used')))
 		);	
 		$this->breaker->update($this->put('id'), $data);
 	}
