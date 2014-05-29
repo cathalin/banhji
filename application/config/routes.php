@@ -39,9 +39,6 @@
 */
 
 $route['default_controller'] 	= "home";
-$route['customer'] 				= "customer/index";
-$route['electricity'] 			= "electricity/index";
-$route['customer/(:num)/meter']	= "customer/meter/$1";
 $route['404_override'] 			= '';
 
 

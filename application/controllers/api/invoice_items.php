@@ -27,13 +27,8 @@ class Invoice_items extends REST_Controller {
 		 			 	
 			if(count($arr) >0){
 				foreach($arr as $row) {
-					$vat = $row->vat;
-					if($vat==="true"){
-						$row->vat = true;
-					}else{
-						$row->vat = false;
-					}	
-
+					$row->vat = settype($row->vat,'boolean');
+					
 				   	//Add extra fields
 					$extra = array( "items" 	=> $this->item->get($row->item_id),
 									"meters"	=> $this->meter->get($row->meter_id)

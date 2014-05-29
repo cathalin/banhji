@@ -253,30 +253,30 @@ class People_api extends REST_Controller {
 				}
 				$this->people->order_by($sort);
 			}
-						
-		 	$arr = $this->people->type($type)->get_many_by($para);		 	
-			if(count($arr) >0){
-				foreach($arr as $row) {
-					$row->use_electricity = settype($row->use_electricity,'boolean');
 
-				   	//Add extra fields
-					$extra = array(																   	
-								   	'currencies'	=> $this->currency->get_by("code", $row->currency_code),
-								   	'companies'		=> $this->company->get($row->company_id)
-							  );
+			$data["results"] = $this->people->type($type)->get_many_by($para);
+			$data["total"] = $this->people->type($type)->count_by($para);		 	
+			
+			foreach($data["results"] as $row) {
+				$row->use_electricity = settype($row->use_electricity,'boolean');
 
-					//Cast object to array
-					$original =  (array) $row;
+			 //   	//Add extra fields
+				// $extra = array(																   	
+				// 			   	'currencies'	=> $this->currency->get_by("code", $row->currency_code),
+				// 			   	'companies'		=> $this->company->get($row->company_id)
+				// 		  );
 
-					//Merge arrays
-					$data[] = array_merge($original, $extra);	
-				}
-				$this->response($data, 200);		
-			}else{
-				$this->response(array(), 200);
+				// //Cast object to array
+				// $original =  (array) $row;
+
+				// //Merge arrays
+				// $data[] = array_merge($original, $extra);	
 			}
+			$this->response($data, 200);
 		}else{
-			$data = $this->people->get_all();
+			$data["results"] = $this->people->get_all();
+			$data["total"] = $this->people->count_all();
+			
 			$this->response($data, 200);
 		}
 	}

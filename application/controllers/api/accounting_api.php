@@ -863,7 +863,6 @@ class Accounting_api extends REST_Controller {
 	}
 
 	public function journals_post() {
-		$id = $this->v4();
 		$arr = array(
 					'id'  				=> $id,	
 					'company_id'		=> $this->post('company_id'),
@@ -899,7 +898,6 @@ class Accounting_api extends REST_Controller {
 			 		//Find last balance of this account
 					$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
 			 		$entries[] = array(
-			 						"id" 			=> $this->v4(),
 					 				"journal_id" 	=> $arr['id'],
 					 				"account" 		=> $v['account_id'],
 					 				"dr"			=> $v['dr'],
