@@ -62,7 +62,7 @@ class purchaseOrders extends REST_Controller {
 			"shipping_address" => $this->put('shipping_address'),
 			"memo_01" =>$this->put('memo_01'),
 			"memo_02" =>$this->put('memo_02'),
-			"vat_id" => $this->put('vat_id'),
+			"vat_id" => $this->put('vat_id') === "" ? 0: $this->put('vat_id')['id'],
 			"created_by" => $this->put('created_by'),
 			"updated_by" => $this->put('updated_by')
 		);
@@ -179,7 +179,7 @@ class purchaseOrders extends REST_Controller {
 						"description" => $q->description,
 						"cost" => $q->cost,
 						"unit" => $q->unit,
-						"taxed" => $q->taxed === "1" ? 'true':'false',
+						"taxed" => $q->taxed === "1" ? true:false,
 						"created_at" => $q->created_at,
 						"updated_at" => $q->updated_at
 					);
@@ -195,13 +195,15 @@ class purchaseOrders extends REST_Controller {
 
 	function items_put(){
 		$postedData = json_decode($this->put("models"));
+		$ids = array();
 		$this->db->trans_start();
 		foreach($postedData as $key=>$value) {
-				$this->items->update($value->id, $value);			
+			$ids[] = $value->id;
+			$this->items->update($value->id, $value);			
 		}
 		$this->db->trans_complete();
 		if($this->db->trans_status() !== FALSE) {
-			$query= $this->items->get_many_by(array("purchaseOrder_id"=>$postedData[0]->purchaseOrder_id));
+			$query= $this->items->get_many($ids);
 			if(count($query) > 0) {
 				foreach($query as $q) {
 					$results[] = array(
@@ -211,7 +213,7 @@ class purchaseOrders extends REST_Controller {
 						"description" => $q->description,
 						"cost" => $q->cost,
 						"unit" => $q->unit,
-						"taxed" => $q->taxed === "1" ? 'true':'false',
+						"taxed" => $q->taxed === "1" ? true:false,
 						"created_at" => $q->created_at,
 						"updated_at" => $q->updated_at
 					);
@@ -225,13 +227,21 @@ class purchaseOrders extends REST_Controller {
 
 	function items_post(){
 		$postedData = json_decode($this->post("models"));
+		$ids = array();		
 		$this->db->trans_start();
 		foreach($postedData as $key=>$value) {
-			$this->items->insert($value);
+			$ids[] = $this->items->insert(array(
+				"purchaseOrder_id" => $value->purchaseOrder_id,
+				"item_id"	=> $value->item_id,
+				"description" => $value->description,
+				"cost" => $value->cost,
+				"unit" => $value->unit,
+				"taxed" => $value->taxed === true ? 1 : 0
+			));
 		}
 		$this->db->trans_complete();
 		if($this->db->trans_status() !== FALSE) {
-			$query= $this->items->get_many_by(array("purchaseOrder_id"=>$postedData[0]->purchaseOrder_id));
+			$query = $this->items->get_many($ids);
 			if(count($query) > 0) {
 				foreach($query as $q) {
 					$results[] = array(
@@ -241,13 +251,14 @@ class purchaseOrders extends REST_Controller {
 						"description" => $q->description,
 						"cost" => $q->cost,
 						"unit" => $q->unit,
-						"taxed" => $q->taxed === "1" ? 'true':'false',
+						"taxed" => $q->taxed === 1 ? true:false,
 						"created_at" => $q->created_at,
 						"updated_at" => $q->updated_at
 					);
 				}
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 201);
 			}
-			$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 200);
+			
 		} else {
 			$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
 		}
