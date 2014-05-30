@@ -15459,6 +15459,249 @@
 	}());
 
 	//BY DAWINE ************************************************************************************************************
+	banhji.sources = (function(){
+		var customerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/people_api/people",
+					type: "GET",
+					dataType: "json"
+				},
+				create: {
+					url: banhji.baseUrl + "api/people_api/people",
+					type: "POST",
+					dataType: "json"
+				},
+				update: {
+					url: banhji.baseUrl + "api/people_api/people",
+					type: "PUT",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},						
+			schema: {
+				model: {
+					id: "id"
+				},
+				data: "results",
+				total: "total"	
+			}
+		});
+
+		var customerTypeDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/people_api/people_type",
+					type: "GET",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},						
+			schema: {
+				model: {
+					id: "id"
+				},
+				data: "results",
+				total: "total"	
+			}
+		});
+		
+		var accountDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/accounts/account",
+					type: "GET",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},						
+			schema: {
+				model: {
+					id: "id"
+				},
+				data: "results",
+				total: "total"	
+			}
+		});			
+
+		var tariffPlanDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/tariff_plans/tariff_plan",
+					type: "GET",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},						
+			schema: {
+				model: {
+					id: "id"
+				},
+				data: "results",
+				total: "total"	
+			}
+		});
+		
+		var exemptionDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/exemptions/exemption",
+					type: "GET",
+					dataType: "json"
+				},
+				parameterMap : function(options, operation) {
+					if( operation !== "read" && options.models ) {
+						return { models: kendo.stringigy(options.models) };
+					}
+					return options;
+				}
+			},						
+			schema: {
+				model: {
+					id: "id"
+				},
+				data: "results",
+				total: "total"	
+			}
+		});
+
+		var maintenanceDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/maintenances/maintenance",
+					type: "GET",
+					dataType: "json"
+				}
+			}
+		});
+
+		var ampereDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricity_unit_api/ampere",
+					type: "GET",
+					dataType: "json"
+				}
+			}
+		});
+
+		var phaseDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricity_unit_api/phase",
+					type: "GET",
+					dataType: "json"
+				}
+			}
+		});
+
+		var voltageDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricity_unit_api/voltage",
+					type: "GET",
+					dataType: "json"
+				}
+			}
+		});
+
+		var companyDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/companies/company",
+					type: "GET",
+					dataType: "json"
+				}
+			}		
+		});
+
+		var transformerDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/electricities/transformer_cascading",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			serverFiltering: true
+		});
+
+		var classDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/classes/class_dropdown",
+					type: "GET",
+					dataType: "json"
+				}
+			},					
+			serverFiltering: true		
+		});
+
+		var provinceDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/provinces/province",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			serverFiltering: true
+		});
+
+		var districtDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/districts/district",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			serverFiltering: true
+		});
+
+		var communeDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/communes/commune",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			serverFiltering: true
+		});
+
+		var villageDS = new kendo.data.DataSource({
+			transport: {
+				read: {
+					url: banhji.baseUrl + "api/villages/village",
+					type: "GET",
+					dataType: "json"
+				}
+			},
+			serverFiltering: true
+		});
+	}());
+
 	banhji.customerCenter = (function(){
 		var statementCollectionDS = new kendo.data.DataSource({
 		  	transport: {	  
@@ -15933,7 +16176,7 @@
 		var customerDS = new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: banhji.baseUrl + "api/people_api/customer_listview",
+					url: banhji.baseUrl + "api/people_api/people",
 					type: "GET",
 					dataType: "json"
 				},
@@ -15960,7 +16203,9 @@
 			schema: {
 				model: {
 					id: "id"
-				}
+				},
+				data: "results",
+				total: "total"	
 			}
 		});
 

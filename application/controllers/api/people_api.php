@@ -242,7 +242,7 @@ class People_api extends REST_Controller {
 			
 			//Limit
 			if(!empty($limit) && isset($limit)){
-				$this->invoice->limit($limit, $offset);
+				$this->people->limit($limit, $offset);
 			}			
 			
 			//Sort
@@ -251,38 +251,32 @@ class People_api extends REST_Controller {
 				for ($j = 0; $j < count($sorter); ++$j) {				
 					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
 				}
-				$this->invoice->order_by($sort);
+				$this->people->order_by($sort);
 			}
-						
-		 	$arr = $this->people->type($type)->get_many_by($para);		 	
-			if(count($arr) >0){
-				foreach($arr as $row) {					
-					
-				   	//Add extra fields
-					$extra = array( 								
-									'people_types'	=> $this->people_type->get($row->people_type_id),
-								   	'amperes' 		=> $this->ampere->get($row->ampere_id), 
-								   	'phases' 		=> $this->phase->get($row->phase_id),
-								   	'voltages'		=> $this->voltage->get($row->voltage_id),
-								   	'tariff_plans' 	=> $this->tariff_plan->get($row->tariff_plan_id), 
-								   	'maintenances' 	=> $this->maintenance->get($row->maintenance_id),
-								   	'exemptions'	=> $this->exemption->get($row->exemption_id),
-								   	'currencies'	=> $this->currency->get_by("code", $row->currency_code),
-								   	'companies'		=> $this->company->get($row->company_id)
-							  );
 
-					//Cast object to array
-					$original =  (array) $row;
+			$data["results"] = $this->people->type($type)->get_many_by($para);
+			$data["total"] = $this->people->type($type)->count_by($para);		 	
+			
+			foreach($data["results"] as $row) {
+				$row->use_electricity = settype($row->use_electricity,'boolean');
 
-					//Merge arrays
-					$data[] = array_merge($original, $extra);	
-				}
-				$this->response($data, 200);		
-			}else{
-				$this->response(Array(), 200);
+			 //   	//Add extra fields
+				// $extra = array(																   	
+				// 			   	'currencies'	=> $this->currency->get_by("code", $row->currency_code),
+				// 			   	'companies'		=> $this->company->get($row->company_id)
+				// 		  );
+
+				// //Cast object to array
+				// $original =  (array) $row;
+
+				// //Merge arrays
+				// $data[] = array_merge($original, $extra);	
 			}
+			$this->response($data, 200);
 		}else{
-			$data = $this->people->get_all();
+			$data["results"] = $this->people->get_all();
+			$data["total"] = $this->people->count_all();
+			
 			$this->response($data, 200);
 		}
 	}
@@ -308,7 +302,7 @@ class People_api extends REST_Controller {
 			'job'	 			=> $this->post('job'),
 			'company'	 		=> $this->post('company'),
 			'bank_account'		=> $this->post('bank_account'),
-			'credit_limit'	 	=> $this->put("credit_limit"),
+			'credit_limit'	 	=> $this->post("credit_limit"),
 
 			'zip_code' 			=> $this->post('zip_code'),			
 			'address'			=> $this->post('address'),
@@ -334,7 +328,7 @@ class People_api extends REST_Controller {
 			'exemption_id'		=> $this->post('exemption_id'),
 						
 			'status'	 		=> $this->post('status'),
-			'registered_date'	=> $this->post('registered_date'),
+			'registered_date'	=> date('Y-m-d', strtotime($this->post('registered_date'))),
 
 			'currency_code'			=> $this->post('currency_code'),
 			'vat_no'				=> $this->post('vat_no'),
@@ -397,7 +391,7 @@ class People_api extends REST_Controller {
 			'exemption_id'		=> $this->put('exemption_id'),
 						
 			'status'	 		=> $this->put('status'),
-			'registered_date'	=> $this->put('registered_date'),
+			'registered_date'	=> date("Y-m-d", strtotime($this->put('registered_date'))),
 
 			'currency_code'			=> $this->put('currency_code'),
 			'vat_no'				=> $this->put('vat_no'),
@@ -577,8 +571,24 @@ class People_api extends REST_Controller {
 						->or_where("id LIKE", $field);
 		}
 
-	 	$data = $this->people->get_many_by($cusPara);		 	
-		if(count($data)>0){			
+	 	$arr = $this->people->get_many_by($cusPara);		 	
+		if(count($arr)>0){
+			foreach ($arr as $row) {								
+				$row->registered_date = date("d-m-Y", strtotime($row->registered_date));
+				$row->use_electricity = settype($row->use_electricity,'boolean');
+
+				$extra = array( 								
+								
+							   	'currencies'	=> $this->currency->get_by("code", $row->currency_code)							   	
+						);
+
+				//Cast object to array
+				$original =  (array) $row;
+
+				//Merge arrays
+				$data[] = array_merge($original, $extra);				
+			}
+
 			$this->response($data, 200);		
 		}else{
 			$this->response(array(), 200);
@@ -599,7 +609,7 @@ class People_api extends REST_Controller {
 	//GET LAST NUMBER
 	function last_no_get(){
 		$company_id = $this->get("company_id");
-		$data = $this->people->order_by('id', 'desc')->get_by('company_id', $company_id);
+		$data = $this->people->order_by('number', 'desc')->get_by('company_id', $company_id);
 		$this->response($data, 200);
 	}	
 

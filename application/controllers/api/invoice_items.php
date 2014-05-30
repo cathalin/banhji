@@ -27,13 +27,8 @@ class Invoice_items extends REST_Controller {
 		 			 	
 			if(count($arr) >0){
 				foreach($arr as $row) {
-					$vat = $row->vat;
-					if($vat==="true"){
-						$row->vat = true;
-					}else{
-						$row->vat = false;
-					}	
-
+					$row->vat = settype($row->vat,'boolean');
+					
 				   	//Add extra fields
 					$extra = array( "items" 	=> $this->item->get($row->item_id),
 									"meters"	=> $this->meter->get($row->meter_id)
@@ -57,60 +52,44 @@ class Invoice_items extends REST_Controller {
 	
 	//POST
 	function invoice_item_post() {
-		$data = array('invoice_id' 		=> $this->post('invoice_id'),
-				   	'item_id'			=> $this->post('item_id'),				   	
-				   	'description'		=> $this->post('description'),
-				   	'multiplier'		=> $this->post('multiplier'),
-				   	'quantity'			=> $this->post('quantity'),
-				   	'unit_price'		=> $this->post('unit_price'),				   	
-				   	'amount'			=> $this->post('amount'),
-				   	'rate' 				=> $this->post('rate'),				   	
-				   	'vat' 				=> $this->post('vat'),
-				   	'markup' 			=> $this->post('markup'),
-				   	'expected_date' 	=> $this->post('expected_date'),
-				   	'so_id'				=> $this->post('so_id'),
-				   	'meter_record_id'	=> $this->post('meter_record_id'),
-				   	'meter_id' 			=> $this->post('meter_id'),
-				   	'prev_reading' 		=> $this->post('prev_reading'),
-				   	'new_reading' 		=> $this->post('new_reading'),
-				   	'month_of' 			=> $this->post('month_of'),
-				   	'days'				=> $this->post('days'),
-				   	'usage_per_day' 	=> $this->post('usage_per_day'),
-				   	'amount_paid' 		=> $this->post('amount_paid'),				   	
-				   	'maintenance_id' 	=> $this->post('maintenance_id'),				   	
-				   	'exemption_id' 		=> $this->post('exemption_id')				   				
-		);				
-		$id = $this->invoice_item->insert($data);		
-		$this->response($id, 201);		
+		$post = json_decode($this->post('models'));
+							  
+		$data = $this->invoice_item->insert_many($post);
+
+		// $data = array('invoice_id' 		=> $this->post('invoice_id'),
+		// 		   	'item_id'			=> $this->post('item_id'),				   	
+		// 		   	'description'		=> $this->post('description'),
+		// 		   	'multiplier'		=> $this->post('multiplier'),
+		// 		   	'quantity'			=> $this->post('quantity'),
+		// 		   	'unit_price'		=> $this->post('unit_price'),				   	
+		// 		   	'amount'			=> $this->post('amount'),
+		// 		   	'rate' 				=> $this->post('rate'),				   	
+		// 		   	'vat' 				=> $this->post('vat'),
+		// 		   	'markup' 			=> $this->post('markup'),
+		// 		   	'sub_code'			=> $this->post('sub_code'),
+		// 		   	'expected_date' 	=> $this->post('expected_date'),
+		// 		   	'so_id'				=> $this->post('so_id'),
+		// 		   	'meter_record_id'	=> $this->post('meter_record_id'),
+		// 		   	'meter_id' 			=> $this->post('meter_id'),
+		// 		   	'prev_reading' 		=> $this->post('prev_reading'),
+		// 		   	'new_reading' 		=> $this->post('new_reading'),
+		// 		   	'month_of' 			=> $this->post('month_of'),
+		// 		   	'days'				=> $this->post('days'),
+		// 		   	'usage_per_day' 	=> $this->post('usage_per_day'),
+		// 		   	'amount_paid' 		=> $this->post('amount_paid'),				   	
+		// 		   	'maintenance_id' 	=> $this->post('maintenance_id'),				   	
+		// 		   	'exemption_id' 		=> $this->post('exemption_id')				   				
+		// );				
+		// $id = $this->invoice_item->insert($data);		
+		$this->response($data, 201);				
 	}
 	
 	//PUT
-	function invoice_item_put() {
-		$data = array('invoice_id' 		=> $this->put('invoice_id'),
-				   	'item_id'			=> $this->put('item_id'),				   	
-				   	'description'		=> $this->put('description'),
-				   	'multiplier'		=> $this->put('multiplier'),
-				   	'quantity'			=> $this->put('quantity'),
-				   	'unit_price'		=> $this->put('unit_price'),				   	
-				   	'amount'			=> $this->put('amount'),
-				   	'rate' 				=> $this->put('rate'),				   	
-				   	'vat' 				=> $this->put('vat'),
-				   	'markup' 			=> $this->put('markup'),
-				   	'expected_date' 	=> $this->put('expected_date'),
-				   	'so_id'				=> $this->put('so_id'),
-				   	'meter_record_id'	=> $this->put('meter_record_id'),
-				   	'meter_id' 			=> $this->put('meter_id'),
-				   	'prev_reading' 		=> $this->put('prev_reading'),
-				   	'new_reading' 		=> $this->put('new_reading'),
-				   	'month_of' 			=> $this->put('month_of'),
-				   	'days'				=> $this->put('days'),
-				   	'usage_per_day' 	=> $this->put('usage_per_day'),
-				   	'amount_paid' 		=> $this->put('amount_paid'),				   	
-				   	'maintenance_id' 	=> $this->put('maintenance_id'),				   	
-				   	'exemption_id' 		=> $this->put('exemption_id')				   				
-		);		
- 		$result = $this->invoice_item->update($this->put('id'), $data);
- 		$this->response($result, 200);
+	function invoice_item_put() {		
+ 		$put = json_decode($this->put('models'));		
+
+		$data = $this->invoice_item->update_many($put);
+ 		$this->response($result, 200);		
 	}
 	
 	//DELETE
@@ -128,8 +107,12 @@ class Invoice_items extends REST_Controller {
 	//POST BATCH	
 	function invoice_item_batch_post() {
 		$post = json_decode($this->post('models'));
+
+		foreach ($post as $key => $value) {
+			$arr = $value;
+		}
 							  
-		$data = $this->invoice_item->insert_many($post);		 
+		$data = $this->invoice_item->insert_many($arr);		 
 		$this->response($data, 201);			
 	}
 

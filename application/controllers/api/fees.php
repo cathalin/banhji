@@ -3,17 +3,17 @@
 
 require APPPATH.'/libraries/REST_Controller.php';
 
-class Amperes extends REST_Controller {
+class Fees extends REST_Controller {
 	
 	
 	//CONSTRUCTOR
 	function __construct() {
 		parent::__construct();		
-		$this->load->model('electricity_units/ampere_model', 'ampere');		
+		$this->load->model('tariffs/fee_model', 'fee');		
 	}
 	
 	//GET 
-	function ampere_get() {
+	function fee_get() {
 		$filter = $this->get("filter");
 		$limit = $this->get("pageSize");
 		$offset = $this->get('skip');
@@ -28,7 +28,7 @@ class Amperes extends REST_Controller {
 			
 			//Limit
 			if(!empty($limit) && isset($limit)){
-				$this->ampere->limit($limit, $offset);
+				$this->fee->limit($limit, $offset);
 			}			
 			
 			//Sort
@@ -37,35 +37,36 @@ class Amperes extends REST_Controller {
 				for ($j = 0; $j < count($sorter); ++$j) {				
 					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
 				}
-				$this->ampere->order_by($sort);
+				$this->fee->order_by($sort);
 			}
 
-			$data["results"] = $this->ampere->get_many_by($para);
-			$data["total"] = $this->ampere->count_by($para);
+			$data["results"] = $this->fee->get_many_by($para);
+			$data["total"] = $this->fee->count_by($para);
 
 			$this->response($data, 200);			
 		}else{
-			$data["results"] = $this->ampere->get_all();
-			$data["total"] = $this->ampere->count_all();
+			$data["results"] = $this->fee->get_all();
+			$data["total"] = $this->fee->count_all();
+			
 			$this->response($data, 200);
 		}			
 	}
 	
 	//POST
-	function ampere_post() {		
-		$id = $this->ampere->insert($this->post());
+	function fee_post() {		
+		$id = $this->fee->insert($this->post());
 		$this->response($id, 201);				
 	}
 	
 	//PUT
-	function ampere_put() {
-		$result = $this->ampere->update($this->put('id'), $this->put());
+	function fee_put() {
+		$result = $this->fee->update($this->put('id'), $this->put());
 		$this->response($result, 200);
 	}
 	
 	//DELETE
-	function ampere_delete() {		
-		$result = $this->ampere->delete($this->delete('id'));
+	function fee_delete() {		
+		$result = $this->fee->delete($this->delete('id'));
 		$this->response($result, 200);
 	}
 }

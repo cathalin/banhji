@@ -15,22 +15,40 @@ class Tariffs extends REST_Controller {
 		
 	//GET 
 	function tariff_get() {
-		$filter = $this->get("filter");		
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+		
+				
+		//Filter
+		$para = array();				
+		for ($i = 0; $i < count($filter['filters']); ++$i) {				
+			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+		}
+		
+		//Limit
+		if(!empty($limit) && isset($limit)){
+			$this->tariff->limit($limit, $offset);
+		}			
+		
+		//Sort
+		if(!empty($sorter) && isset($sorter)){			
+			$sort = array();
+			for ($j = 0; $j < count($sorter); ++$j) {				
+				$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+			}
+			$this->tariff->order_by($sort);
+		}
+
 		if(!empty($filter) && isset($filter)){
-			$data = $this->tariff->get_by($filter['filters'][0]['field'], $filter['filters'][0]['value']);
-			$this->response($data, 200);						
+			$data = $this->tariff->get_many_by($para);
 		}else{
-			$arr = $this->tariff->get_all();
-			foreach($arr as $row) {				  
-				  $data[] = array(
-				  		   'id'				=> $row->id,
-				  		   'name'			=> $row->name,
-						   'currency_id'	=> $row->currency_id,						   					  
-						   'currencies'		=> $this->currency->get_by('id',$row->currency_id)						   					  
-				  );
-			  }
-			$this->response($data, 200);		
-		}		
+			$data = $this->tariff->get_all();
+		}
+
+		$this->response($data, 200);			
+		
 	}
 	
 	//POST
