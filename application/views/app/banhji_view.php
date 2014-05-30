@@ -12217,15 +12217,14 @@
 				this.set('current', model);
 			},
 			addItems 	: function() {
-				this.itemDS.insert(this.itemDS.data().length - 1, {
-					purchaseOrder_id: this.get('current') ? this.get('current').id : null,
+				this.itemDS.insert(this.itemDS.data().length, {
+					purchaseOrder_id: null,
 					item_id: null, 
 					description: null, 
 					cost: 0, 
 					unit: 0, 
 					taxed: false
 				});
-				console.log(this.itemDS.data().length);
 			},
 			onItemChange: function(e){
 				var model = e.data;
@@ -12253,28 +12252,34 @@
 					updated_by: banhji.config.userData['userId'],
 				});
 				this.setCurrent(this.dataSource.at(0));
-			},
+			},			
 			taxable 	: function(e) {
 				var $checked = $(e.currentTarget).is(':checked');
-				var amount = kendo.parseFloat(this.get('taxAmount'));
+				var amount = 0;
 				if(this.get('vat') !== null) {
-					if($checked) {
-						amount = amount + (e.data.unit * e.data.cost * this.get('vat').price);						
-					} else {
-						amount = amount - (e.data.unit * e.data.cost * this.get('vat').price);	
-					}
-					this.set("taxAmount", kendo.toString(amount, 'c2'));
-				} else {
-					alert("សួមរើសយកពន្ធ");
-					e.data.set('taxed', false);
+					$.each(this.itemDS.data(), function(i, v){
+						if(v.taxed) {
+							amount = amount + (v.unit * v.cost * 0.1);
+						}
+					});
 				}
+				this.set('taxAmount', kendo.toString(amount, 'C2'));
+				// this.calVat();			
 			},
 			selectTax 	: function(e) {
-				var model = this.itemListDS.get(e.sender._selectedValue);
-				this.set('vat', model);	
-		  		var amount = this.get('taxAmount');
-		  		amount = amount * model.price;
-				this.set("taxAmount", amount, 'c2');
+				var amount = 0;
+				if(e.sender._selectedValue !== "0") {
+					var model = this.itemListDS.get(e.sender._selectedValue);
+					this.set('vat', model);
+					$.each(this.itemDS.data(), function(i, v){
+						if(v.taxed) {
+							amount = amount + (v.unit * v.cost * 0.1);
+						}
+					});
+				} else {
+					amount = 0;
+				}
+				this.set("taxAmount", kendo.toString(amount, 'c2'));
 			},
 			getById 	: function(id){
 				var self = this;
@@ -12283,9 +12288,10 @@
 				this.dataSource.bind('change', function(e){
 					var data = this.view()[0];
 					self.setCurrent(data);
-					self.set("vat", viewModel.itemListDS.get(data.vat_id));
-					var amount=0;
-					self.set('taxAmount', kendo.toString(amount, 'C2'));
+					if(data.vat_id !== "0") {
+						var model = self.itemListDS.get(data.vat_id);
+						self.set("vat", model);
+					}
 				});
 			},
 			getItemBy 	: function(poId) {
@@ -12319,57 +12325,65 @@
 				this.dataSource.bind('requestEnd', function(e){
 					var res = e.response;
 					if(res.status === "OK") {
-						// if(e.type === "create") {
-						// 	alert("បញ្ជាទិញបានកត់ត្រាដែលមានលេខៈ " + res.results[0].number);
-						// } else if(e.type === "update") {
-						// 	alert("បញ្ជាទិញតរូវបានកែប្រែៈ update: "+ res.results[0].number);
-						// }
+						if(e.type === "create") {
+							$.each(viewModel.itemDS.data(), function(i, v){
+								v.set("purchaseOrder_id", res.results[0].id);
+							});
+						} else if(e.type === "update") {
+							$.each(viewModel.itemDS.data(), function(i, v){
+								if(v.isNew) {
+									v.set("purchaseOrder_id", res.results[0].id);
+								}
+							});
+						}
 						dfd.resolve(res.results[0].id);
-							
+						viewModel.dataSource.data([]);	
+					} else {
+						dfd.reject(false);
+					}
+				});
+				return dfd.promise();			},
+			createItems : function(isDone) {
+				var dfd = $.Deferred();
+				if(isDone) {
+					viewModel.itemDS.sync();
+				}	
+				viewModel.itemDS.bind("requestEnd", function(e){
+					if(e.response.status === "OK") {
+						switch (e.type) { 
+							case "create":
+								viewModel.newPO();
+								viewModel.itemDS.data([]);
+								viewModel.addItems();
+								viewModel.set("total", 0);
+								viewModel.set("vendor", null);
+								viewModel.set("taxAmount", 0);
+							break;
+							case "update":
+								// do nothing;
+							break;
+						}
+						dfd.resolve(true);
 					} else {
 						dfd.reject(false);
 					}
 				});
 				return dfd.promise();
 			},
-			createItems : function(poId) {
-				$.each(this.itemDS.data(), function(i, v){
-					v.set("purchaseOrder_id", poId);
-				});
-				if(viewModel.itemDS.hasChanges()) {
-					viewModel.itemDS.sync();
-					viewModel.itemDS.bind("requestEnd", function(e){
-						if(e.response.status === "OK") {
-							// $.each(e.response.results, function(i, v){
-							// 	var model = viewModel.itemDS.at(i);
-							// 	viewModel.itemDS.pushDestroy(model);
-							// });
-							viewModel.itemDS.fetch();
-							viewModel.newPO();
-							viewModel.set("total", 0);
-							viewModel.set("vendor", null);
-							viewModel.set("taxAmount", 0);
-						}							
-					});	
-				}
-			},
 			save 		: function(){
 				if(kendo.parseFloat(this.grandTotal()) > 0) {
-					if(this.dataSource.hasChanges()) {
 						this.dataSource.sync();
 						this.createPO()
-						.then(function(poId){
-							viewModel.createItems(poId);
-						});
-					} else {
-						viewModel.itemDS.sync();
-						viewModel.itemDS.bind("requestEnd", function(e){
-							if(e.response.status === "OK") {
+						.then(viewModel.createItems)
+						.then(function(status){
+							if(status === true) {
+								
 								alert("ការកែប្រែបានសំរច។");
-							}							
-						});
-					}
-						
+							} else {
+								alert("មិនអាចកត់ត្រាបានទេ");
+							}
+								
+						});	
 				}				
 			},
 			popupVendor: function(e) {
@@ -12483,8 +12497,6 @@
 		});
 		return viewModel;
 	}());
-	// banhji.purchaseOrder.getById(6);
-	// banhji.purchaseOrder.save();
 
 	banhji.po = (function(){		
 		var companyDS = new kendo.data.DataSource({
@@ -24381,48 +24393,37 @@
 		// });
 	});
 
-	banhji.router.route("po(/:id)", function(id){
-		banhji.view.layout.showIn("#layout-view", banhji.view.po);				
-		kendo.fx($("#slide-form")).slideIn("down").play();
-		if(banhji.purchaseOrder.get('itemList').length === 0) {
-			banhji.purchaseOrder.getItemList();
-		}
-		if(id!==undefined){
-			banhji.purchaseOrder.getItemList()
-			.then(function(data){
-				banhji.purchaseOrder.itemList.splice(0,banhji.purchaseOrder.itemList.length);
-				$.each(data, function(i, v){
-					banhji.purchaseOrder.itemList.push(v);
-					if(v.item_type_id === "6") {
+	banhji.router.route("po(/:id)", function(id){				
+		banhji.purchaseOrder.getItemList()
+		.then(function(items){
+			if(banhji.purchaseOrder.get('itemList').length === 0) {
+				$.each(items, function(i, v){	
+					if(v.item_type_id !== "6") {
+						banhji.purchaseOrder.get('itemList').push(v);						
+					} else {
 						if(banhji.purchaseOrder.vatList.length < 1) {
-							banhji.purchaseOrder.vatList.push(v);
-						}						
-					}
-				});
-				banhji.purchaseOrder.getById(id);
-				banhji.purchaseOrder.getItemBy(id);
-			});
-		}else{
-			banhji.purchaseOrder.getItemList()
-			.then(function(data){
-				banhji.purchaseOrder.itemList.splice(0,banhji.purchaseOrder.itemList.length);
-				$.each(data, function(i, v){
-					banhji.purchaseOrder.itemList.push(v);
-					if(v.item_type_id === "6") {
-						if(banhji.purchaseOrder.vatList.length < 1) {
+							banhji.purchaseOrder.vatList.push({id: 0, name: "none", price: 0.00});
 							banhji.purchaseOrder.vatList.push(v);
 						}
 					}
 				});
-				banhji.purchaseOrder.addItems();
-				// banhji.purchaseOrder.getItemBy(0);
+			}
+			if(id) {
+				banhji.purchaseOrder.getById(id);
+				banhji.purchaseOrder.getItemBy(id);
+			} else {
 				banhji.purchaseOrder.newPO();
+				banhji.purchaseOrder.itemDS.data([]);
 				if(banhji.vendor.get('current').id !== null) {
 					banhji.purchaseOrder.get("current").vendor = banhji.vendor.get('current');
 					banhji.purchaseOrder.set('vendor', banhji.purchaseOrder.get("current").vendor);
 				}
-			});
-		}
+			}
+		})
+		.then(function(){
+			banhji.view.layout.showIn("#layout-view", banhji.view.po);
+			kendo.fx($("#slide-form")).slideIn("down").play();
+		});
 								
 		// var validator = $("#example").kendoValidator().data("kendoValidator"),
 		// 	status = $("#status");

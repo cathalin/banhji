@@ -62,7 +62,8 @@ class purchaseOrders extends REST_Controller {
 			"shipping_address" => $this->put('shipping_address'),
 			"memo_01" =>$this->put('memo_01'),
 			"memo_02" =>$this->put('memo_02'),
-			"vat_id" => $this->put('vat_id') === "" ? 0: $this->put('vat_id')['id'],
+			"amount" => $this->put('amount'),
+			// "vat_id" => $this->put('vat_id') === "" ? 0: $this->put('vat_id')['id'],
 			"created_by" => $this->put('created_by'),
 			"updated_by" => $this->put('updated_by')
 		);
@@ -76,7 +77,7 @@ class purchaseOrders extends REST_Controller {
 				$results[] = array(
 					"id" => $query->id,
 					"number" => $query->number,
-					"voucher" => $query->voucher === 0 ? "": $query->voucher,
+					"voucher" => $query->voucher === 0 ? null: $query->voucher,
 					"vendor" => $query->vendor_id,
 					"date" => $query->date,
 					"expected_date" => $query->expected_date,
@@ -109,6 +110,7 @@ class purchaseOrders extends REST_Controller {
 			"shipping_address" => $this->post('shipping_address'),
 			"memo_01" =>$this->post('memo_01'),
 			"memo_02" =>$this->post('memo_02'),
+			"amount" => $this->post('amount'),
 			"class_id"=> $this->post('class'),
 			"vat_id" => $this->post('vat_id') === "" ? 0: $this->post('vat_id')['id'],
 			"created_by" => $this->post('created_by'),
