@@ -711,66 +711,12 @@ class Accounting_api extends REST_Controller {
 		}								
 		$this->response($arr, 200);		
 	}
-	
-	//Get Budget
-	function budget_dropdown_get(){
-		$data = $this->classes->get_all();
-		
-		foreach($data as $row){
-			
-			if ($row->type == "Budget"){				
-				$name = $row->name; 
-				$arr[] = array(
-					"id" 			 => $row->id,
-					'name' 			 => $name
-				
-				);
-			}									
-					
-		}						
-		$this->response($arr, 200);		
-	}
-	
-	//Get Donor
-	function donor_dropdown_get(){
-		$data = $this->classes->get_all();
-		
-		foreach($data as $row){
-			
-			if ($row->type == "Donor"){				
-				$name = $row->name; 
-				$arr[] = array(
-					"id" 			 => $row->id,
-					'name' 			 => $name
-				
-				);
-			}	
-											
-			
-			
-		}						
-		$this->response($arr, 200);		
-	}
-	
-	//Get Location
-	function location_dropdown_get(){
-		$data = $this->classes->get_all();
-		
-		foreach($data as $row){
-			
-			if ($row->type == "Location"){				
-				$name = $row->name; 
-				$arr[] = array(
-					"id" 			 => $row->id,
-					'name' 			 => $name
-				
-				);
-			}
-		}						
-		$this->response($arr, 200);		
-	}
 
 	//journal section
+
+	// todo:
+	// separate journal from its journal entries
+	// prepare number with exp for expense and pch for purhcase
 
 	public function journals_get() {
 		$filter = $this->get("filter");		
@@ -781,90 +727,57 @@ class Accounting_api extends REST_Controller {
 			}
 			// $this->response($para, 200);
 			$query = $this->journal->get_many_by($criteria);
+
+			if(count($query) > "0") :
+				foreach($query as $row) :					
+					$journals[] = array(
+						"id" 				=> $row->id,
+						"company_id"		=> $row->company_id,	
+						"number"			=> $row->number,
+						"reference" 		=> $row->reference,			
+						'memo' 				=> $row->memo,
+						'check_no'			=> $row->check_no,						
+						'voucher' 	    	=> $row->voucher,			
+						'class_id' 			=> $row->class_id,
+						'budget_id' 		=> $row->budget_id,
+						'donor_id' 			=> $row->donor_id,
+						'location_id' 		=> $row->location_id,				
+						'transaction_type' 	=> $row->transaction_type,
+						'people_id' 		=> $row->people_id,
+						'employee_id' 		=> $row->employee_id,						
+						'invoice_id' 		=> $row->invoice_id,
+						'payment_term_id'	=> $row->payment_term_id,
+						'payment_id' 		=> $row->payment_id,
+						'amount_billed'		=> $row->amount_billed,
+						'amount_due' 		=> $row->amount_due,
+						'amount_paid' 		=> $row->amount_paid,
+						'payment_method'	=> $row->payment_method,
+						'date'				=> $row->date,
+						'dueDate'			=> $row->due_date,
+						'address' 			=> $row->address,
+						'ship_to' 			=> $row->ship_to,
+						'class_name'		=> $this->classes->get_by('id', $row->class_id),
+						'budget_name'		=> $this->classes->get_by('id', $row->budget_id),
+						'donor_name'		=> $this->classes->get_by('id', $row->donor_id),
+						'location_name'		=> $this->classes->get_by('id', $row->location_id),
+						'people_name'		=> $this->people->get_by('id', $row->people_id),
+						'employee_name'		=> $this->employee->get_by('id', $row->employee_id),
+						'grn'				=> $row->grn,
+						'status' 			=> $row->status,
+						'created_at'		=> $row->created_at
+					);
+				endforeach;
+				$this->response(array("status"=>"OK", "message"=>"Data found ".count($journals), "results"=>$journals), 200);
+			else :
+				$this->response(array("status"=>"Error", "message"=>$this->db->_error_message(), "results"=>array()), 200);
+			endif;
 		} else {
-			$query = $this->journal->get_all();
-		}
-		
-		if(count($query) > "0") :
-			foreach($query as $row) :
-				$entries;
-				if($row->transaction_type === "po" && $row->grn === 0) {
-					$entries = $this->invoice_item->get_many_by(array("invoice_id"=>$row->id));
-				} elseif($row->transaction_type === "po" && $row->grn !== 0) {
-					 $entries = $this->item_records->get_many_by(array("bill_id"=>$row->grn));
-				} elseif($row->transaction_type === "purchase") {
-					$entries = $this->item_records->get_many_by(array("bill_id"=>$row->id));
-				} elseif($row->transaction_type === "grn") {
-					$entries = $this->item_records->get_many_by(array("bill_id"=>$row->id));
-				} else {
-					$entries = array();
-				}
-				$entryQuery = $this->j_entry->get_many_by(array("journal_id"=> $row->id));
-				if(count($entryQuery)>0) {
-					foreach($entryQuery as $entry) {
-						$journalEntries[] = array(
-							"account" => $this->account->get($entry->account),
-							"class_id" => $entry->class_id,
-							"dr" 	   => $entry->dr,
-							"cr" 	   => $entry->cr,
-							"balance"  => $entry->balance,
-							"exchange_rate" => $entry->exchange_rate,
-							"journal_id"=> $entry->journal_id,
-							"memo" 	   => $entry->memo,
-							"main"	   => $entry->main 
-						);
-					}
-				} else {
-					$journalEntries = array();
-				}
-				$journals[] = array(
-					"id" 				=> $row->id,
-					"company_id"		=> $row->company_id,
-					"entries"			=> $entries,
-					"journalEntries"	=> $journalEntries,	
-					"number"			=> $row->number,
-					"reference" 		=> $row->reference,			
-					'memo' 				=> $row->memo,
-					'check_no'			=> $row->check_no,						
-					'voucher' 	    	=> $row->voucher,			
-					'class_id' 			=> $row->class_id,
-					'budget_id' 		=> $row->budget_id,
-					'donor_id' 			=> $row->donor_id,
-					'location_id' 		=> $row->location_id,				
-					'transaction_type' 	=> $row->transaction_type,
-					'people_id' 		=> $row->people_id,
-					'employee_id' 		=> $row->employee_id,						
-					'invoice_id' 		=> $row->invoice_id,
-					'payment_term_id'	=> $row->payment_term_id,
-					'payment_id' 		=> $row->payment_id,
-					'amount_billed'		=> $row->amount_billed,
-					'amount_due' 		=> $row->amount_due,
-					'amount_paid' 		=> $row->amount_paid,
-					'payment_method'	=> $row->payment_method,
-					'date'				=> $row->date,
-					'dueDate'			=> $row->due_date,
-					'address' 			=> $row->address,
-					'ship_to' 			=> $row->ship_to,
-					'class_name'		=> $this->classes->get_by('id', $row->class_id),
-					'budget_name'		=> $this->classes->get_by('id', $row->budget_id),
-					'donor_name'		=> $this->classes->get_by('id', $row->donor_id),
-					'location_name'		=> $this->classes->get_by('id', $row->location_id),
-					'people_name'		=> $this->people->get_by('id', $row->people_id),
-					'employee_name'		=> $this->employee->get_by('id', $row->employee_id),
-					'grn'				=> $row->grn,
-					'status' 			=> $row->status,
-					'created_at'		=> $row->created_at
-				);
-			endforeach;
-			$this->response(array("status"=>"OK", "message"=>"Data found ".count($journals), "results"=>$journals), 200);
-		else :
-			$this->response(array("status"=>"Error", "message"=>$this->db->_error_message(), "results"=>array()), 200);
-		endif;
+			$this->response(array("status"=>"Error", "message"=>"Please provide Query.", "results"=>array()), 200);
+		}		
 	}
 
 	public function journals_post() {
 		$arr = array(
-					'id'  				=> $id,	
 					'company_id'		=> $this->post('company_id'),
 					'amount_billed'		=> $this->post('amount_billed'),
 					'amount_due'		=> $this->post('amount_due'),
@@ -892,51 +805,46 @@ class Accounting_api extends REST_Controller {
 		);
 		$this->journal->insert($arr);
 		if($this->db->affected_rows() > 0) {
-			$journal_Entries = $this->post("journalEntries");
-			if($journal_Entries){
-				foreach($journal_Entries as $k => $v) {
-			 		//Find last balance of this account
-					$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
-			 		$entries[] = array(
-					 				"journal_id" 	=> $arr['id'],
-					 				"account" 		=> $v['account_id'],
-					 				"dr"			=> $v['dr'],
-					 				"cr"			=> $v['cr'],
-					 				"class_id"		=> $v['class_id'],
-					 				"memo"			=> $v['memo'],
-					 				"balance"		=> $balance,
-					 				"exchange_rate" => $v['exchange_rate'],
-					 				"main"			=> $v['main']
-					 			); 
-				// $entries[] = array("account_id"=>$v['account_id']);		
-	 			}
-
-	 			$this->j_entry->insert_many($entries, FALSE);
-			}
  			if($this->db->affected_rows()>0) {
  				$query = $this->journal->get($arr['id']);
- 					if(count($query) > 0) {
- 							$journals[] = array(
-								"id" 				=> $query->id,
-								'number' 			=> $query->number,			
-								'memo' 				=> $query->memo,						
-								'voucher' 	    	=> $query->voucher,			
-								'class_id' 			=> $query->class_id,
-								'budget_id' 		=> $query->budget_id,
-								'donor_id' 			=> $query->donor_id,
-								'location_id' 		=> $query->location_id,				
-								'transaction_type' 	=> $query->transaction_type,
-								'people_id' 		=> $query->people_id,
-								'employee_id' 		=> $query->employee_id,						
-								'class_name'		=> $this->classes->get_by('id', $query->class_id),
-								'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
-								'donor_name'		=> $this->classes->get_by('id', $query->donor_id),
-								'location_name'		=> $this->classes->get_by('id', $query->location_id),
-								'people_name'		=> $this->people->get_by('id', $query->people_id),
-								'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
-								"entries"			=> $this->j_entry->get_many_by("journal_id", $query->id)
-							);
- 					}				
+				if(count($query) > 0) {
+						$journals[] = array(
+						"id" 				=> $query->id,
+						"company_id"		=> $query->company_id,	
+						"number"			=> $query->number,
+						"reference" 		=> $query->reference,			
+						'memo' 				=> $query->memo,
+						'check_no'			=> $query->check_no,						
+						'voucher' 	    	=> $query->voucher,			
+						'class_id' 			=> $query->class_id,
+						'budget_id' 		=> $query->budget_id,
+						'donor_id' 			=> $query->donor_id,
+						'location_id' 		=> $query->location_id,				
+						'transaction_type' 	=> $query->transaction_type,
+						'people_id' 		=> $query->people_id,
+						'employee_id' 		=> $query->employee_id,						
+						'invoice_id' 		=> $query->invoice_id,
+						'payment_term_id'	=> $query->payment_term_id,
+						'payment_id' 		=> $query->payment_id,
+						'amount_billed'		=> $query->amount_billed,
+						'amount_due' 		=> $query->amount_due,
+						'amount_paid' 		=> $query->amount_paid,
+						'payment_method'	=> $query->payment_method,
+						'date'				=> $query->date,
+						'dueDate'			=> $query->due_date,
+						'address' 			=> $query->address,
+						'ship_to' 			=> $query->ship_to,
+						'class_name'		=> $this->classes->get_by('id', $query->class_id),
+						'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
+						'donor_name'		=> $this->classes->get_by('id', $query->donor_id),
+						'location_name'		=> $this->classes->get_by('id', $query->location_id),
+						'people_name'		=> $this->people->get_by('id', $query->people_id),
+						'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
+						'grn'				=> $query->grn,
+						'status' 			=> $query->status,
+						'created_at'		=> $query->created_at
+					);
+				}				
 				$this->response(array("status"=>"OK", "message"=>"Data found.","entry"=>$entries, "results"=>$query), 201);
 			} else {
 				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
@@ -948,37 +856,77 @@ class Accounting_api extends REST_Controller {
 
 	public function journals_put() {
 		$arr = array(
-					// 'id'  				=> $id,	
-					'company_id'		=> $this->put('company_id'),
-					'amount_billed'		=> $this->put('amount_billed'),
-					'amount_due'		=> $this->put('amount_due'),
-					'amount_paid'		=> $this->put('amount_paid'),
-					'memo' 				=> $this->put('memo'),
-					'payment_method'	=> $this->put('payment_method'),		 							
-					'voucher' 	    	=> $this->put('voucher'),			
-					'class_id' 		    => $this->put('class_id'),
-					'budget_id' 		=> $this->put('budget_id'),
-					'donor_id' 			=> $this->put('donor_id'),
-					'location_id' 		=> $this->put('location_id'),				
-					'transaction_type'  => $this->put('transaction_type'),
-					'people_id' 		=> $this->put('people_id'),	
-					'employee_id' 		=> $this->put('employee_id'),				
-					'invoice_id' 		=> $this->put('invoice_id'),
-					'check_no'			=> $this->put('check_no') ? $this->put('check_no') : "",
-					'payment_id' 		=> $this->put('payment_id') ? $this->put('payment_id') : 0,
-					'number' 			=> $this->put('number') ? $this->put('number') : "",
-					'date' 				=> $this->put('date'),
-					'due_date'			=> $this->put('dueDate'),
-					'address'			=> $this->put('address') ?	$this->put('address') : "",
-					'ship_to' 			=> $this->put('ship_to') ?	$this->put('ship_to') : "",
-					'status'			=> $this->put('status')								
+			'company_id'		=> $this->put('company_id'),
+			'amount_billed'		=> $this->put('amount_billed'),
+			'amount_due'		=> $this->put('amount_due'),
+			'amount_paid'		=> $this->put('amount_paid'),
+			'memo' 				=> $this->put('memo'),
+			'payment_method'	=> $this->put('payment_method'),		 							
+			'voucher' 	    	=> $this->put('voucher'),			
+			'class_id' 		    => $this->put('class_id'),
+			'budget_id' 		=> $this->put('budget_id'),
+			'donor_id' 			=> $this->put('donor_id'),
+			'location_id' 		=> $this->put('location_id'),				
+			'transaction_type'  => $this->put('transaction_type'),
+			'people_id' 		=> $this->put('people_id'),	
+			'employee_id' 		=> $this->put('employee_id'),				
+			'invoice_id' 		=> $this->put('invoice_id'),
+			'check_no'			=> $this->put('check_no') ? $this->put('check_no') : "",
+			'payment_id' 		=> $this->put('payment_id') ? $this->put('payment_id') : 0,
+			'number' 			=> $this->put('number') ? $this->put('number') : "",
+			'date' 				=> $this->put('date'),
+			'due_date'			=> $this->put('dueDate'),
+			'address'			=> $this->put('address') ?	$this->put('address') : "",
+			'ship_to' 			=> $this->put('ship_to') ?	$this->put('ship_to') : "",
+			'status'			=> $this->put('status')								
 		);
-		// $this->journal->update($this->put('id'), $arr);
-		$whatever = $this->j_entry->get_many_by(array('journal_id'=>$this->put('id')));
-		if(count($whatever) === count($this->put('journalEntries'))) {
-			$this->response("kflds", 200);
+		$this->journal->update($this->put('id'), $arr);
+		if($this->db->affected_rows() > 0 && $this->db->affected_rows() === 1) {
+			if($this->db->affected_rows()>0) {
+ 				$query = $this->journal->get($this->put('id'));
+				if(count($query) > 0) {
+					$journals[] = array(
+						"id" 				=> $query->id,
+						"company_id"		=> $query->company_id,	
+						"number"			=> $query->number,
+						"reference" 		=> $query->reference,			
+						'memo' 				=> $query->memo,
+						'check_no'			=> $query->check_no,						
+						'voucher' 	    	=> $query->voucher,			
+						'class_id' 			=> $query->class_id,
+						'budget_id' 		=> $query->budget_id,
+						'donor_id' 			=> $query->donor_id,
+						'location_id' 		=> $query->location_id,				
+						'transaction_type' 	=> $query->transaction_type,
+						'people_id' 		=> $query->people_id,
+						'employee_id' 		=> $query->employee_id,						
+						'invoice_id' 		=> $query->invoice_id,
+						'payment_term_id'	=> $query->payment_term_id,
+						'payment_id' 		=> $query->payment_id,
+						'amount_billed'		=> $query->amount_billed,
+						'amount_due' 		=> $query->amount_due,
+						'amount_paid' 		=> $query->amount_paid,
+						'payment_method'	=> $query->payment_method,
+						'date'				=> $query->date,
+						'dueDate'			=> $query->due_date,
+						'address' 			=> $query->address,
+						'ship_to' 			=> $query->ship_to,
+						'class_name'		=> $this->classes->get_by('id', $query->class_id),
+						'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
+						'donor_name'		=> $this->classes->get_by('id', $query->donor_id),
+						'location_name'		=> $this->classes->get_by('id', $query->location_id),
+						'people_name'		=> $this->people->get_by('id', $query->people_id),
+						'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
+						'grn'				=> $query->grn,
+						'status' 			=> $query->status,
+						'created_at'		=> $query->created_at
+					);
+				}				
+				$this->response(array("status"=>"OK", "message"=>"Data found.","entry"=>$entries, "results"=>$query), 201);
+			} else {
+				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
+			}
 		}
-		
 	}
 
 	public function journals_delete() {
@@ -999,6 +947,151 @@ class Accounting_api extends REST_Controller {
 			$this->response(array("status"=>"error", "message"=>"cannot delete"), 400);
 		}
 	}
+	// ***********************************
+	// param @$filter
+	// ***********************************
+	public function journalEntries_get() {
+		$filter = $this->get("filter");		
+		if(!empty($filter) && isset($filter)){			
+			$criteria = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			// $this->response($para, 200);
+			$query = $this->j_entry->get_many_by($criteria);
+			if(count($query) > "0") :
+				$this->response(array("status"=>"OK", "results"=>$journals), 200);
+			else :
+				$this->response(array("status"=>"Error", "message"=>$this->db->_error_message(), "results"=>array()), 200);
+			endif;
+		} else {
+			$this->response(array("status"=>"Error", "message"=> "Please provide query parameter.", "results"=>array()), 200);
+		}
+	}
+
+	public function journalEntries_post() {
+		$postedData = json_decode($this->post("models"));
+		$ids = array();		
+		$this->db->trans_start();
+		foreach($postedData as $key=>$value) {
+			$data[] = array(
+				"journal_id" 	=> $value->journal_id,
+ 				"account" 		=> $value->account,
+ 				"dr"			=> $value->dr,
+ 				"cr"			=> $value->cr,
+ 				"class_id"		=> $value->class_id,
+ 				"memo"			=> $value->memo,
+ 				// "balance"		=> $balance,
+ 				"exchange_rate" => $value->exchange_rate,
+ 				"main"			=> $value->main
+			);
+		}
+		$ids = $this->j_entry->insert_many($data, FALSE);
+
+		$this->db->trans_complete();
+		if($this->db->trans_status() !== FALSE) {
+			$query = $this->j_entry->get_many($ids);
+			if(count($query) > 0) {
+				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"journal_id" => $q->journal_id,
+						"account" => $q->account,
+						"dr" => $q->dr,
+						"cr" => $q->cr,
+						"class_id" => $q->class_id,
+						"memo" => $q->memo,
+						"exchange_rate" => $q->exchange_rate,
+						"main" => $q->main,
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 201);
+			}
+			
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
+		}
+
+		// $journal_Entries = json_decode($this->post("models"));
+		
+		// foreach($journal_Entries as $k => $v) {
+	 		//Find last balance of this account
+			// $balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
+	 		// $entries[] = array(
+			 // 			"journal_id" 	=> $v->journal_id
+			 				// "account" 		=> $v->account_id,
+			 				// "dr"			=> $v->dr,
+			 				// "cr"			=> $v->cr,
+			 				// "class_id"		=> $v->class_id,
+			 				// "memo"			=> $v->memo,
+			 				// // "balance"		=> $balance,
+			 				// "exchange_rate" => $v->exchange_rate,
+			 				// "main"			=> $v->main
+			 			// );
+		// 	$entries[] = $v;
+		// }
+		// $this->response(array("status"=>"OK", "message"=>"No results found.", "results"=>$entries), 201);
+		// $ids = $this->j_entry->insert_many($entries, FALSE);
+
+		// $query = $this->j_entry->get_many($ids);
+		// if(count($query) > 0) {
+		// 	$this->response(array("status"=>"OK", "results"=>$query), 200);
+		// } else {
+		// 	$this->response(array("status"=>"Error", "message"=>"No results found.", "results"=>array()), 200);
+		// }
+		
+	}
+
+	public function journalEntries_put() {
+		$journal_Entries = json_decode($this->put("models"));
+		$ids = [];
+		if($journal_Entries){
+			foreach($journal_Entries as $k => $v) {
+		 		//Find last balance of this account
+				$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
+				$ids[] = $v['id'];
+		 		$entries = array(
+				 				"account" 		=> $v['account_id'],
+				 				"dr"			=> $v['dr'],
+				 				"cr"			=> $v['cr'],
+				 				"class_id"		=> $v['class_id'],
+				 				"memo"			=> $v['memo'],
+				 				"balance"		=> $balance,
+				 				"exchange_rate" => $v['exchange_rate'],
+				 				"main"			=> $v['main']
+				 			);
+		 		$this->j_entry->update($v['id'], $entries);
+ 			}
+ 			
+
+ 			$query = $this->j_entry->get_many($ids);
+ 			if(count($query) > 0) {
+ 				$this->response(array("status"=>"OK", "results"=>$query), 200);
+ 			} else {
+ 				$this->response(array("status"=>"Error", "message"=>"No results found.", "results"=>array()), 200);
+ 			}
+		} else {
+			$this->response(array("status"=>"Error", "message"=>"No results found.", "results"=>array()), 200);
+		}
+	}
+
+	public function journalEntries_delete() {
+		$ids = json_decode($this->delete('models'));
+		$this->db->trans_start();
+		foreach($ids as $key=>$value) {
+			$this->j_entry->delete($value->id);
+		}	
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() !== FALSE) {
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array()), 200);
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"Cannot delete Purchase Order.", "results"=>array()), 200);
+		}
+	}
+
 	public function v4($trim = false) {        
         $format = ($trim == false) ? '%04x%04x-%04x-%04x-%04x-%04x%04x%04x' : '%04x%04x%04x%04x%04x%04x%04x%04x';
     
@@ -1023,4 +1116,33 @@ class Accounting_api extends REST_Controller {
                 mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
         );
     }
+
+    private function getNumber($company_id) {
+		$number = "";
+
+		$_lastPO = $this->journal->order_by("id", "DESC")->limit(1)->get_many_by(array('company_id'=>$company_id));
+		if(count($_lastPO) > 0) {
+			$number .= substr($_lastPO[0]->number, 2);
+			$four = date('ym');
+			if(substr($number, 0, 4) === $four) {
+				$pre = substr($number,4) + 1;
+				$var = "";
+
+				for($i = 2; $i >= strlen($pre); $i--) {
+					$var .= "0";
+				}
+				$var .= $pre;
+				$four .= $var;
+				return $four;
+			} else {
+				return $four."001";
+			}
+		} else {
+			$four = date('ym');
+
+			return $four."001";
+		}	
+	}
+
+	function index_get() {}
 }

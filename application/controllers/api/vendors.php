@@ -35,6 +35,7 @@ class Vendors extends REST_Controller {
 					"company"			=> $r->company,
 					"created_at"		=> $r->created_at,
 					"number"			=> $r->number,
+					"address"			=> $r->address,
 					"email"				=> $r->email,
 					"gender"			=> $r->gender,
 					"image_url"			=> $r->image_url,

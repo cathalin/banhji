@@ -309,38 +309,42 @@ class Inventory_api extends REST_Controller {
 		}		
 	}
 
-	/*function itemrecords_get() {
+	function itemrecords_get() {
 		$filter= $this->get('filter');
+		$limit = $this->get("pageSize");
+		$offset = $this->get("skip"); 
 		if(!empty($filter) && isset($filter)){			
 			$criteria = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$query = $this->item_record->order_by($this->get('sort')[0]['field'], $this->get('sort')[0]['dir'])->get_many_by($criteria);
-		} else {
-			$query = $this->item_record->get_all();
-		}
-		
-		if(count($query)>0) {
-			foreach($query as $row){	
-				$arr[] = array(
-					"id" 			=> $row->id,
-					"item_id"		=> $row->item_id,
-					"bill"	 		=> $this->journal->get($row->id),				
-					"description"	=> $row->description,
-					"cost"			=> $row->cost,
-					"price"			=> $row->price,
-					"quantity"		=> $row->quantity,
-					"amount"		=> $row->amount,
-					"balance"		=> $row->balance,
-					"created_at"	=> $row->created_at
-				);						
+			$query = $this->item_record->limit($limit, $offset)->get_many_by($criteria);
+			$count = $this->item_record->count_by($criteria);
+
+			if(count($query)>0) {
+				foreach($query as $row){	
+					$arr[] = array(
+						"id" 			=> $row->id,
+						"item_id"		=> $row->item_id,
+						"bill"	 		=> $this->journal->get($row->id),				
+						"description"	=> $row->description,
+						"cost"			=> $row->cost,
+						"price"			=> $row->price,
+						"quantity"		=> $row->quantity,
+						"amount"		=> $row->amount,
+						"balance"		=> $row->balance,
+						"created_at"	=> $row->created_at
+					);						
+				}
+				$this->response(array("status"=>"OK", "count"=>$count, "results"=>$arr), 200);	
+			} else {
+				$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 			}
-			$this->response(array("status"=>"OK", "count"=>count($arr), "results"=>$arr), 200);	
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 		}	
-	}*/
+	}
+
 
 	function itemrecords_post() {
 		$postedData = $this->post('models');
