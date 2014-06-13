@@ -49,12 +49,12 @@ class Accounting_api extends REST_Controller {
 						"type" => $this->account->get_ac_type($ac->account_type_id)
 					);
 				}				
-				$this->response(array('error'=>'false','code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
+				$this->response(array('error'=>false,'code'=>200,'message'=>'data found.', 'results'=>$data), 200);	
 			} else {				
-				$this->response(array('error'=>'true','code'=>404,'message'=>'no data found.', 'results'=>array()), 200);	
+				$this->response(array('error'=>true,'code'=>404,'message'=>'no data found.', 'results'=>array()), 200);	
 			}	
 		}else{
-			$this->response(array('error'=>'true','code'=>401,'message'=>'no query passed.', 'results'=>array()), 200);		
+			$this->response(array('error'=>true,'code'=>401,'message'=>'no query passed.', 'results'=>array()), 200);		
 		}		
 	}
 
