@@ -791,66 +791,59 @@ class Accounting_api extends REST_Controller {
 					'location_id' 		=> $this->post('location_id'),				
 					'transaction_type'  => $this->post('transaction_type'),
 					'people_id' 		=> $this->post('people_id'),	
-					'employee_id' 		=> $this->post('employee_id'),				
-					'invoice_id' 		=> $this->post('invoice_id'),
+					'employee_id' 		=> $this->post('employee_id'),
 					'check_no'			=> $this->post('check_no') ? $this->post('check_no') : "",
 					'payment_id' 		=> $this->post('payment_id') ? $this->post('payment_id') : 0,
 					'number' 			=> $this->post('number') ? $this->post('number') : "",
 					'date' 				=> $this->post('date'),
 					'due_date'			=> $this->post('dueDate'),
-					'address'			=> $this->post('address') ?	$this->post('address') : "",
-					'ship_to' 			=> $this->post('ship_to') ?	$this->post('ship_to') : "",
 					'status'			=> $this->post('status'),
 					'inJournal'			=> $this->post('inJournal')									
 		);
-		$this->journal->insert($arr);
-		if($this->db->affected_rows() > 0) {
- 			if($this->db->affected_rows()>0) {
- 				$query = $this->journal->get($arr['id']);
-				if(count($query) > 0) {
-						$journals[] = array(
-						"id" 				=> $query->id,
-						"company_id"		=> $query->company_id,	
-						"number"			=> $query->number,
-						"reference" 		=> $query->reference,			
-						'memo' 				=> $query->memo,
-						'check_no'			=> $query->check_no,						
-						'voucher' 	    	=> $query->voucher,			
-						'class_id' 			=> $query->class_id,
-						'budget_id' 		=> $query->budget_id,
-						'donor_id' 			=> $query->donor_id,
-						'location_id' 		=> $query->location_id,				
-						'transaction_type' 	=> $query->transaction_type,
-						'people_id' 		=> $query->people_id,
-						'employee_id' 		=> $query->employee_id,						
-						'invoice_id' 		=> $query->invoice_id,
-						'payment_term_id'	=> $query->payment_term_id,
-						'payment_id' 		=> $query->payment_id,
-						'amount_billed'		=> $query->amount_billed,
-						'amount_due' 		=> $query->amount_due,
-						'amount_paid' 		=> $query->amount_paid,
-						'payment_method'	=> $query->payment_method,
-						'date'				=> $query->date,
-						'dueDate'			=> $query->due_date,
-						'address' 			=> $query->address,
-						'ship_to' 			=> $query->ship_to,
-						'class_name'		=> $this->classes->get_by('id', $query->class_id),
-						'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
-						'donor_name'		=> $this->classes->get_by('id', $query->donor_id),
-						'location_name'		=> $this->classes->get_by('id', $query->location_id),
-						'people_name'		=> $this->people->get_by('id', $query->people_id),
-						'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
-						'grn'				=> $query->grn,
-						'status' 			=> $query->status,
-						'created_at'		=> $query->created_at
-					);
-				}				
-				$this->response(array("status"=>"OK", "message"=>"Data found.","entry"=>$entries, "results"=>$query), 201);
-			} else {
-				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
-			}
+		$id = $this->journal->insert($arr);
+		if($this->db->affected_rows()>0) {
+			$query = $this->journal->get($id);
+			if(count($query) > 0) {
+					$journals[] = array(
+					"id" 				=> $query->id,
+					"company_id"		=> $query->company_id,	
+					"number"			=> $query->number,
+					"reference" 		=> $query->reference,			
+					'memo' 				=> $query->memo,
+					'check_no'			=> $query->check_no,						
+					'voucher' 	    	=> $query->voucher,			
+					'class_id' 			=> $query->class_id,
+					'budget_id' 		=> $query->budget_id,
+					'donor_id' 			=> $query->donor_id,
+					'location_id' 		=> $query->location_id,				
+					'transaction_type' 	=> $query->transaction_type,
+					'people_id' 		=> $query->people_id,
+					'employee_id' 		=> $query->employee_id,						
+					'invoice_id' 		=> $query->invoice_id,
+					'payment_term_id'	=> $query->payment_term_id,
+					'payment_id' 		=> $query->payment_id,
+					'amount_billed'		=> $query->amount_billed,
+					'amount_due' 		=> $query->amount_due,
+					'amount_paid' 		=> $query->amount_paid,
+					'payment_method'	=> $query->payment_method,
+					'date'				=> $query->date,
+					'dueDate'			=> $query->due_date,
+					'address' 			=> $query->address,
+					'ship_to' 			=> $query->ship_to,
+					'class_name'		=> $this->classes->get_by('id', $query->class_id),
+					'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
+					'donor_name'		=> $this->classes->get_by('id', $query->donor_id),
+					'location_name'		=> $this->classes->get_by('id', $query->location_id),
+					'people_name'		=> $this->people->get_by('id', $query->people_id),
+					'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
+					'grn'				=> $query->grn,
+					'status' 			=> $query->status,
+					'created_at'		=> $query->created_at
+				);
+			}				
+			$this->response(array("status"=>"OK", "message"=>"Data found.", "results"=>$query), 201);
 		} else {
-			$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 400);
+			$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
 		}
 	}
 
