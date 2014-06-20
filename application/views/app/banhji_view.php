@@ -1042,7 +1042,8 @@
 																				 data-text-field="name" 
 																				 data-value-field="id"
 																				 data-placeholder="---រើសមួយ---"
-																				 data-template="myItemListTmpl" 
+																				 data-template="myItemListTmpl"
+																				 data-value-primitive="true"
 																				 style="width: 130px;"></td>
 		<td style="padding-bottom: 1px;"><input type="text" style='width: 93%; margin-bottom:3px;' placeholder="Description" style="width: 145px;" 
 																				 data-bind="value: description"></td>
@@ -10033,8 +10034,8 @@
 			addToCart 	: function() {
 				if(this.get('type')=== 'purchase') {
 					this.get('cart').add({
+						bill_id: null,
 						item_id: null,
-						bill: null,
 						description: null,
 						cost: 0.00,
 						price: 0.00,
@@ -10132,7 +10133,17 @@
 					this.transaction.save()
 					.then(function(journal){
 						var model = journal;
-						console.log(journal.id);
+
+						if(viewModel.get("type") === "purchase") {
+							$.each(viewModel.get("cart").data(), function(i, v){
+								v.set("bill_id", journal.id);
+							});
+							viewModel.itemRecord.save()
+							.then(function(items){
+								console.log(items);
+							});
+						}
+						
 					});
 				} else {
 					console.log("vbnbnv");

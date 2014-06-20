@@ -50,16 +50,16 @@ class Inventory_api extends REST_Controller {
 					"id" 					=> $row->id,
 					'item_sku' 				=> $row->item_sku,
 					'name' 			   		=> $row->name,
-					'quantity' 	    		=> $row->quantity,
+					'amount' 	    		=> $row->amount,
 					'order_point'			=> $row->order_point,
 					'cost' 	    			=> $row->cost,
 					'price' 	    		=> $row->price,
 					'purchase_description'  => $row->purchase_description,					 
 					'sale_description'      => $row->sale_description,				
-					// 'phase'					=> $row->phase,
-					// 'ampere'				=> $row->ampere,
-					// 'fuse'					=> $row->fuse,
-					// 'voltage'				=> $row->voltage,
+					// // 'phase'					=> $row->phase,
+					// // 'ampere'				=> $row->ampere,
+					// // 'fuse'					=> $row->fuse,
+					// // 'voltage'				=> $row->voltage,
 					'status'    			=> $row->status==1? TRUE:FALSE,
 					'general_account' 		=> $this->account->get($row->general_account_id),
 					'cogs_account' 	    	=> $this->account->get($row->cogs_account_id),
@@ -69,7 +69,7 @@ class Inventory_api extends REST_Controller {
 					'account_name'	   		=> $this->account->get_by('id',$row->general_account_id)
 				);						
 			}
-			$this->response(array("status"=>"OK", "count"=>count($arr), "results"=>$arr), 200);	
+			$this->response(array("status"=>"OK", "results"=>$arr), 200);	
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 		}						
@@ -347,22 +347,68 @@ class Inventory_api extends REST_Controller {
 
 
 	function itemrecords_post() {
-		$postedData = $this->post('models');
+		$postedData = json_decode($this->post('models'));
 		foreach($postedData as $k=>$v) {
-			if($k !== "id") {
-				$data[] = $v;
-			}
+			$data[] = array(
+				"bill_id" => $v->bill_id,
+				"item_id" => is_array($v->item_id) ? $v->item_id['id'] : $v->item_id,
+				"description" => $v->description,
+				"cost"	=> $v->cost,
+				"price" => $v->price,
+				"quantity" => $v->quantity,
+				"amount" => $v->amount,
+				"taxed" => $v->taxed === true ? 1 : 0
+			);
+			$current_item = $this->item->get($v->item-id);
+			$unit = $current_item->on_hand + $v->quantity;
+			$amount = $current_item->amount + $v->amount;
+			$this->item->update($v->item_id, array("on_hand" => $unit, "amount"=> $amount, "weighted_avg"=> $amount/$unit));
 		}
 
-		$query[] = $this->item_record->insert_many($data);
+		$ids = $this->item_record->insert_many($data);
 		if($this->db->affected_rows() > 0) {
+			$query = $this->item_record->get_many($ids);
+			$count = $this->item_record->count_by(array("bill_id" => $postedData[0]->bill_id));
 			$this->response(array("status"=>"OK", "count"=>$this->db->affected_rows(), "results"=>$query), 200);
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>$array()), 200);
 		}
 	}
 
-	function itemrecords_put() {}
+	function itemrecords_put() {
+		$postedData = json_decode($this->put('models'));
+		$ids = array();
+		foreach($postedData as $k=>$v) {
+			$ids[] = $v->id;
+
+			// get two last records by ASC order and select the first one for based calculation
+			// 
+			$current_item = $this->item->limit(2)->order_by("created_at", "ASC")->get($v->item['id']);
+
+			$this->item_record->update($v->id, array(
+				"bill_id" => $v->bill_id,
+				"item_id" => is_array($v->item_id) ? $v->item_id['id'] : $v->item_id,
+				"description" => $v->description,
+				"cost"	=> $v->cost,
+				"price" => $v->price,
+				"quantity" => $v->quantity,
+				"amount" => $v->amount,
+				"taxed" => $v->taxed === true ? 1 : 0
+			));	
+
+			$unit = $current_item[0]->on_hand + $v->quantity;
+			$amount = $current_item[0]->amount + $v->amount;
+			$this->item->update($v->item_id, array("on_hand" => $unit, "amount"=> $amount, "weighted_avg"=> $amount/$unit));		
+		}
+
+		if($this->db->affected_rows() > 0) {
+			$query = $this->item_record->get_many($ids);
+			$count = $this->item_record->count_by(array("bill_id" => $postedData[0]->bill_id));
+			$this->response(array("status"=>"OK", "count"=>$this->db->affected_rows(), "results"=>$query), 200);
+		} else {
+			$this->response(array("status"=>"Error", "count"=>0, "results"=>$array()), 200);
+		}
+	}
 
 	function itemrecords_delete() {}
 
