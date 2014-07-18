@@ -25,6 +25,7 @@ class Inventory_api extends REST_Controller {
 		$this->load->model('inventory/electricity_box_model', 'electricity_box');
 		$this->load->model('staff/employee_m', 'staff');
 		$this->load->model('accounting/account_model', 'account');
+		$this->load->model('accounting/journal_entry_model', 'j_entry');
 	}
 	
 	
@@ -333,6 +334,7 @@ class Inventory_api extends REST_Controller {
 						"quantity"		=> $row->quantity,
 						"amount"		=> $row->amount,
 						"balance"		=> $row->balance,
+						"taxed"			=> $row->taxed === "1" ? true:false,
 						"created_at"	=> $row->created_at
 					);						
 				}
@@ -351,7 +353,7 @@ class Inventory_api extends REST_Controller {
 		foreach($postedData as $k=>$v) {
 			$data[] = array(
 				"bill_id" => $v->bill_id,
-				"item_id" => is_array($v->item_id) ? $v->item_id['id'] : $v->item_id,
+				"item_id" => $v->item_id,
 				"description" => $v->description,
 				"cost"	=> $v->cost,
 				"price" => $v->price,
@@ -359,7 +361,7 @@ class Inventory_api extends REST_Controller {
 				"amount" => $v->amount,
 				"taxed" => $v->taxed === true ? 1 : 0
 			);
-			$current_item = $this->item->get($v->item-id);
+			$current_item = $this->item->get($v->item_id);
 			$unit = $current_item->on_hand + $v->quantity;
 			$amount = $current_item->amount + $v->amount;
 			$this->item->update($v->item_id, array("on_hand" => $unit, "amount"=> $amount, "weighted_avg"=> $amount/$unit));
@@ -369,7 +371,26 @@ class Inventory_api extends REST_Controller {
 		if($this->db->affected_rows() > 0) {
 			$query = $this->item_record->get_many($ids);
 			$count = $this->item_record->count_by(array("bill_id" => $postedData[0]->bill_id));
-			$this->response(array("status"=>"OK", "count"=>$this->db->affected_rows(), "results"=>$query), 200);
+			if(count($query)>0) {
+				foreach($query as $row){	
+					$arr[] = array(
+						"id" 			=> $row->id,
+						"item_id"		=> $row->item_id,
+						"bill_id"	 	=> $row->bill_id,				
+						"description"	=> $row->description,
+						"cost"			=> $row->cost,
+						"price"			=> $row->price,
+						"quantity"		=> $row->quantity,
+						"amount"		=> $row->amount,
+						"balance"		=> $row->balance,
+						"taxed"			=> $row->taxed === "1" ? true:false,
+						"created_at"	=> $row->created_at
+					);						
+				}
+				$this->response(array("status"=>"OK", "count"=>$count, "results"=>$arr), 200);	
+			} else {
+				$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
+			}
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>$array()), 200);
 		}
@@ -383,11 +404,28 @@ class Inventory_api extends REST_Controller {
 
 			// get two last records by ASC order and select the first one for based calculation
 			// 
-			$current_item = $this->item->limit(2)->order_by("created_at", "ASC")->get($v->item['id']);
+			$item = $this->item->limit(1)->order_by("created_at", "DESC")->get($v->item_id);
+			$current_item = $this->item_record->limit(1)->order_by('created_at', 'DESC')->get($v->id);
+
+			$temp = 0;
+			$unit = $item->on_hand - $current_item->quantity;
+			$amount = $item->amount - $current_item->amount;
+			if($current_item->quantity > $v->quantity) {
+				//
+				$temp = $current_item->quantity - ($current_item->quantity - $v->quantity);
+				$temp_amount = $current_item->amount + ($current_item->amount - $v->amount);
+			} else {
+				//
+				$temp = $current_item->quantity + ($v->quantity - $current_item->quantity);
+				$temp_amount = $current_item->amount + ($v->amount - $current_item->amount);
+			}
+
+			 $unit = $unit + $temp;
+			$amount = $amount + $temp_amount;
+			$this->item->update($v->item_id, array("on_hand" => $unit, "amount"=> $amount, "weighted_avg"=> $amount/$unit));
 
 			$this->item_record->update($v->id, array(
-				"bill_id" => $v->bill_id,
-				"item_id" => is_array($v->item_id) ? $v->item_id['id'] : $v->item_id,
+				"item_id" => $v->item_id,
 				"description" => $v->description,
 				"cost"	=> $v->cost,
 				"price" => $v->price,
@@ -395,16 +433,30 @@ class Inventory_api extends REST_Controller {
 				"amount" => $v->amount,
 				"taxed" => $v->taxed === true ? 1 : 0
 			));	
-
-			$unit = $current_item[0]->on_hand + $v->quantity;
-			$amount = $current_item[0]->amount + $v->amount;
-			$this->item->update($v->item_id, array("on_hand" => $unit, "amount"=> $amount, "weighted_avg"=> $amount/$unit));		
 		}
 
 		if($this->db->affected_rows() > 0) {
 			$query = $this->item_record->get_many($ids);
-			$count = $this->item_record->count_by(array("bill_id" => $postedData[0]->bill_id));
-			$this->response(array("status"=>"OK", "count"=>$this->db->affected_rows(), "results"=>$query), 200);
+			if(count($query)>0) {
+				foreach($query as $row){	
+					$arr[] = array(
+						"id" 			=> $row->id,
+						"item_id"		=> $row->item_id,
+						"bill_id"	 	=> $row->bill_id,				
+						"description"	=> $row->description,
+						"cost"			=> $row->cost,
+						"price"			=> $row->price,
+						"quantity"		=> $row->quantity,
+						"amount"		=> $row->amount,
+						"balance"		=> $row->balance,
+						"taxed"			=> $row->taxed === "1" ? true:false,
+						"created_at"	=> $row->created_at
+					);						
+				}
+				$this->response(array("status"=>"OK", "count"=>count($query), "results"=>$arr), 200);	
+			} else {
+				$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
+			}
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>$array()), 200);
 		}

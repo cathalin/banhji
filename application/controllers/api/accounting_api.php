@@ -24,6 +24,7 @@ class Accounting_api extends REST_Controller {
 		$this->load->model('staff/employee_m', 'employee');
 		$this->load->model('accounting/expense_record_model', 'expense_record');
 		$this->load->model('company_m', 'company');
+		$this->load->model('inventory/item_model', 'item');
 		$this->load->library('session');
 	}
 	
@@ -391,11 +392,8 @@ class Accounting_api extends REST_Controller {
 						 'donor_name'		=> $this->classes->get_by('id', $row->donor_id),
 						 'location_name'	=> $this->classes->get_by('id', $row->location_id),
 						 'people_name'		=> $this->people->get_by('id', $row->people_id),
-						 'employee_name'	=> $this->employee->get_by('id', $row->employee_id)
-									
+						 'employee_name'	=> $this->employee->get_by('id', $row->employee_id)						
 			);	
-			
-			
 		}
 						
 		$this->response($arr, 200);		
@@ -763,6 +761,7 @@ class Accounting_api extends REST_Controller {
 						'people_name'		=> $this->people->get_by('id', $row->people_id),
 						'employee_name'		=> $this->employee->get_by('id', $row->employee_id),
 						'grn'				=> $row->grn,
+						"vat_id"			=> $this->item->get($row->vat_id),
 						'status' 			=> $row->status,
 						'created_at'		=> $row->created_at
 					);
@@ -795,9 +794,10 @@ class Accounting_api extends REST_Controller {
 					'check_no'			=> $this->post('check_no') ? $this->post('check_no') : "",
 					'payment_id' 		=> $this->post('payment_id') ? $this->post('payment_id') : 0,
 					'number' 			=> $this->post('number') ? $this->post('number') : "",
-					'date' 				=> $this->post('date'),
-					'due_date'			=> $this->post('dueDate'),
+					'date' 				=> date('Y-m-d', strtotime($this->post('date'))),
+					'due_date'			=> date('Y-m-d', strtotime($this->post('dueDate'))),
 					'status'			=> $this->post('status'),
+					'vat_id'			=> is_array($this->post('vat_id')) ? $this->post('vat_id')['id'] : $this->post('vat_id'),
 					'inJournal'			=> $this->post('inJournal')									
 		);
 		$id = $this->journal->insert($arr);
@@ -837,11 +837,12 @@ class Accounting_api extends REST_Controller {
 					'people_name'		=> $this->people->get_by('id', $query->people_id),
 					'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
 					'grn'				=> $query->grn,
+					"vat_id"			=> $this->item->get($query->vat_id),
 					'status' 			=> $query->status,
 					'created_at'		=> $query->created_at
 				);
 			}				
-			$this->response(array("status"=>"OK", "message"=>"Data found.", "results"=>$query), 201);
+			$this->response(array("status"=>"OK", "message"=>"Data found.", "type" => "create", "results"=>$query), 201);
 		} else {
 			$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
 		}
@@ -867,14 +868,15 @@ class Accounting_api extends REST_Controller {
 			'check_no'			=> $this->put('check_no') ? $this->put('check_no') : "",
 			'payment_id' 		=> $this->put('payment_id') ? $this->put('payment_id') : 0,
 			'number' 			=> $this->put('number') ? $this->put('number') : "",
-			'date' 				=> $this->put('date'),
-			'due_date'			=> $this->put('dueDate'),
+			'date' 				=> date('Y-m-d', strtotime($this->put('date'))),
+			'due_date'			=> date('Y-m-d', strtotime($this->put('dueDate'))),
 			'address'			=> $this->put('address') ?	$this->put('address') : "",
 			'ship_to' 			=> $this->put('ship_to') ?	$this->put('ship_to') : "",
+			'vat_id'			=> is_array($this->put('vat_id')) ? $this->put('vat_id')['id'] : $this->put('vat_id'),
 			'status'			=> $this->put('status')								
 		);
 		$this->journal->update($this->put('id'), $arr);
-		if($this->db->affected_rows() > 0 && $this->db->affected_rows() === 1) {
+
 			if($this->db->affected_rows()>0) {
  				$query = $this->journal->get($this->put('id'));
 				if(count($query) > 0) {
@@ -912,14 +914,14 @@ class Accounting_api extends REST_Controller {
 						'employee_name'		=> $this->employee->get_by('id', $query->employee_id),
 						'grn'				=> $query->grn,
 						'status' 			=> $query->status,
+						"vat_id"			=> $this->item->get($query->vat_id),
 						'created_at'		=> $query->created_at
 					);
 				}				
-				$this->response(array("status"=>"OK", "message"=>"Data found.","entry"=>$entries, "results"=>$query), 201);
+				$this->response(array("status"=>"OK", "message"=>"Data found.", "type" =>"update", "results"=>$journals), 201);
 			} else {
-				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 500);
+				$this->response(array("status"=>"Failed", "message"=>$this->db->_error_message(), "results"=>array()), 400);
 			}
-		}
 	}
 
 	public function journals_delete() {
@@ -952,11 +954,27 @@ class Accounting_api extends REST_Controller {
 			}
 			// $this->response($para, 200);
 			$query = $this->j_entry->get_many_by($criteria);
-			if(count($query) > "0") :
-				$this->response(array("status"=>"OK", "results"=>$journals), 200);
-			else :
+			if(count($query) > "0") {
+				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"journal_id" => $q->journal_id,
+						"account" => $q->account,
+						"dr" => $q->dr,
+						"cr" => $q->cr,
+						"class_id" => $q->class_id,
+						"memo" => $q->memo,
+						"exchange_rate" => $q->exchange_rate,
+						"main" => $q->main,
+						"taxed" => $q->taxed === "1" ? true:false,
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 201);
+			} else {
 				$this->response(array("status"=>"Error", "message"=>$this->db->_error_message(), "results"=>array()), 200);
-			endif;
+			}
 		} else {
 			$this->response(array("status"=>"Error", "message"=> "Please provide query parameter.", "results"=>array()), 200);
 		}
@@ -974,6 +992,7 @@ class Accounting_api extends REST_Controller {
  				"cr"			=> $value->cr,
  				"class_id"		=> $value->class_id,
  				"memo"			=> $value->memo,
+ 				"taxed"			=> $value->taxed === true ? 1 : 0,
  				// "balance"		=> $balance,
  				"exchange_rate" => $value->exchange_rate,
  				"main"			=> $value->main
@@ -996,6 +1015,7 @@ class Accounting_api extends REST_Controller {
 						"memo" => $q->memo,
 						"exchange_rate" => $q->exchange_rate,
 						"main" => $q->main,
+						"taxed" => $q->taxed === "1" ? true:false,
 						"created_at" => $q->created_at,
 						"updated_at" => $q->updated_at
 					);
@@ -1039,29 +1059,45 @@ class Accounting_api extends REST_Controller {
 
 	public function journalEntries_put() {
 		$journal_Entries = json_decode($this->put("models"));
-		$ids = [];
+		$ids = array();
 		if($journal_Entries){
 			foreach($journal_Entries as $k => $v) {
 		 		//Find last balance of this account
-				$balance = $this->j_entry->calculate_account_balance($v['account_id'],$v['dr'],$v['cr']);
-				$ids[] = $v['id'];
+				// $balance = $this->j_entry->calculate_account_balance($v->account_id,$v->dr,$v->cr);
+				$ids[] = $v->id;
 		 		$entries = array(
-				 				"account" 		=> $v['account_id'],
-				 				"dr"			=> $v['dr'],
-				 				"cr"			=> $v['cr'],
-				 				"class_id"		=> $v['class_id'],
-				 				"memo"			=> $v['memo'],
-				 				"balance"		=> $balance,
-				 				"exchange_rate" => $v['exchange_rate'],
-				 				"main"			=> $v['main']
+				 				"account" 		=> $v->account,
+				 				"dr"			=> $v->dr,
+				 				"cr"			=> $v->cr,
+				 				"class_id"		=> $v->class_id,
+				 				"memo"			=> $v->memo,
+				 				// "balance"		=> $balance,
+				 				"taxed"			=> $v->taxed === true ? 1 : 0,
+				 				"exchange_rate" => $v->exchange_rate,
+				 				"main"			=> $v->main
 				 			);
-		 		$this->j_entry->update($v['id'], $entries);
- 			}
- 			
+		 		$this->j_entry->update($v->id, $entries);
+ 			}			
 
  			$query = $this->j_entry->get_many($ids);
  			if(count($query) > 0) {
- 				$this->response(array("status"=>"OK", "results"=>$query), 200);
+ 				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"journal_id" => $q->journal_id,
+						"account" => $q->account,
+						"dr" => $q->dr,
+						"cr" => $q->cr,
+						"class_id" => $q->class_id,
+						"memo" => $q->memo,
+						"exchange_rate" => $q->exchange_rate,
+						"main" => $q->main,
+						"taxed" => $q->taxed === "1" ? true:false,
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 201);
  			} else {
  				$this->response(array("status"=>"Error", "message"=>"No results found.", "results"=>array()), 200);
  			}
