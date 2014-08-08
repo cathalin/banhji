@@ -119,50 +119,33 @@ class Electricities extends REST_Controller {
 
 	//Getting the record of tranformer with given id
 	public function transformerRecords_get() {
-		$filter = $this->get('filter');
-		$field = $filter['filters'][0]['field'];
-		$value	= $filter['filters'][0]['value'];
-		if($value !== "") {
-			$data = $this->record->get_many_by($field, $value);
-			if(count($data) > 0 ) {
-				foreach($data as $r) {
-					$items[] = array(
-						"bill"				=> $this->bill->get($r->bill_id),
-						"id"				=> $r->id,
-						"multiplier"		=> $r->multiplier,
-						"new_reading"		=> $r->new_reading,
-						"prev_reading"		=> $r->prev_reading,
-						"tariff"			=> $r->tariff,
-						"transformer"		=> $this->transformer->get($r->transformer_id),
-						"created_at"		=> $r->created_at,
-						"updated_at"		=> $r->updated_at
-					);
-				}
-				$this->response($items, 200);
-			} else {
-				$this->response(array(), 200);
+		$filter= $this->get('filter');
+		if(!empty($filter) && isset($filter)){			
+			$criteria = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
+			$query = $this->record->limit(12)->get_many_by($criteria);
 		} else {
-			$data = $this->record->get_all();
-
-			if(count($data) > 0 ) {
-				foreach($data as $r) {
-					$items[] = array(
-						"bill"				=> $this->bill->get($r->bill_id),
-						"id"				=> $r->id,
-						"multiplier"		=> $r->multiplier,
-						"new_reading"		=> $r->new_reading,
-						"prev_reading"		=> $r->prev_reading,
-						"tariff"			=> $r->tariff,
-						"transformer"		=> $this->transformer->get($r->transformer_id),
-						"created_at"		=> $r->created_at,
-						"updated_at"		=> $r->updated_at
-					);
-				}
-				$this->response($items, 200);
-			} else {
-				$this->response(array("status"=>"this is not data found."), 500);
+			$query = $this->record->get_all();
+		}
+		if(count($query) > 0) {
+			foreach($query as $row){	
+				$arr[] = array(
+					"bill"				=> $this->bill->get($row->bill_id),
+					"id"				=> $row->id,
+					"multiplier"		=> $row->multiplier,
+					"new_reading"		=> $row->new_reading,
+					"prev_reading"		=> $row->prev_reading,
+					"tariff"			=> $row->tariff,
+					"transformer"		=> $this->transformer->get($row->transformer_id),
+					"created_at"		=> $row->created_at,
+					"updated_at"		=> $row->updated_at
+				);						
 			}
+			$this->response(array("status"=>"OK", "results"=>$arr), 200);	
+		} else {
+			$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 		}
 	}
 
@@ -347,35 +330,42 @@ class Electricities extends REST_Controller {
 	}
 
 	public function transformers_get() {
-		$transformers = $this->transformer->get_all();
-		if($transformers) {
-			foreach($transformers as $transformer) {
-				$data[] = array(
-					'id' => $transformer->id,
-					'license' => $this->class->get($transformer->license_id), 
-					'transformerNumber' => $transformer->transformer_number,
-					'attributes' => $this->attributes->get_many_by("transformer_id", $transformer->id),
-					'capacity' => $transformer->capacity,
-					'type' => $transformer->type,
-					'brand' => $transformer->brand,
-					'location' => $transformer->location,
-					'latitute' => $transformer->latitute,
-					'longtitute' => $transformer->longtitute,
-					'numberOfMeters' => array(),
-					'numberOfCustomers' => array(),
-					'numberOfBoxes' => array(),
-					'price'	=> $transformer->price,
-					'vendor' => $this->people->get($transformer->vendor_id),
-					'records' => $this->record->get_many_by('transformer_id', $transformer->id),
-					'saleHistory' => $this->record->sales($transformer->id),
-					'lastInvoice' => $this->record->order_by("id", "DESC")->limit(1)->get_by("transformer_id", $transformer->id),
-					'created_at' => $transformer->created_at
-				);
-			}
-			$this->response($data, 200);
-		} else {
-			$this->response(array("status"=>"error", "message"=>"there is no data returned."), 400);
-		}
+		$filter = $this->get("filter");		
+		if(!empty($filter) && isset($filter)){			
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}			
+			$transformers = $this->transformer->get_many_by($para);			
+			if($transformers) {
+				foreach($transformers as $transformer) {
+					$data[] = array(
+						'id' => $transformer->id,
+						'license' => $this->class->get($transformer->license_id), 
+						'transformerNumber' => $transformer->transformer_number,
+						'attributes' => $this->attributes->get_many_by("transformer_id", $transformer->id),
+						'capacity' => $transformer->capacity,
+						'type' => $transformer->type,
+						'brand' => $transformer->brand,
+						'location' => $transformer->location,
+						'latitute' => $transformer->latitute,
+						'longtitute' => $transformer->longtitute,
+						'numberOfMeters' => array(),
+						'numberOfCustomers' => array(),
+						'numberOfBoxes' => array(),
+						'price'	=> $transformer->price,
+						'vendor' => $this->people->get($transformer->vendor_id),
+						'created_at' => $transformer->created_at
+					);
+				}
+				$this->response(array("status"=>"OK", "message"=>"data found.", "results"=>$data), 200);
+			} else {
+				$this->response(array("status"=>"error", "message"=>"there is no data returned.", "results"=>array()), 200);
+			}			
+		}else{
+			// $data = $this->transformer->get_all();
+			$this->response(array("status"=>"error", "message"=>"there is no data returned."), 200);
+		}		
 	}
 
 	public function transformers_post() {
@@ -419,11 +409,7 @@ class Electricities extends REST_Controller {
 					'brand' => $tran->brand,
 					'location' => $tran->location,
 					'latitute' => $tran->latitute,
-					'longtitute' => $tran->longtitute,
-					'numberOfMeters' => array(),
-					'numberOfCustomers' => array(),
-					'numberOfBoxes' => array(),
-					'saleHistory' => array()
+					'longtitute' => $tran->longtitute
 				);
 				
 				$this->response($data, 200);
@@ -479,11 +465,7 @@ class Electricities extends REST_Controller {
 					'brand' => $tran->brand,
 					'location' => $tran->location,
 					'latitute' => $tran->latitute,
-					'longtitute' => $tran->longtitute,
-					'numberOfMeters' => array(),
-					'numberOfCustomers' => array(),
-					'numberOfBoxes' => array(),
-					'saleHistory' => array()
+					'longtitute' => $tran->longtitute
 				);
 				$this->response($data, 200);
 			} else {
