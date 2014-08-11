@@ -11,30 +11,36 @@ class Companies extends REST_Controller {
 	}
 	
     function index_get() {
-		$data = $this->company->current($this->session->userdata('company_id'))->get_all();
-		
-		if (!empty($data)) {
-			foreach($data as $r){
-				$company[] = array(
-					"id" 				=> $r->id,
-					"name"				=> $r->name,
-					"parent_id" 		=> $r->parent_id,
-					"year_founed" 		=> $r->year_founded,
-					"image_url" 		=> $r->image_url,
-					"operation_license" => $r->operation_license,
-					"mobile"			=> $r->mobile,
-					"phone" 			=> $r->phone,
-					"address"			=> $r->address,
-					"representative" 	=> $r->representative,
-					"licenses_held" 	=> $this->license->count_all()
-				);
+		$filter = $this->get("filter");	
+		if($filter) {		
+			$criteria = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$this->response($company, 200);
+			$filterQuery = $this->company->order_by("created_at", "DESC")->get_many_by($criteria);
+			if(count($filterQuery) > 0) {
+				foreach($filterQuery as $r) {
+					$data[] = array(
+						"id" 				=> $r->id,
+						"name"				=> $r->name,
+						"parent_id" 		=> $r->parent_id,
+						"year_founed" 		=> $r->year_founded,
+						"image_url" 		=> $r->image_url,
+						"operation_license" => $r->operation_license,
+						"mobile"			=> $r->mobile,
+						"phone" 			=> $r->phone,
+						"address"			=> $r->address,
+						"currency" 			=> $r->based_currency,
+						"representative" 	=> $r->representative,
+						"licenses_held" 	=> $this->license->count_all()
+					);
+	 			}
+ 				$this->response(array("status"=>"OK", "results"=>$data), 200);
+			} else {
+				$this->response(array("status"=>"false", "message"=>"There is no result found.", "results"=>array()), 200);
+			}
 		} else {
-			$api = array(
-				"status" => "null"
-			);
-			$this->response($api, 200);
+			$this->response(array("status"=>"false", "message"=>"company id is needed.", "results"=>array()), 200);
 		}
     }
 	

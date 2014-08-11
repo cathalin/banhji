@@ -9,7 +9,8 @@ class grn extends REST_Controller {
 	function __construct() {
 		parent::__construct();		
 		$this->load->model('grn_model', 'po');
-		$this->load->model('inventory/purchaseorder_item_model', 'items');		
+		$this->load->model('inventory/purchaseorder_item_model', 'items');
+		$this->load->model('inventory/item_record_model', 'item_records');	
 	}
 		
 	
@@ -36,7 +37,6 @@ class grn extends REST_Controller {
 						"shipping_address" => $q->shipping_address,
 						"memo_01" => $q->memo_01,
 						"memo_02" => $q->memo_02,
-						"items" => $this->items->get_many_by(array('purchaseOrder_id'=>$q->id)),
 						"vat_id"=> $q->vat_id,
 						"created_by" => $q->created_by,
 						"updated_by" => $q->updated_by,
@@ -114,6 +114,8 @@ class grn extends REST_Controller {
 		$data = array(
 			"company_id" => $this->post('company'),
 			"number" => $this->getNumber($this->post('company')),
+			"po_id" => $this->post("po_id"),
+			"vendor_id" => $this->post("vendor"),
 			"voucher" => $this->post('voucher'),
 			"date" => date('Y-d-m', strtotime($this->post('date'))),
 			"expected_date" => date('Y-d-m', strtotime($this->post('expected_date'))),
@@ -129,17 +131,6 @@ class grn extends REST_Controller {
 
 		$this->db->trans_start();
 		$po = $this->po->insert($data);
-		foreach($this->post('items') as $key => $value) {
-			$items[] = array(
-				"purchaseOrder_id" => $po,
-				"item_id" => $value['item_id'],
-				"description" => $value['description'],
-				"cost" => $value['cost'],
-				"unit" => $value['unit'],
-				"taxed"=> $value['taxed'] === "true" ? 1:0
-			);
-		}
-		$this->items->insert_many($items, FALSE);
 
 		$this->db->trans_complete();
 		if($this->db->trans_status() !== FALSE) {
@@ -187,6 +178,133 @@ class grn extends REST_Controller {
 			}
 		}
 	}
+
+	function items_get(){
+		// $q = $this->get('data');
+		$filter = $this->get("filter");	
+		if($filter) {		
+			$criteria = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			$filterQuery = $this->item_records->get_many_by($criteria);
+			if(count($filterQuery) > 0) {
+				foreach($filterQuery as $q) {
+					$data[] = array(
+						"id" => $q->id,
+						"grn_id" => $q->grn_id,
+						"item_id" => $q->item_id,
+						"description" => $q->description,
+						"cost" => $q->cost,
+						"quantity" => $q->unit,
+						"amount" => $q->amount,
+						"taxed" => $q->taxed === "1" ? true:false,
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+	 			}
+ 				$this->response(array("status"=>"OK", "results"=>$data), 200);
+			} else {
+				$this->response(array("status"=>"false", "message"=>"There is no result found.", "results"=>array()), 200);
+			}
+		} else {
+			$this->response(array("status"=>"false", "message"=>"company id is needed.", "results"=>array()), 200);
+		}		
+	}
+
+	function items_put(){
+		$postedData = json_decode($this->put("models"));
+		$ids = array();
+		$this->db->trans_start();
+		foreach($postedData as $key=>$value) {
+			$ids[] = $value->id;
+			$this->item_records->update($value->id, array(
+				"item_id"	=> $value->item_id,
+				"description" => $value->description,
+				"cost" => $value->unit_price,
+				"quantity" => $value->quantity,
+				"taxed" => $value->taxed === true ? 1 : 0
+			));			
+		}
+		$this->db->trans_complete();
+		if($this->db->trans_status() !== FALSE) {
+			$query= $this->item_records->get_many($ids);
+			if(count($query) > 0) {
+				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"grn_id" => $q->grn_id,
+						"item_id" => $q->item_id,
+						"description" => $q->description,
+						"cost" => $q->cost,
+						"quantity" => $q->unit,
+						"amount" => $q->amount,
+						"taxed" => $q->taxed === "1" ? true:false,
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+			}
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 200);
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
+		}
+	}
+
+	function items_post(){
+		$postedData = json_decode($this->post("models"));
+		$ids = array();		
+		$this->db->trans_start();
+		foreach($postedData as $key=>$value) {
+			$ids[] = $this->item_records->insert(array(
+				"grn_id" => $value->grn_id,
+				"item_id"	=> $value->item_id,
+				// "description" => $value->description,
+				"cost" => $value->unit_price,
+				"quantity" => $value->quantity,
+				"taxed" => $value->taxed === true ? 1 : 0
+			));
+		}
+		$this->db->trans_complete();
+		if($this->db->trans_status() !== FALSE) {
+			$query = $this->item_records->get_many($ids);
+			if(count($query) > 0) {
+				foreach($query as $q) {
+					$results[] = array(
+						"id" => $q->id,
+						"grn_id" => $q->grn_id,
+						"item_id" => $q->item_id,
+						// "description" => $q->description,
+						"cost" => $q->cost,
+						"quantity" => $q->quantity,
+						"amount" => $q->amount,
+						"taxed" => $q->taxed === "1" ? true:false,
+						"created_at" => $q->created_at,
+						"updated_at" => $q->updated_at
+					);
+				}
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 201);
+			}
+			
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"cannot create Purchase Order.", "results"=>array()), 200);
+		}
+	}
+
+	function items_delete(){
+		$ids = json_decode($this->delete('models'));
+		$this->db->trans_start();
+		foreach($ids as $key=>$value) {
+			$this->item_records->delete($value->id);
+		}	
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() !== FALSE) {
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array()), 200);
+		} else {
+			$this->response(array("status"=>"Failed", "message"=>"Cannot delete Purchase Order.", "results"=>array()), 200);
+		}
+	}
 	
 	function getNumber($company_id) {
 		$number = "";
@@ -211,7 +329,9 @@ class grn extends REST_Controller {
 				// $this->response("GRN".$four."001", 200);
 			}
 		} else {
-			return "GRN";
+			$four = date('ym');
+
+			return "GRN".$four."001";
 		}
 	}
 }

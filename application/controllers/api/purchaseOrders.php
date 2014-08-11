@@ -9,7 +9,7 @@ class purchaseOrders extends REST_Controller {
 	function __construct() {
 		parent::__construct();		
 		$this->load->model('PurchaseOrder_model', 'po');
-		$this->load->model('inventory/purchaseorder_item_model', 'items');		
+		$this->load->model('inventory/purchaseorder_item_model', 'items');	
 	}
 		
 	
@@ -21,22 +21,26 @@ class purchaseOrders extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$filterQuery = $this->po->get_many_by($criteria);
+			$filterQuery = $this->po->order_by("created_at", "DESC")->get_many_by($criteria);
 			if(count($filterQuery) > 0) {
 				foreach($filterQuery as $q) {
 					$data[] = array(
 						"id" => $q->id,
+						"company_id" => $q->company_id,
 						"number" => $q->number,
 						"voucher" => $q->voucher,
 						"vendor" => $q->vendor_id,
-						"date" => $q->date,
-						"expected_date" => $q->expected_date,
+						"date" => date('d-m-Y', strtotime($q->date)),
+						"expected_date" => date('d-m-Y', strtotime($q->expected_date)),
 						"class" => $q->class_id,
 						"address" => $q->address,
 						"shipping_address" => $q->shipping_address,
 						"memo_01" => $q->memo_01,
 						"memo_02" => $q->memo_02,
 						"vat_id"=> $q->vat_id,
+						"amount" => $q->amount,
+						"grn" => $q->grn,
+						"status" => $q->status,
 						"created_by" => $q->created_by,
 						"updated_by" => $q->updated_by,
 						"created_at" => $q->created_at,
@@ -53,17 +57,18 @@ class purchaseOrders extends REST_Controller {
 	}
 
 	function index_put(){
+		date_default_timezone_set('UTC');
 		$data = array(
-			"number" => $this->put('number'),
-			"voucher" => $this->put('voucher'),
-			"date" => $this->put('date'),
-			"expected_date" => $this->put('expected_date'),
+			"date" => date('Y-m-d', strtotime($this->put('date'))),
+			"expected_date" => date('Y-m-d', strtotime($this->put('expected_date'))),
 			"address" => $this->put('address'),
 			"shipping_address" => $this->put('shipping_address'),
-			"memo_01" =>$this->put('memo_01'),
+			"memo_01" => $this->put('memo_01'),
 			"memo_02" =>$this->put('memo_02'),
-			"vat_id" => $this->put('vat_id') === "" ? 0: $this->put('vat_id')['id'],
-			"created_by" => $this->put('created_by'),
+			"amount" => $this->put('amount'),
+			"grn" => $this->put('grn') ? $this->put('grn') : 0,
+			"status" => $this->put('status'),
+			"vat_id" => is_array($this->put('vat_id')) ? $this->put('vat_id')['id'] : $this->put('vat_id'),
 			"updated_by" => $this->put('updated_by')
 		);
 
@@ -75,8 +80,9 @@ class purchaseOrders extends REST_Controller {
 			if(count($query) > 0) {
 				$results[] = array(
 					"id" => $query->id,
+					"company_id" => $query->company_id,
 					"number" => $query->number,
-					"voucher" => $query->voucher === 0 ? "": $query->voucher,
+					"voucher" => $query->voucher === 0 ? null: $query->voucher,
 					"vendor" => $query->vendor_id,
 					"date" => $query->date,
 					"expected_date" => $query->expected_date,
@@ -86,6 +92,9 @@ class purchaseOrders extends REST_Controller {
 					"memo_01" => $query->memo_01,
 					"memo_02" => $query->memo_02,
 					"vat_id" => $query->vat_id,
+					"amount" => $query->amount,
+					"grn" => $query->grn,
+					"status" => $query->status,
 					"created_by" => $query->created_by,
 					"updated_by" => $query->updated_by,
 					"created_at" => $query->created_at,
@@ -109,8 +118,11 @@ class purchaseOrders extends REST_Controller {
 			"shipping_address" => $this->post('shipping_address'),
 			"memo_01" =>$this->post('memo_01'),
 			"memo_02" =>$this->post('memo_02'),
+			"amount" => $this->post('amount'),
 			"class_id"=> $this->post('class'),
 			"vat_id" => $this->post('vat_id') === "" ? 0: $this->post('vat_id')['id'],
+			"status" => 0,
+			"grn" => NULL,
 			"created_by" => $this->post('created_by'),
 			"updated_by" => $this->post('updated_by')
 		);
@@ -133,6 +145,9 @@ class purchaseOrders extends REST_Controller {
 					"memo_01" => $query->memo_01,
 					"memo_02" => $query->memo_02,
 					"vat_id" => $query->vat_id,
+					"amount" => $query->amount,
+					"grn" => $query->grn,
+					"status" => $query->status,
 					"created_by" => $query->created_by,
 					"updated_by" => $query->updated_by,
 					"created_at" => $query->created_at,
