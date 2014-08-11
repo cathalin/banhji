@@ -3,16 +3,17 @@
 
 require APPPATH.'/libraries/REST_Controller.php';
 
-class Payment_methods extends REST_Controller {
+class Electricity_units extends REST_Controller {
+	
 	
 	//CONSTRUCTOR
 	function __construct() {
 		parent::__construct();		
-		$this->load->model('accounting/payment_method_model', 'payment_method');		
+		$this->load->model('electricity_unit_model', 'electricity_unit');		
 	}
 	
 	//GET 
-	function payment_method_get() {
+	function electricity_unit_get() {
 		$filter = $this->get("filter");
 		$limit = $this->get("pageSize");
 		$offset = $this->get('skip');
@@ -27,7 +28,7 @@ class Payment_methods extends REST_Controller {
 			
 			//Limit
 			if(!empty($limit) && isset($limit)){
-				$this->payment_method->limit($limit, $offset);
+				$this->electricity_unit->limit($limit, $offset);
 			}			
 			
 			//Sort
@@ -36,50 +37,48 @@ class Payment_methods extends REST_Controller {
 				for ($j = 0; $j < count($sorter); ++$j) {				
 					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
 				}
-				$this->payment_method->order_by($sort);
+				$this->electricity_unit->order_by($sort);
 			}
 
-			$data["results"] = $this->payment_method->get_many_by($para);
-			$data["total"] = $this->payment_method->count_by($para);
+			$data["results"] = $this->electricity_unit->get_many_by($para);
+			$data["total"] = $this->electricity_unit->count_by($para);
 
 			$this->response($data, 200);			
 		}else{
-			$data["results"] = $this->payment_method->get_all();
-			$data["total"] = $this->payment_method->count_all();
+			$data["results"] = $this->electricity_unit->get_all();
+			$data["total"] = $this->electricity_unit->count_all();
+			
 			$this->response($data, 200);
 		}			
 	}
 	
 	//POST
-	function payment_method_post() {
+	function electricity_unit_post() {
 		$post = array(
-			"name" 					=> $this->post("name"),
-			"description"			=> $this->post("description"),			
-			"company_id" 			=> $this->post("company_id")								
-		);
-
-		$id = $this->payment_method->insert($post);
-		$data["results"] = $this->payment_method->get($id);
+			"type" 			=> $this->post("type"),
+			"name" 			=> $this->post("name"),
+			"company_id"	=> $this->post("company_id")					
+		);		
+		$id = $this->electricity_unit->insert($post);
+		$data["results"] = $this->electricity_unit->get($id);
 
 		$this->response($data, 201);				
 	}
 	
 	//PUT
-	function payment_method_put() {
+	function electricity_unit_put() {
 		$put = array(
-			"name" 					=> $this->put("name"),
-			"description"			=> $this->put("description"),			
-			"company_id" 			=> $this->put("company_id")						
+			"type" 			=> $this->put("type"),
+			"name" 			=> $this->put("name"),
+			"company_id"	=> $this->put("company_id")					
 		);
-		$result = $this->payment_method->update($this->put('id'), $put);
-
+		$result = $this->electricity_unit->update($this->put('id'), $put);		
 		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE
-	function payment_method_delete() {		
-		$result = $this->payment_method->delete($this->delete('id'));
+	function electricity_unit_delete() {		
+		$result = $this->electricity_unit->delete($this->delete('id'));
 		$this->response($result, 200);
 	}
-	
-}//End Of Class
+}

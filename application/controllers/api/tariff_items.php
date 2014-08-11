@@ -7,9 +7,8 @@ class Tariff_items extends REST_Controller {
 	//CONSTRUCTOR
 	function __construct() {
 		parent::__construct();
-		$this->load->model('tariffs/Tariff_item_model', 'tariff_item');
+		$this->load->model('tariffs/Tariff_item_model', 'tariff_item');		
 		
-		$this->load->model('tariffs/Tariff_item_model', 'tariff_item');
 		$this->load->model('tariffs/Plan_item_model', 'plan_item');		
 	}
 	
@@ -17,40 +16,74 @@ class Tariff_items extends REST_Controller {
 	//GET 
 	function tariff_item_get() {
 		$filter = $this->get("filter");
-		$sort = $this->get("sort");
-
-		if(!empty($sort) && isset($sort)){
-			$this->tariff_item->order_by($sort[0]['field'], $sort[0]['dir']);
-		}
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
 
 		if(!empty($filter) && isset($filter)){			
-			$data = $this->tariff_item->get_many_by($filter['filters'][0]['field'], $filter['filters'][0]['value']);			
-		}else{			
-			$data = $this->tariff_item->get_all();		
-		}
-		
-		if(count($data)>0){
-			$this->response($data, 200);
+			//Filter
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->tariff_item->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->tariff_item->order_by($sort);
+			}
+
+			$data["results"] = $this->tariff_item->get_many_by($para);
+			$data["total"] = $this->tariff_item->count_by($para);
+
+			$this->response($data, 200);			
 		}else{
-			$empty_array = Array();
-			$this->response($empty_array, 200);
-		}		
+			$data["results"] = $this->tariff_item->get_all();
+			$data["total"] = $this->tariff_item->count_all();
+			$this->response($data, 200);
+		}			
 	}
 	
 	//POST
-	function tariff_item_post() {	
-		$this->tariff_item->insert($this->post());		
+	function tariff_item_post() {
+		$post = array(								
+			"tariff_id"		=> $this->post("tariff_id"),
+			"usage"			=> $this->post("usage"),
+			"price"			=> $this->post("price"),
+			"is_flat"		=> $this->post("is_flat"),
+			"amount"		=> $this->post("amount")					
+		);		
+		$id = $this->tariff_item->insert($post);
+		$data["results"] = $this->tariff_item->get($id);
+
+		$this->response($data, 201);				
 	}
 	
 	//PUT
 	function tariff_item_put() {
- 		 $this->tariff_item->update($this->put('id'), $this->put());
+		$put = array(								
+			"tariff_id"		=> $this->put("tariff_id"),
+			"usage"			=> $this->put("usage"),
+			"price"			=> $this->put("price"),
+			"is_flat"		=> $this->put("is_flat"),
+			"amount"		=> $this->put("amount")					
+		);
+		$result = $this->tariff_item->update($this->put('id'), $put());		
+		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE
-	function tariff_item_delete() {
-		//$this->response(array("status"=>$this->delete('id')), 200);
-		$this->tariff_item->delete($this->delete('id'));
+	function tariff_item_delete() {		
+		$result = $this->tariff_item->delete($this->delete('id'));
+		$this->response($result, 200);
 	}
 
 	//GET TARIFF ITEM BY TARIFF PLAN ID

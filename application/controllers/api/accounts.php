@@ -97,6 +97,46 @@ class Accounts extends REST_Controller {
 	function index_get($id=null, $action=null) {
 		$this->response(array("status"=> "OK", "msg"=>"with param"), 200);
 	}
+
+	//BY DAWINE
+	//GET 
+	function accountz_get() {
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
+		if(!empty($filter) && isset($filter)){			
+			//Filter
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->account->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->account->order_by($sort);
+			}
+
+			$data["results"] = $this->account->get_many_by($para);
+			$data["total"] = $this->account->count_by($para);
+
+			$this->response($data, 200);			
+		}else{
+			$data["results"] = $this->account->get_all();
+			$data["total"] = $this->account->count_all();
+			$this->response($data, 200);
+		}			
+	}
 		
 	
 }//End Of Class

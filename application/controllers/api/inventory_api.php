@@ -279,34 +279,41 @@ class Inventory_api extends REST_Controller {
 	//*** Dawine ***
 	//ITEMS
 	function items_get() {
-		$filter = $this->get("filter");		
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
 		if(!empty($filter) && isset($filter)){			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}			
-			$arr = $this->item->get_many_by($para);
-			$data = Array();
-			if(count($arr) >0){
-				foreach($arr as $row) {				   	
-
-				   	//Add extra fields
-					$extra = array(	'unit_measures' => $this->unit_measure->get($row->unit_measure_id),
-									'item_types' 	=> $this->item_type->get($row->item_type_id)								   	
-							  );
-
-					//Cast object to array
-					$original = (array) $row;
-
-					//Merge arrays
-					$data[] = array_merge($original, $extra);	
-				}						
 			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->item->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->item->order_by($sort);
+			}
+
+			$data["results"] = $this->item->get_many_by($para);
+			$data["total"] = $this->item->count_by($para);
+
 			$this->response($data, 200);			
 		}else{
-			$data = $this->item->get_all();
+			$data["results"] = $this->item->get_all();
+			$data["total"] = $this->item->count_all();
 			$this->response($data, 200);
-		}		
+		}			
 	}
 
 	/*function itemrecords_get() {

@@ -34,7 +34,7 @@ class Invoices extends REST_Controller {
 		$limit = $this->get("pageSize");
 		$offset = $this->get('skip');
 		$sorter = $this->get("sort");
-		
+
 		if(!empty($filter) && isset($filter)){			
 			//Filter
 			$para = array();				
@@ -56,169 +56,96 @@ class Invoices extends REST_Controller {
 				$this->invoice->order_by($sort);
 			}
 
-			$arr = $this->invoice->get_many_by($para);
+			$data["results"] = $this->invoice->get_many_by($para);
+			$data["total"] = $this->invoice->count_by($para);
 
-			$data = array();
-			if(count($arr) >0){
-				foreach($arr as $row) {																			   
-				   	$totalPaid	 = $this->payment->get_total_payment($row->id);
-				   	$total  	 = $row->amount - $totalPaid;
-
-				   	//Add extra fields
-					$extra = array(	'total_paid' 		=> $totalPaid,   
-								   	'total' 			=> $total,
-								   	'pay_amount'		=> $total,
-								   	'invoice_items'     => $this->invoice_item->get_many_by('invoice_id', $row->id),
-								   	'customers'			=> $this->people->get($row->customer_id),
-								   	'companies' 		=> $this->company->get($row->company_id)
-							  );
-
-					//Cast object to array
-					$original = (array) $row;
-
-					//Merge arrays
-					$data[] = array_merge($original, $extra);	
-				}						
-			}
 			$this->response($data, 200);			
 		}else{
-			$data = $this->invoice->get_all();
+			$data["results"] = $this->invoice->get_all();
+			$data["total"] = $this->invoice->count_all();
 			$this->response($data, 200);
-		}		
+		}			
 	}
 	
 	//POST
 	function invoice_post() {
-		$data = array('number' 			=> $this->get_number($this->post('type')),
-				   	'type'				=> $this->post('type'),				   					   	
-				   	'amount'			=> $this->post('amount'),
-				   	'rate'				=> $this->post('rate'),
-				   	'sub_code' 			=> $this->post('sub_code'),
-				   	'vat'				=> $this->post('vat'),
-				   	'vat_id'			=> $this->post('vat_id'),				   	
-				   	'status' 			=> $this->post('status'),				   					   	
-				   	'issued_date' 		=> date('Y-m-d', strtotime($this->post('issued_date'))),
-				   	'payment_date' 		=> date('Y-m-d', strtotime($this->post('payment_date'))),
-				   	'due_date' 			=> date('Y-m-d', strtotime($this->post('due_date'))),
-				   	'expected_date'		=> date('Y-m-d', strtotime($this->post('expected_date'))),
-				   	'month_of'			=> date('Y-m-d', strtotime($this->post('month_of'))),
-				   	'date_read_from' 	=> date('Y-m-d', strtotime($this->post('date_read_from'))),
-				   	'date_read_to' 		=> date('Y-m-d', strtotime($this->post('date_read_to'))),
-				   	'box_no' 			=> $this->post('box_no'),
-				   	'address' 			=> $this->post('address'),
-				   	'ship_to'			=> $this->post('ship_to'),
-				   	'biller' 			=> $this->post('biller'),
-				   	'customer_id' 		=> $this->post('customer_id'),				   	
-				   	'vendor_id' 		=> $this->post('vendor_id'),
-				   	'reference_type' 	=> $this->post('reference_type'),
-				   	'reference_id' 		=> $this->post('reference_id'),				   	
-				   	'check_no' 			=> $this->post('check_no'),
-				   	'payment_method_id'	=> $this->post('payment_method_id'),
-				   	'payment_term_id'	=> $this->post('payment_term_id'),
-				   	'cash_account_id'	=> $this->post('cash_account_id'),				   	
-				   	'class_id' 			=> $this->post('class_id'),
-				   	'transformer_id' 	=> $this->post('transformer_id'),				   	
-				   	'memo' 				=> $this->post('memo'),
-				   	'memo2' 			=> $this->post('memo2'),
-				   	'company_id' 		=> $this->post('company_id')					
+		$post = array(
+			"number" 			=> $this->_get_number($this->post("type")),
+			"type" 				=> $this->post("type"),
+			"amount" 			=> $this->post("amount"),
+			"rate" 				=> $this->post("rate"),
+			"sub_code" 			=> $this->post("sub_code"),
+			"vat" 				=> $this->post("vat"),			
+			"vat_id"			=> $this->post("vat_id"),
+			"status" 			=> $this->post("status"),
+			"issued_date" 		=> date("Y-m-d", strtotime($this->post("issued_date"))),
+			"payment_date" 		=> date("Y-m-d", strtotime($this->post("payment_date"))),
+			"due_date" 			=> date("Y-m-d", strtotime($this->post("due_date"))),
+			"expected_date" 	=> date("Y-m-d", strtotime($this->post("expected_date"))),
+			"month_of" 			=> date("Y-m-d", strtotime($this->post("month_of"))),
+			"date_read_from" 	=> date("Y-m-d", strtotime($this->post("date_read_from"))),
+			"date_read_to" 		=> date("Y-m-d", strtotime($this->post("date_read_to"))),
+			"box_no" 			=> $this->post("box_no"),
+			"address" 			=> $this->post("address"),
+			"ship_to" 			=> $this->post("ship_to"),
+			"biller" 			=> $this->post("biller"),
+			"customer_id" 		=> $this->post("customer_id"),
+			"vendor_id" 		=> $this->post("vendor_id"),
+			"reference_type" 	=> $this->post("reference_type"),
+			"reference_id" 		=> $this->post("reference_id"),
+			"check_no" 			=> $this->post("check_no"),
+			"payment_method_id"	=> $this->post("payment_method_id"),
+			"payment_term_id" 	=> $this->post("payment_term_id"),
+			"cash_account_id" 	=> $this->post("cash_account_id"),
+			"class_id" 			=> $this->post("class_id"),
+			"transformer_id" 	=> $this->post("transformer_id"),
+			"memo" 				=> $this->post("memo"),
+			"memo2" 			=> $this->post("memo2"),
+			"company_id" 		=> $this->post("company_id"),					
 		);
-		
-		$id = $this->invoice->insert($data);
+		$id = $this->invoice->insert($post);
+		$data["results"] = $this->invoice->get($id);
 
-		//Add invoice items
-		// $invItem = $this->post("invoice_items");
-		// $type = $this->post('type');
-		// $itemRec = array();
-		// foreach($invItem as $key => $value) {			
-		// 		$items[] = $value;			
-		// }
-
-		// $itemIds = array();//$this->insert_many($invItem);
-
-		// for ($i=0; $i< count($items); $i++) { 
-		// 	$items[$i]['invoice_id'] = $id;
-			
-		// 	//Add witdraw item
-		// 	if(!empty($items[$i]['item_id']) && isset($items[$i]['item_id'])){
-		// 		$item_id = $items[$i]['item_id'];
-		// 		$item_type_id = $this->item->item_type($item_id);
-		// 		if($item_type_id!=3 && $item_type_id!=0){
-		// 			if($type=="Invoice" || $type=="Receipt"){					
-
-		// 				$itemRec[] = array(
-		// 					"invoice_id"	=> $id, 
-		// 					"item_id"		=> $item_id, 
-		// 					"description"	=> $items[$i]['description'], 
-		// 					"quantity"		=> ($items[$i]['quantity']*-1),						
-		// 					"price"			=> $items[$i]['unit_price'],
-		// 					"amount"		=> $items[$i]['quantity']*($items[$i]['unit_price']*$items[$i]['rate']),						
-		// 					"balance" 		=> ($this->item_record->last_balance_of($items[$i]["item_id"]) - $items[$i]["quantity"])
-		// 				);
-		// 			}
-		// 		}
-		// 	}			
-		// }
-
-		//Witdraw item		
-		// $itemRecIds = array();
-		// if(count($itemRec)>0){
-		// 	$itemRecIds = $this->item_record->insert_many($itemRec);
-		// }		
-
-		// //Average record items for notice
-		// $avgRecord = $this->post("average_records");
-		// $avgIds = array();
-		// if(!empty($avgRecord) && isset($avgRecord)){
-		// 	foreach($avgRecord as $k => $v) {			
-		// 		$avgItems[] = $v;			
-		// 	}
-		// 	for ($j=0; $j< count($avgItems); $j++) { 
-		// 		$avgItems[$j]['notice_id'] = $id;
-		// 	}
-		// 	$avgIds = $this->average_record->insert_many($avgItems);
-		// }
-		
-		$this->response($id, 201);			
+		$this->response($data, 201);			
 	}
 	
 	//PUT
-	function invoice_put(){
-		$data = array('number' 			=> $this->put('number'),
-				   	'type'				=> $this->put('type'),			   	
-				   	'amount'			=> $this->put('amount'),
-				   	'rate'				=> $this->put('rate'),
-				   	'sub_code'			=> $this->put('sub_code'),
-				   	'vat'				=> $this->put('vat'),
-				   	'vat_id'			=> $this->put('vat_id'),				   					   	
-				   	'status' 			=> $this->put('status'),				   	
-				   	'issued_date' 		=> date('Y-m-d', strtotime($this->put('issued_date'))),
-				   	'payment_date' 		=> date('Y-m-d', strtotime($this->put('payment_date'))),
-				   	'due_date' 			=> date('Y-m-d', strtotime($this->put('due_date'))),
-				   	'expected_date'		=> date('Y-m-d', strtotime($this->put('expected_date'))),
-				   	'month_of'			=> date('Y-m-d', strtotime($this->put('month_of'))),
-				   	'date_read_from' 	=> date('Y-m-d', strtotime($this->put('date_read_from'))),
-				   	'date_read_to' 		=> date('Y-m-d', strtotime($this->put('date_read_to'))),
-				   	'box_no' 			=> $this->put('box_no'),
-				   	'address' 			=> $this->put('address'),
-				   	'ship_to'			=> $this->put('ship_to'),
-				   	'biller' 			=> $this->put('biller'),
-				   	'customer_id' 		=> $this->put('customer_id'),				   	
-				   	'vendor_id' 		=> $this->put('vendor_id'),
-				   	'reference_type' 	=> $this->put('reference_type'),
-				   	'reference_id' 		=> $this->put('reference_id'),				   	
-				   	'check_no' 			=> $this->put('check_no'),
-				   	'payment_method_id'	=> $this->put('payment_method_id'),
-				   	'payment_term_id'	=> $this->put('payment_term_id'),
-				   	'cash_account_id'	=> $this->put('cash_account_id'),				   	
-				   	'class_id' 			=> $this->put('class_id'),
-				   	'transformer_id' 	=> $this->put('transformer_id'),				   	
-				   	'memo' 				=> $this->put('memo'),
-				   	'memo2' 			=> $this->put('memo2'),
-				   	'company_id' 		=> $this->put('company_id')					
-		);	
-
- 		$result = $this->invoice->update($this->put('id'), $data);
-		$this->response($result, 200);
+	function invoice_put(){		
+		$put = array(
+			"number" 			=> $this->put("number"),
+			"type" 				=> $this->put("type"),
+			"rate" 				=> $this->put("rate"),
+			"sub_code" 			=> $this->put("sub_code"),
+			"vat" 				=> $this->put("vat"),			
+			"vat_id"			=> $this->put("vat_id"),
+			"status" 			=> $this->put("status"),
+			"issued_date" 		=> date("Y-m-d", strtotime($this->put("issued_date"))),
+			"payment_date" 		=> date("Y-m-d", strtotime($this->put("payment_date"))),
+			"due_date" 			=> date("Y-m-d", strtotime($this->put("due_date"))),
+			"expected_date" 	=> date("Y-m-d", strtotime($this->put("expected_date"))),
+			"month_of" 			=> date("Y-m-d", strtotime($this->put("month_of"))),
+			"date_read_from" 	=> date("Y-m-d", strtotime($this->put("date_read_from"))),
+			"date_read_to" 		=> date("Y-m-d", strtotime($this->put("date_read_to"))),
+			"box_no" 			=> $this->put("box_no"),
+			"address" 			=> $this->put("address"),
+			"ship_to" 			=> $this->put("ship_to"),
+			"biller" 			=> $this->put("biller"),
+			"customer_id" 		=> $this->put("customer_id"),
+			"vendor_id" 		=> $this->put("vendor_id"),
+			"reference_type" 	=> $this->put("reference_type"),
+			"reference_id" 		=> $this->put("reference_id"),
+			"check_no" 			=> $this->put("check_no"),
+			"payment_method_id"	=> $this->put("payment_method_id"),
+			"payment_term_id" 	=> $this->put("payment_term_id"),
+			"cash_account_id" 	=> $this->put("cash_account_id"),
+			"class_id" 			=> $this->put("class_id"),
+			"transformer_id" 	=> $this->put("transformer_id"),
+			"memo" 				=> $this->put("memo"),
+			"memo2" 			=> $this->put("memo2"),
+			"company_id" 		=> $this->put("company_id"),					
+		);
+		$result = $this->invoice->update($this->put('id'), $put);		
+		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE
@@ -228,23 +155,29 @@ class Invoices extends REST_Controller {
 	}
 
 	//Generate Invoice's Number
-	Private function get_number($type){
+	Private function _get_number($type){
 		$header = "";
     	switch($type){
 		case "Receipt":
-		  $header = "SR";
-		  break;
+		  	$header = "SR";
+		  	break;
 		case "SO":
-		  $header = "SO";
-		  break;
+		  	$header = "SO";
+		  	break;
 		case "Estimate":
-		  $header = "QO";
-		  break;
+		  	$header = "QO";
+		  	break;
 		case "GDN":
-		  $header = "GDN";
-		  break;				
+		  	$header = "GDN";
+		  	break;
+		case "eInvoice":
+		  	$header = "EINV";
+		  	break;
+		case "wInvoice":
+		  	$header = "WINV";
+		  	break;				
 		default:
-		  $header = "INV";
+		  	$header = "INV";
 		}
 		
 		$YY = date("y");
@@ -279,22 +212,47 @@ class Invoices extends REST_Controller {
 	function invoice_batch_post() {
 		$post = json_decode($this->post('models'));
 
-		foreach ($post as $key => $value) {
-			$arr = $value;
+		$YY = date("y");
+		$MM = date("m");
+		$headerWithDate = "EINV" . $YY . $MM;
+
+		$inv = $this->invoice->order_by("id", "desc")->get_by("type", "eInvoice");
+		$last_no = "";		
+		if(count($inv)>0){
+			$last_no = $inv->number;
+		}
+		$no = 0;
+		$curr_YY = 0;
+
+		if(strlen($last_no)>10){
+			$no = intval(substr($last_no, strlen($last_no) - 5));
+			$curr_YY = intval(substr($last_no, strlen($last_no) - 9, 2));			
 		}
 
-		$data = $this->invoice->insert_many($arr);
+		//Reset invoice number back to 1 for the new year starts
+		if(intval($YY)>$curr_YY){
+			$no = 1;
+		}else{
+			$no++;
+		}
+		
+		foreach ($post as $key => $value) {
+			$value->number = $headerWithDate . str_pad($no, 5, "0", STR_PAD_LEFT);
+			$arr[] = $value;
+
+			$no++;
+		}
+
+		$ids = $this->invoice->insert_many($arr);
+		$data["results"] = $this->invoice->get_many($ids);
 
 		$this->response($data, 201);			
 	}
 
 	//POST MANY
 	function invoice_many_post(){
-		$post = json_decode($this->post("data"));
-	  	foreach ($post as $key => $value) {
-	  		$data[] = $value;	  				 				  	
-	  	}
-	  	$result = $this->invoice->insert_many($data);
+		$post = json_decode($this->post("models"));	  	
+	  	$result = $this->invoice->insert_many($post);
 	  	
 		$this->response($result, 200);		
 	}

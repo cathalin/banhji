@@ -227,7 +227,7 @@ class People_api extends REST_Controller {
 	/* --- PEOPLE --- */
 	
 	//GET 
-	function people_get($type=1) {		
+	function people_get() {		
 		$filter = $this->get("filter");
 		$limit = $this->get("pageSize");
 		$offset = $this->get('skip');
@@ -254,24 +254,26 @@ class People_api extends REST_Controller {
 				$this->people->order_by($sort);
 			}
 
-			$data["results"] = $this->people->type($type)->get_many_by($para);
-			$data["total"] = $this->people->type($type)->count_by($para);		 	
+			$data["results"] = $this->people->get_many_by($para);
+			$data["total"] = $this->people->count_by($para);
 			
-			foreach($data["results"] as $row) {
-				$row->use_electricity = settype($row->use_electricity,'boolean');
+			//Modify field
+			foreach($data["results"] as $key => $row) {
+				$row->use_electricity = $row->use_electricity === 'true'? true: false;
 
-			 //   	//Add extra fields
-				// $extra = array(																   	
-				// 			   	'currencies'	=> $this->currency->get_by("code", $row->currency_code),
-				// 			   	'companies'		=> $this->company->get($row->company_id)
-				// 		  );
+				//Add extra fields
+				$extra = array(	  
+				   "companies"	=> $this->currency->get($row->company_id),
+				   "currencies"	=> $this->currency->get_by("code", $row->currency_code)				   
+				);
 
-				// //Cast object to array
-				// $original =  (array) $row;
+				//Cast object to array
+				$original =  (array) $row;
 
-				// //Merge arrays
-				// $data[] = array_merge($original, $extra);	
+				//Merge arrays
+				$data["results"][$key] = array_merge($original, $extra);			 
 			}
+
 			$this->response($data, 200);
 		}else{
 			$data["results"] = $this->people->get_all();
@@ -283,132 +285,126 @@ class People_api extends REST_Controller {
 	
 	//POST
 	function people_post() {
-		$data = array(
-			'people_type_id'	=> $this->post('people_type_id'),
-			'use_electricity'	=> $this->post('use_electricity'),
-			'use_water'			=> $this->post('use_water'),
-			'number'	 		=> $this->post('number'),
-			'surname'	 		=> $this->post('surname'),
-			'name'	 			=> $this->post('name'),				  	  
-			'gender'	 		=> $this->post('gender'),
-			'dob'	 			=> $this->post('dob'),
-			'pob'	 			=> $this->post('pob'),
-			'phone'	 			=> $this->post('phone'),
-			'email'	 			=> $this->post('email'),
-			'family_member'		=> $this->post('family_member'),
-			'memo'	 			=> $this->post('memo'),
-			'image_url'	 		=> $this->post('image_url'),
-			'card_number'	 	=> $this->post('card_number'),
-			'job'	 			=> $this->post('job'),
-			'company'	 		=> $this->post('company'),
-			'bank_account'		=> $this->post('bank_account'),
-			'credit_limit'	 	=> $this->post("credit_limit"),
+		$post = array(
+			"people_type_id"			=> $this->post("people_type_id"),
+			"use_electricity"			=> $this->post("use_electricity"),
+			"use_water"					=> $this->post("use_water"),
+			"number"					=> $this->post("number"),
+			"surname"					=> $this->post("surname"),
+			"name"						=> $this->post("name"),
+			"gender"					=> $this->post("gender"),
+			"dob"						=> $this->post("dob"),
+			"pob"						=> $this->post("pob"),
+			"phone"						=> $this->post("phone"),
+			"email"						=> $this->post("email"),
+			"family_member"				=> $this->post("family_member"),
+			"memo"						=> $this->post("memo"),
+			"image_url"					=> $this->post("image_url"),
+			"card_number"				=> $this->post("card_number"),
+			"job"						=> $this->post("job"),
+			"company"					=> $this->post("company"),
+			"bank_account"				=> $this->post("bank_account"),
+			"deposit_amount"			=> $this->post("deposit_amount"),
+			"credit_limit"				=> $this->post("credit_limit"),
+			"zip_code"					=> $this->post("zip_code"),
+			"address"					=> $this->post("address"),
+			"address2"					=> $this->post("address2"),
+			"address3"					=> $this->post("address3"),
+			"address4"					=> $this->post("address4"),
+			"ship_to"					=> $this->post("ship_to"),
+			"class_id"					=> $this->post("class_id"),
+			"transformer_id"			=> $this->post("transformer_id"),
+			"province_id"				=> $this->post("province_id"),
+			"district_id"				=> $this->post("district_id"),
+			"commune_id"				=> $this->post("commune_id"),
+			"village_id"				=> $this->post("village_id"),
+			"latitute"					=> $this->post("latitute"),
+			"longtitute"				=> $this->post("longtitute"),
+			"ampere_id"					=> $this->post("ampere_id"),
+			"phase_id"					=> $this->post("phase_id"),
+			"voltage_id"				=> $this->post("voltage_id"),
+			"tariff_plan_id"			=> $this->post("tariff_plan_id"),
+			"maintenance_id"			=> $this->post("maintenance_id"),
+			"round_settle"				=> $this->post("round_settle"),
+			"status"					=> $this->post("status"),
+			"registered_date"			=> date("Y-m-d", strtotime($this->post("registered_date"))),
+			"currency_code"				=> $this->post("currency_code"),
+			"vat_no"					=> $this->post("vat_no"),
+			"account_receiveable_id"	=> $this->post("account_receiveable_id"),
+			"revenue_account_id"		=> $this->post("revenue_account_id"),
+			"account_payable_id"		=> $this->post("account_payable_id"),
+			"parent_id"					=> $this->post("parent_id"),
+			"license_id"				=> $this->post("license_id"),
+			"company_id"				=> $this->post("company_id")
+		);
+		$id = $this->people->insert($this->post());
+		$data["results"] = $this->people->get($id);
 
-			'zip_code' 			=> $this->post('zip_code'),			
-			'address'			=> $this->post('address'),
-			'address2'			=> $this->post('address2'),
-			'address3'			=> $this->post('address3'),
-			'address4'			=> $this->post('address4'),					
-			
-			'class_id' 			=> $this->post('class_id'),
-			'transformer_id'	=> $this->post('transformer_id'),
-			'province_id'	 	=> $this->post('province_id'),
-			'district_id'	 	=> $this->post('district_id'),
-			'commune_id'	 	=> $this->post('commune_id'),
-			'village_id'	 	=> $this->post('village_id'),
-			'latitute' 			=> $this->post('latitute'),
-			'longtitute' 		=> $this->post('longtitute'),
-
-			'ampere_id'	 		=> $this->post('ampere_id'),
-			'phase_id'	 		=> $this->post('phase_id'),
-			'voltage_id'	 	=> $this->post('voltage_id'),
-
-			'tariff_plan_id'	=> $this->post('tariff_plan_id'),
-			'maintenance_id'  	=> $this->post('maintenance_id'),
-			'exemption_id'		=> $this->post('exemption_id'),
-						
-			'status'	 		=> $this->post('status'),
-			'registered_date'	=> date('Y-m-d', strtotime($this->post('registered_date'))),
-
-			'currency_code'			=> $this->post('currency_code'),
-			'vat_no'				=> $this->post('vat_no'),
-			'account_receiveable_id'=> $this->post('account_receiveable_id'),
-			'revenue_account_id'	=> $this->post('revenue_account_id'),
-			'account_payable_id'	=> $this->post('account_payable_id'),			
-
-			'company_id'			=> $this->post('company_id')
-		);			
-		$id = $this->people->insert($data);
-		$this->response($id, 200);		
+		$this->response($data, 201);		
 	}
 	
 	//PUT
 	function people_put() {
-		$data = array(
-			'people_type_id'	=> $this->put('people_type_id'),
-			'use_electricity'	=> $this->put('use_electricity'),
-			'use_water'			=> $this->put('use_water'),
-			'number'	 		=> $this->put('number'),
-			'surname'	 		=> $this->put('surname'),
-			'name'	 			=> $this->put('name'),				  	  
-			'gender'	 		=> $this->put('gender'),
-			'dob'	 			=> $this->put('dob'),
-			'pob'	 			=> $this->put('pob'),
-			'phone'	 			=> $this->put('phone'),
-			'email'	 			=> $this->put('email'),
-			'family_member'		=> $this->put('family_member'),
-			'memo'	 			=> $this->put('memo'),
-			'image_url'	 		=> $this->put('image_url'),
-			'card_number'	 	=> $this->put('card_number'),
-			'job'	 			=> $this->put('job'),
-			'company'	 		=> $this->put('company'),
-			'bank_account'		=> $this->put('bank_account'),
-			'balance'			=> $this->put('balance'),
-			'deposit_amount' 	=> $this->put("deposit_amount"),
-			'credit_limit'	 	=> $this->put("credit_limit"),
-
-			'zip_code' 			=> $this->put('zip_code'),			
-			'address'			=> $this->put('address'),
-			'address2'			=> $this->put('address2'),
-			'address3'			=> $this->put('address3'),
-			'address4'			=> $this->put('address4'),			
-			
-			'class_id' 			=> $this->put('class_id'),
-			'transformer_id'	=> $this->put('transformer_id'),
-			'province_id'	 	=> $this->put('province_id'),
-			'district_id'	 	=> $this->put('district_id'),
-			'commune_id'	 	=> $this->put('commune_id'),
-			'village_id'	 	=> $this->put('village_id'),
-			'latitute' 			=> $this->put('latitute'),
-			'longtitute' 		=> $this->put('longtitute'),
-
-			'ampere_id'	 		=> $this->put('ampere_id'),
-			'phase_id'	 		=> $this->put('phase_id'),
-			'voltage_id'	 	=> $this->put('voltage_id'),
-
-			'tariff_plan_id'	=> $this->put('tariff_plan_id'),
-			'maintenance_id'  	=> $this->put('maintenance_id'),
-			'exemption_id'		=> $this->put('exemption_id'),
-						
-			'status'	 		=> $this->put('status'),
-			'registered_date'	=> date("Y-m-d", strtotime($this->put('registered_date'))),
-
-			'currency_code'			=> $this->put('currency_code'),
-			'vat_no'				=> $this->put('vat_no'),
-			'account_receiveable_id'=> $this->put('account_receiveable_id'),
-			'revenue_account_id'	=> $this->put('revenue_account_id'),
-			'account_payable_id'	=> $this->put('account_payable_id'),			
-
-			'company_id'			=> $this->put('company_id')
+		$put = array(
+			"people_type_id"			=> $this->put("people_type_id"),
+			"use_electricity"			=> $this->put("use_electricity"),
+			"use_water"					=> $this->put("use_water"),
+			"number"					=> $this->put("number"),
+			"surname"					=> $this->put("surname"),
+			"name"						=> $this->put("name"),
+			"gender"					=> $this->put("gender"),
+			"dob"						=> $this->put("dob"),
+			"pob"						=> $this->put("pob"),
+			"phone"						=> $this->put("phone"),
+			"email"						=> $this->put("email"),
+			"family_member"				=> $this->put("family_member"),
+			"memo"						=> $this->put("memo"),
+			"image_url"					=> $this->put("image_url"),
+			"card_number"				=> $this->put("card_number"),
+			"job"						=> $this->put("job"),
+			"company"					=> $this->put("company"),
+			"bank_account"				=> $this->put("bank_account"),
+			"deposit_amount"			=> $this->put("deposit_amount"),
+			"credit_limit"				=> $this->put("credit_limit"),
+			"zip_code"					=> $this->put("zip_code"),
+			"address"					=> $this->put("address"),
+			"address2"					=> $this->put("address2"),
+			"address3"					=> $this->put("address3"),
+			"address4"					=> $this->put("address4"),
+			"ship_to"					=> $this->put("ship_to"),
+			"class_id"					=> $this->put("class_id"),
+			"transformer_id"			=> $this->put("transformer_id"),
+			"province_id"				=> $this->put("province_id"),
+			"district_id"				=> $this->put("district_id"),
+			"commune_id"				=> $this->put("commune_id"),
+			"village_id"				=> $this->put("village_id"),
+			"latitute"					=> $this->put("latitute"),
+			"longtitute"				=> $this->put("longtitute"),
+			"ampere_id"					=> $this->put("ampere_id"),
+			"phase_id"					=> $this->put("phase_id"),
+			"voltage_id"				=> $this->put("voltage_id"),
+			"tariff_plan_id"			=> $this->put("tariff_plan_id"),
+			"maintenance_id"			=> $this->put("maintenance_id"),
+			"round_settle"				=> $this->put("round_settle"),
+			"status"					=> $this->put("status"),
+			"registered_date"			=> date("Y-m-d", strtotime($this->put("registered_date"))),
+			"currency_code"				=> $this->put("currency_code"),
+			"vat_no"					=> $this->put("vat_no"),
+			"account_receiveable_id"	=> $this->put("account_receiveable_id"),
+			"revenue_account_id"		=> $this->put("revenue_account_id"),
+			"account_payable_id"		=> $this->put("account_payable_id"),
+			"parent_id"					=> $this->put("parent_id"),
+			"license_id"				=> $this->put("license_id"),
+			"company_id"				=> $this->put("company_id")
 		);
- 		$result = $this->people->update($this->put('id'), $data);
- 		$this->response($result, 200);
+		$result = $this->people->update($this->put('id'), $put);		
+		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE
 	function people_delete() {
-		//$this->response(array("status"=>$this->delete('id')), 200);
-		$this->people->delete($this->delete('id'));
+		$result = $this->people->delete($this->delete('id'));
+		$this->response($result, 200);
 	}
 
 	//PEOPLE LIST 
@@ -465,13 +461,21 @@ class People_api extends REST_Controller {
 	//UPDATE BALANCE
 	function balance_batch_put(){	   	
 		$put = json_decode($this->put("data"));
+
+		foreach ($put as $key => $value) {
+			$ids[] = $value->id;
+			$this->people->update($value->id, array("balance"=>$value->balance));
+		}
+
+		$data["results"] = $this->people->get_many($ids);
+		$this->response($data, 200);
 	   			
-	  	$result = $this->people->balance_batch($put);
-	  	if($result > 0 ) {
-	  		$this->response(array("status"=>"OK","msg"=>"updated!"), 200);
-	  	} else {
-	  		$this->response(array("status"=>"error","msg"=>"cannot update"), 400);
-	  	}	
+	  	// $result = $this->people->balance_batch($put);
+	  	// if($result > 0 ) {
+	  	// 	$this->response(array("status"=>"OK","msg"=>"updated!"), 200);
+	  	// } else {
+	  	// 	$this->response(array("status"=>"error","msg"=>"cannot update"), 400);
+	  	// }	
 	}
 
 	//UPDATE DEPOSIT
@@ -485,59 +489,72 @@ class People_api extends REST_Controller {
 	}
 	
 	//CUSTOMER SEARCH
-	function customer_search_get() {		
-		$filter = $this->get("filter");		
-		$limit 	= $this->get('pageSize');
-		$offset = $this->get('skip');			
-		$para = array();				
-		for ($i = 0; $i < count($filter['filters']); ++$i) {				
-			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		}
+	function customer_search_get() {
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
 
-		$cusPara = array();
-		if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
-			$cusPara += array("transformer_id"=>$para["transformer_id"]);
-		}
+		if(!empty($filter) && isset($filter)){
+			//Filter
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->people->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->people->order_by($sort);
+			}
 
-	 	$this->people->type(1);
+			$cusPara = array();
+			if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
+				$cusPara += array("transformer_id"=>$para["transformer_id"]);
+			}			
 
-	 	if(!empty($limit) && isset($limit)){
-	 		$this->people->limit($limit, $offset);
-	 	}
+		 	if(!empty($para["name"]) && isset($para["name"])){
+		 		$field = $para["name"];
+				$this->people->where("number LIKE", $field)
+							->or_where("surname LIKE", $field)
+							->or_where("name LIKE", $field)
+							->or_where("id LIKE", $field);
+			}
 
-	 	if(!empty($para["searchField"]) && isset($para["searchField"])){
-	 		$field = $para["searchField"];
-			$this->people->where("number LIKE", $field)
-						->or_where("surname LIKE", $field)
-						->or_where("name LIKE", $field)
-						->or_where("id LIKE", $field);
-		}
+			$data["results"] = $this->people->get_many_by($cusPara);
+			$data["total"] = $this->people->count_by($para);
+			
+			//Modify field
+			foreach($data["results"] as $key => $row) {
+				$row->use_electricity = settype($row->use_electricity,'boolean');
 
-	 	$arr = $this->people->get_many_by($cusPara);		 	
-		if(count($arr) >0){
-			foreach($arr as $row) {
-								
-			   	//Add extra fields
-				$extra = array( 'currencies'	=> $this->currency->get_by("code", $row->currency_code),							
-								'people_types'	=> $this->people_type->get($row->people_type_id),
-							   	//'amperes' 		=> $this->ampere->get($row->ampere_id), 
-							   	// 'phases' 		=> $this->phase->get($row->phase_id),
-							   	// 'voltages'		=> $this->voltage->get($row->voltage_id),
-							   	// 'tariff_plans' 	=> $this->tariff_plan->get($row->tariff_plan_id), 
-							   	// 'maintenances' 	=> $this->maintenance->get($row->maintenance_id),
-							   	// 'exemptions'	=> $this->exemption->get($row->exemption_id),
-							   	// 'classes'		=> $this->classes->get($row->class_id)							   	
-						  );
+				//Add extra fields
+				$extra = array(	  
+				   "companies"	=> $this->currency->get($row->company_id),
+				   "currencies"	=> $this->currency->get_by("code", $row->currency_code)				   
+				);
 
 				//Cast object to array
 				$original =  (array) $row;
 
 				//Merge arrays
-				$data[] = array_merge($original, $extra);	
+				$data["results"][$key] = array_merge($original, $extra);			 
 			}
-			$this->response($data, 200);		
+
+			$this->response($data, 200);
 		}else{
-			$this->response(FALSE, 200);
+			$data["results"] = $this->people->get_all();
+			$data["total"] = $this->people->count_all();
+			
+			$this->response($data, 200);
 		}		
 	}
 

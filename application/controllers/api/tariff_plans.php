@@ -13,29 +13,71 @@ class Tariff_plans extends REST_Controller {
 		
 	//GET 
 	function tariff_plan_get() {
-		$filter = $this->get("filter");			
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
 		if(!empty($filter) && isset($filter)){			
-			$data = $this->tariff_plan->get_by($filter['filters'][0]['field'], $filter['filters'][0]['value']);			
+			//Filter
+			$para = array();				
+			for ($i = 0; $i < count($filter['filters']); ++$i) {				
+				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
+			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->tariff_plan->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->tariff_plan->order_by($sort);
+			}
+
+			$data["results"] = $this->tariff_plan->get_many_by($para);
+			$data["total"] = $this->tariff_plan->count_by($para);
+
+			$this->response($data, 200);			
 		}else{
-			$data = $this->tariff_plan->get_all();	
-		}				
-		$this->response($data, 200);
+			$data["results"] = $this->tariff_plan->get_all();
+			$data["total"] = $this->tariff_plan->count_all();
+			$this->response($data, 200);
+		}			
 	}
 	
 	//POST
-	function tariff_plan_post() {	
-		$this->tariff_plan->insert($this->post());		
+	function tariff_plan_post() {
+		$post = array(								
+			"name"			=> $this->post("name"),
+			"status"		=> $this->post("status"),
+			"company_id"	=> $this->post("company_id")		
+		);		
+		$id = $this->tariff_plan->insert($post);
+		$data["results"] = $this->tariff_plan->get($id);
+
+		$this->response($data, 201);				
 	}
 	
 	//PUT
 	function tariff_plan_put() {
- 		 $this->tariff_plan->update($this->put('id'), $this->put());
+		$put = array(								
+			"name"			=> $this->put("name"),
+			"status"		=> $this->put("status"),
+			"company_id"	=> $this->put("company_id")		
+		);
+		$result = $this->tariff_plan->update($this->put('id'), $put);		
+		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE
-	function tariff_plan_delete() {
-		//$this->response(array("status"=>$this->delete('id')), 200);
-		$this->tariff_plan->delete($this->delete('id'));
+	function tariff_plan_delete() {		
+		$result = $this->tariff_plan->delete($this->delete('id'));
+		$this->response($result, 200);
 	}
 		
 	

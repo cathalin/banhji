@@ -24,85 +24,82 @@ class Meter_records extends REST_Controller {
 	
 	//GET 
 	function meter_record_get() {
-		$filter = $this->get("filter");		
-		if(!empty($filter) && isset($filter)){
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
+		if(!empty($filter) && isset($filter)){			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}			
+			}
 			
-			$limit 	= $this->get('pageSize');
-			$offset = $this->get('skip');
+			//Limit
 			if(!empty($limit) && isset($limit)){
 				$this->meter_record->limit($limit, $offset);
 			}			
-			$arr = $this->meter_record->get_many_by($para);
-			if(count($arr) >0){
-				foreach($arr as $row) {					
-					$activeUsage = ($row->new_reading + $row->new_round) - $row->prev_reading;					
-					$reactiveUsage = ($row->reactive_new_reading + $row->reactive_new_round) - $row->reactive_prev_reading;
-
-					//Add extra fields
-					$extra = array('active_usage' 		=> $activeUsage,
-								   	'reactive_usage'	=> $reactiveUsage,
-								   	'isCheck'			=> false								   					   
-					);
-
-					//Cast object to array
-					$original =  (array) $row;
-
-					//Merge arrays
-					$data[] = array_merge($original, $extra);	
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
 				}
-				$this->response($data, 200);		
-			}else{
-				$empty_array = Array();
-				$this->response($empty_array, 200);
-			}						
+				$this->meter_record->order_by($sort);
+			}
+
+			$data["results"] = $this->meter_record->get_many_by($para);
+			$data["total"] = $this->meter_record->count_by($para);
+
+			//Modify field
+			foreach($data["results"] as $key => $row) {				
+				$row->new_round = $row->new_round === 'true'? true: false;
+				$row->reactive_new_round = $row->reactive_new_round === 'true'? true: false;						 
+			}
+
+			$this->response($data, 200);			
 		}else{
-			$data = $this->meter_record->get_all();
-			$this->response($data, 200);	
+			$data["results"] = $this->meter_record->get_all();
+			$data["total"] = $this->meter_record->count_all();
+			$this->response($data, 200);
 		}				
 	}
 	
 	//POST
 	function meter_record_post() {
-		$data = array('meter_id'			=> $this->post('meter_id'),
-				   	'prev_reading'			=> $this->post('prev_reading'),
-				   	'new_reading' 			=> $this->post('new_reading'),
-				   	'new_round' 			=> $this->post('new_round'),
-				   	'reactive_prev_reading'	=> $this->post('reactive_prev_reading'),								   
-				   	'reactive_new_reading'	=> $this->post('reactive_new_reading'),
-				   	'reactive_new_round'	=> $this->post('reactive_new_round'),			   
-				   	'is_backup_reading' 	=> $this->post('is_backup_reading'),
-				   	'month_of' 				=> $this->post('month_of'),
-				   	'date_read_from'		=> $this->post('date_read_from'),								   
-				   	'date_read_to'			=> $this->post('date_read_to'),
-				   	'reader' 				=> $this->post('reader'),
-				   	'invoice_id'			=> $this->post('invoice_id')					
-		);		
-		$id = $this->meter_record->insert($data);
-		$this->response($id, 200);				
+		$post = json_decode($this->post('models'));		
+		$ids = $this->meter_record->insert_many($post);
+		$data["results"] = $this->meter_record->get_many($ids);
+			
+		$this->response($data, 201);				
 	}
 	
 	//PUT
 	function meter_record_put() {
 		$data = array('id'					=> $this->put('id'),
 					'meter_id'				=> $this->put('meter_id'),
+					'customer_id'			=> $this->put('customer_id'),
+					'transformer_id'		=> $this->put('transformer_id'),
 				   	'prev_reading'			=> $this->put('prev_reading'),
 				   	'new_reading' 			=> $this->put('new_reading'),
+				   	'add_up'				=> $this->put('add_up'),
 				   	'new_round' 			=> $this->put('new_round'),
 				   	'reactive_prev_reading'	=> $this->put('reactive_prev_reading'),								   
 				   	'reactive_new_reading'	=> $this->put('reactive_new_reading'),
+				   	'reactive_add_up'		=> $this->put('reactive_add_up'),
 				   	'reactive_new_round'	=> $this->put('reactive_new_round'),			   
 				   	'is_backup_reading' 	=> $this->put('is_backup_reading'),
-				   	'month_of' 				=> $this->put('month_of'),
-				   	'date_read_from'		=> $this->put('date_read_from'),								   
-				   	'date_read_to'			=> $this->put('date_read_to'),
+				   	'month_of' 				=> date("Y-m-d", strtotime($this->put("month_of"))),
+				   	'date_read_from'		=> date("Y-m-d", strtotime($this->put("date_read_from"))),								   
+				   	'date_read_to'			=> date("Y-m-d", strtotime($this->put("date_read_to"))),
 				   	'reader' 				=> $this->put('reader'),
 				   	'invoice_id'			=> $this->put('invoice_id')					
 		);
-		$this->meter_record->update($this->put('id'), $data);
+		
+		$result = $this->meter_record->update($this->put('id'), $data);		
+		$this->response(array("updated"=>$result, "results"=>$data), 200);
 	}
 	
 	//DELETE
@@ -124,14 +121,14 @@ class Meter_records extends REST_Controller {
 	//UPDATE BATCH
 	function meter_record_batch_put(){
 		$put = json_decode($this->put("data"));
-	   	//$data = array();	  		  	
-		
-	  	$result = $this->meter_record->update_batch($put);
-	  	if($result > 0 ) {
-	  		$this->response(array("status"=>"OK","msg"=>"updated!"), 200);
-	  	} else {
-	  		$this->response(array("status"=>"error","msg"=>"cannot update"), 400);
-	  	}			
+	   	
+		foreach ($put as $key => $value) {
+			$ids[] = $value->id;
+			$this->meter_record->update($value->id, array("invoice_id"=>$value->invoice_id));
+		}
+
+		$data["results"] = $this->meter_record->get_many($ids);
+		$this->response($data, 200);	  				
 	}	
 
 	//UPDATE READING
@@ -340,14 +337,13 @@ class Meter_records extends REST_Controller {
 		$data = array();
 		if(count($arr) >0){
 			foreach($arr as $row){				
-				$activeUsage = ($row->new_reading + $row->new_round - $row->prev_reading)*$row->multiplier;
-				$reactiveUsage = ($row->reactive_new_reading + $row->reactive_new_round - $row->reactive_prev_reading)*$row->multiplier;
+				$activeUsage = ($row->new_reading + $row->add_up - $row->prev_reading)*$row->multiplier;
+				$reactiveUsage = ($row->reactive_new_reading + $row->reactive_add_up - $row->reactive_prev_reading)*$row->multiplier;
 
 			   	//Add extra fields
 				$extra = array('active_usage' 		=> $activeUsage,
 								'reactive_usage'	=> $reactiveUsage,
-								'people'			=> $this->people->get($row->customer_id),
-								//'meters'			=> $this->meter->get($row->meter_id),
+								'people'			=> $this->people->get($row->customer_id),								
 							   	'electricity_boxes' => $this->electricity_box->get($row->electricity_box_id),
 							   	'isCheck'			=> false						   	
 						  );
@@ -473,64 +469,65 @@ class Meter_records extends REST_Controller {
 	}
 
 	//READING	
-	function reading_get() {
-		$filter = $this->get("filter");		
-		$para = array();				
-		for ($i = 0; $i < count($filter['filters']); ++$i) {				
-			$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-		}
-		$arr = $this->meter->order_by("customer_id", "asc")->get_many_by($para);
+	function reading_get() {		
+		$transformer_id = $this->get("transformer_id");
+		$monthOf = date("Y-m-d", strtotime($this->get("month_of")));
 
-		$data = array();
-		if(count($arr)>0){
-			//Reading
+		$readings = $this->meter_record->get_many_by(array(
+														"transformer_id"=>$transformer_id,
+														"month_of"=>$monthOf
+													));		
+		if(count($readings)>0){			
 			$meterIds = array();
-			foreach ($arr as $row) {
-				array_push($meterIds, $row->id);
+			foreach ($readings as $row) {
+				array_push($meterIds, $row->meter_id);
 			}
-			$meterRecord = $this->meter_record->where_in("meter_id", $meterIds)->distinct("meter_id")->order_by("month_of", "desc")->get_all();			
-			
-			$customer_id = 0;
-			$people = null;
-			foreach ($arr as $row) {
-				$month_of = "";
-				$prev_reading = "";
-				$reactive_prev_reading = "";
-				if(count($meterRecord)>0){
-					foreach ($meterRecord as $mr) {
-						if($mr->meter_id===$row->id){
-							$month_of = $mr->month_of;
-							$prev_reading = $mr->new_reading;
-							$reactive_prev_reading = $mr->reactive_new_reading;
-							break;
-						}
-					}					
-				}
 
-				if($row->customer_id!==$customer_id){
-					$people = $this->people->get($row->customer_id);
-					$customer_id = $row->customer_id;
-				}
-
-			   	//Add extra fields
-				$extra = array('people'				=> $people,						    
-						    'electricity_boxes'		=> $this->electricity_box->get($row->electricity_box_id),						    
-						    'month_of' 				=> $month_of,
-						    'rcheckNewRound'		=> false,
-						    'reactive_prev_reading'	=> $reactive_prev_reading,				  		
-					  		'reactive_new_reading' 	=> "",
-					  		'checkNewRound'			=> false,
-					  		'prev_reading'			=> $prev_reading,					  		
-					  		'new_reading'			=> ""						   	
-						  );
-
-				//Cast object to array
-				$original = (array) $row;
-
-				//Merge arrays
-				$data[] = array_merge($original, $extra);	
-			}
+			$this->meter->where_not_in("id", $meterIds);			
 		}
+		
+		$meter = $this->meter->get_many_by(array(
+												"transformer_id"=>$transformer_id,
+												"status"=>1
+											));
+		
+		foreach ($meter as $row) {
+			$meter_record = $this->meter_record->get_by(array(
+															"meter_id"=>$row->id,
+															"month_of <"=>$monthOf
+													    ));
+			$last_reading = "";
+			$last_reactive_reading = "";
+			if(count($meter_record)>0){
+				$last_reading = $meter_record->new_reading;
+				
+				if($meter_record->reactive_new_reading>0){
+					$last_reactive_reading = $meter_record->reactive_new_reading;
+				}
+			}
+
+		   	//Add extra fields
+			$extra = array(						
+						"people"		=> $this->people->get($row->customer_id),
+						"prev_reading"  => $last_reading,
+						"new_reading" 	=> "",
+						"total_active"  => 0,
+						"add_up" 		=> 0,
+						"new_round"		=> false,
+						"reactive_prev_reading" => $last_reactive_reading,
+						"reactive_new_reading" 	=> "",
+						"total_reactive"=> 0,
+						"reactive_add_up" 		=> 0,
+						"reactive_new_round"	=> false						    				   	
+					 );
+
+			//Cast object to array
+			$original = (array)$row;
+
+			//Merge arrays
+			$data[] = array_merge($original, $extra);	
+		}		
+
 		$this->response($data, 200);			
 	}
 

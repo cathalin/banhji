@@ -53,15 +53,33 @@ class Fees extends REST_Controller {
 	}
 	
 	//POST
-	function fee_post() {		
+	function fee_post() {
+		$post = array(
+			"type" 				=> $this->post("type"),
+			"name" 				=> $this->post("name"),
+			"amount" 			=> $this->post("amount"),
+			"exemption_type" 	=> $this->post("exemption_type"),
+			"description" 		=> $this->post("description"),			
+			"company_id"		=> $this->post("company_id")					
+		);		
 		$id = $this->fee->insert($this->post());
-		$this->response($id, 201);				
+		$data["results"] = $this->fee->get($id);
+
+		$this->response($data, 201);				
 	}
 	
 	//PUT
 	function fee_put() {
-		$result = $this->fee->update($this->put('id'), $this->put());
-		$this->response($result, 200);
+		$put = array(
+			"type" 				=> $this->put("type"),
+			"name" 				=> $this->put("name"),
+			"amount" 			=> $this->put("amount"),
+			"exemption_type" 	=> $this->put("exemption_type"),
+			"description" 		=> $this->put("description"),			
+			"company_id"		=> $this->put("company_id")					
+		);	
+		$result = $this->fee->update($this->put('id'), $put);		
+		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE

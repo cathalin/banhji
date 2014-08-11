@@ -79,42 +79,41 @@ class Files extends REST_Controller {
 		$this->load->library('getcsv');
 		$path = './uploads/documents/'.'meter_read.csv';
 		$arr = $this->getcsv->set_file_path($path)->get_array();
-		$data = array();
-		if(count($arr)>0){
-			foreach($arr as $row) {
-				//$meters = $this->meter->get_customer_meter_by_meter_no($row['meter'])->get_all();
-				$meters = $this->meter->get_many_by('meter_no', $row['meter']);								
-				foreach($meters as $m) {
-					$meter_record_id = $this->meter_record->max($m->id);
-					
-					$data[] = array(
-						'id' 				=> $m->id,					   		
-				  	 	'meter_no'			=> $m->meter_no,					  	 	
-				  	 	'parent_id'			=> $m->parent_id,
-				  	 	'tariff_id'			=> $m->tariff_id,
-				  	 	'max_digit'			=> $m->max_digit,
+		$this->response($arr, 200);
 
-				  	 	'customers'			=> $this->people->get($m->customer_id),						    
-					    'electricity_boxes'	=> $this->electricity_box->get($m->electricity_box_id),					  		
-					    'meter_records'		=> $this->meter_record->get($meter_record_id),
-					
-				  		'rcheckNewRound'		=> false,					  		
-				  		'reactive_new_reading' 	=> "",
-				  		'checkNewRound'			=> false,					  		
-				  		'new_reading'			=> $row['reading']				  						  									    								   
-					);
-					
-				}				
-			}
-			if(count($data)>0){
-				$this->response($data, 200);
-			}else{
-				$this->response(FALSE, 200);
-			}					
-		}else{
-			$this->response(FALSE, 200);
-		}
-		//$this->response($arr, 200);		
+		$data = array();
+		//if(count($arr)>0){
+			// $meterNoList = array();
+			// foreach ($arr as $key => $value) {
+			// 	$meterNoList[] = $value->meter;
+			// }
+						
+			//$meters = $this->meter->where_in("meter_no", $meterNoList)->get_all();								
+			// foreach($meters as $m) {
+			// 	$meter_record_id = $this->meter_record->max($m->id);
+				
+			// 	$data[] = array(						
+			// 		'id' 				=> $m->id,					   		
+			//   	 	'meter_no'			=> $m->meter_no,					  	 	
+			//   	 	'parent_id'			=> $m->parent_id,
+			//   	 	'tariff_id'			=> $m->tariff_id,
+			//   	 	'max_digit'			=> $m->max_digit,
+
+			//   	 	'customers'			=> $this->people->get($m->customer_id),						    
+			// 	    'electricity_boxes'	=> $this->electricity_box->get($m->electricity_box_id),					  		
+			// 	    'meter_records'		=> $this->meter_record->get($meter_record_id),
+				
+			//   		'rcheckNewRound'		=> false,					  		
+			//   		'reactive_new_reading' 	=> "",
+			//   		'checkNewRound'			=> false,					  		
+			//   		'new_reading'			=> $row['reading']				  						  									    								   
+			// 	);
+				
+			// }			
+							
+		// }else{
+		// 	$this->response(array(), 200);
+		// }			
 	}
 
 

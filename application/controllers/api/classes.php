@@ -90,20 +90,42 @@ class Classes extends REST_Controller {
 	}
 
 	//BY DAWINE 
-	function class_dropdown_get(){
-		$filter = $this->get("filter");		
+	function index_get() {
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
 		if(!empty($filter) && isset($filter)){			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}			
-			$data = $this->classes->get_many_by($para);
+			}
 			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->classes->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->classes->order_by($sort);
+			}
+
+			$data["results"] = $this->classes->get_many_by($para);
+			$data["total"] = $this->classes->count_by($para);
+
 			$this->response($data, 200);			
 		}else{
-			$data = $this->classes->get_all();
+			$data["results"] = $this->classes->get_all();
+			$data["total"] = $this->classes->count_all();
 			$this->response($data, 200);
-		}
+		}			
 	}
 
 	

@@ -22,84 +22,134 @@ class Meters extends REST_Controller {
 	
 	//GET 
 	function meter_get() {
-		$filter = $this->get("filter");		
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
 		if(!empty($filter) && isset($filter)){			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}			
-			$arr = $this->meter->get_many_by($para);
-		
-			if(count($arr) >0){
-				foreach($arr as $row) {					
-				   	//Add extra fields
-					$extra = array('items'					=> $this->item->get($row->item_id),
-								    'parents'				=> $this->meter->get($row->parent_id),
-								    'electricity_boxes'		=> $this->electricity_box->get($row->electricity_box_id),								    
-								    'avg'					=> $this->meter_record->avg($row->id),								   								   	
-								   	'meter_records'			=> $this->meter_record->order_by('id', 'DESC')->get_by('meter_id', $row->id)						   	
-							  );
-
-					//Cast object to array
-					$original = (array) $row;
-
-					//Merge arrays
-					$data[] = array_merge($original, $extra);	
-				}
-				$this->response($data, 200);		
-			}else{				
-				$this->response(Array(), 200);
 			}
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->meter->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+				}
+				$this->meter->order_by($sort);
+			}
+
+			$data["results"] = $this->meter->get_many_by($para);
+			$data["total"] = $this->meter->count_by($para);
+
+			//Modify field
+			foreach($data["results"] as $key => $row) {
+				$row->ear_sealed = $row->ear_sealed === 'true'? true: false;
+				$row->cover_sealed = $row->cover_sealed === 'true'? true: false;
+				
+				//Add extra fields
+				$extra = array(	  
+				   'electricity_boxes'	=> $this->electricity_box->get($row->electricity_box_id)
+				);
+
+				//Cast object to array
+				$original = (array)$row;
+
+				//Merge arrays
+				$data["results"][$key] = array_merge($original, $extra);			 
+			}
+
+			$this->response($data, 200);			
 		}else{
-			$data = $this->meter->get_all();
+			$data["results"] = $this->meter->get_all();
+			$data["total"] = $this->meter->count_all();
 			$this->response($data, 200);
-		}		
+		}			
 	}
 	
 	//POST
 	function meter_post() {
-		$data = array('type' 				=> $this->post('type'),
-					'meter_no' 				=> $this->post('meter_no'),
-					'multiplier' 			=> $this->post('multiplier'),
-					'max_digit' 			=> $this->post('max_digit'),
-					'status' 				=> $this->post('status'),
-					'ear_sealed' 			=> $this->post('ear_sealed'),					 
-					'cover_sealed'			=> $this->post('cover_sealed'),
-					'tariff_id'				=> $this->post('tariff_id'),
-					'memo'					=> $this->post('memo'),
-					'customer_id' 			=> $this->post('customer_id'),
-					'item_id' 				=> $this->post('item_id'),
-					'transformer_id' 		=> $this->post('transformer_id'),										
-					'electricity_box_id'	=> $this->post('electricity_box_id'),
-					'date_used' 			=> date('Y-m-d', strtotime($this->post('date_used'))),
-					'parent_id'				=> $this->post('parent_id')					
-		);			
-		$id = $this->meter->insert($data);		
+		$data = array(
+			"type" 				=> $this->post("type"),
+			"meter_no" 			=> $this->post("meter_no"),
+			"multiplier" 		=> $this->post("multiplier"),
+			"max_digit" 		=> $this->post("max_digit"),
+			"status" 			=> $this->post("status"),
+			"ear_sealed" 		=> $this->post("ear_sealed"),
+			"cover_sealed" 		=> $this->post("cover_sealed"),
+			"tariff_id" 		=> $this->post("tariff_id"),
+			"memo" 				=> $this->post("memo"),
+			"customer_id" 		=> $this->post("customer_id"),
+			"item_id" 			=> $this->post("item_id"),
+			"transformer_id" 	=> $this->post("transformer_id"),
+			"electricity_box_id"=> $this->post("electricity_box_id"),
+			"date_used" 		=> date('Y-m-d', strtotime($this->post("date_used"))),
+			"parent_id" 		=> $this->post("parent_id")
+		);
 
-		$this->response($id, 201);					
+		$id = $this->meter->insert($data);
+		$arr = $this->meter->get($id);
+		
+		//Add extra fields
+		$extra = array(	  
+		   	'electricity_boxes'	=> $this->electricity_box->get($arr->electricity_box_id)
+		);
+
+		//Cast object to array
+		$original = (array)$arr;
+
+		//Merge arrays
+		$result["results"] = array_merge($original, $extra);		
+		
+		$this->response($result, 201);				
 	}
 	
 	//PUT
 	function meter_put() {
-		$data = array('type' 				=> $this->put('type'),
-					 'meter_no' 			=> $this->put('meter_no'),
-					 'multiplier' 			=> $this->put('multiplier'),
-					 'max_digit' 			=> $this->put('max_digit'),
-					 'status' 				=> $this->put('status'),
-					 'ear_sealed' 			=> $this->put('ear_sealed'),
-					 'cover_sealed'			=> $this->put('cover_sealed'),					 
-					 'tariff_id'			=> $this->put('tariff_id'),
-					 'memo'					=> $this->put('memo'),					 
-					 'customer_id' 			=> $this->put('customer_id'),
-					 'item_id' 				=> $this->put('item_id'),
-					 'transformer_id' 		=> $this->put('transformer_id'),				 
-					 'electricity_box_id'	=> $this->put('electricity_box_id'),					 
-					 'date_used' 			=> date('Y-m-d', strtotime($this->put('date_used'))),				 
-					 'parent_id'			=> $this->put('parent_id')					 
-		);				
-		$result = $this->meter->update($this->put('id'), $data);
+		$date_used = new DateTime($this->put("date_used"));
 
-		$this->response($result, 200);
+		$data = array(
+			"type" 				=> $this->put("type"),
+			"meter_no" 			=> $this->put("meter_no"),
+			"multiplier" 		=> $this->put("multiplier"),
+			"max_digit" 		=> $this->put("max_digit"),
+			"status" 			=> $this->put("status"),
+			"ear_sealed" 		=> $this->put("ear_sealed"),
+			"cover_sealed" 		=> $this->put("cover_sealed"),
+			"tariff_id" 		=> $this->put("tariff_id"),
+			"memo" 				=> $this->put("memo"),
+			"customer_id" 		=> $this->put("customer_id"),
+			"item_id" 			=> $this->put("item_id"),
+			"transformer_id" 	=> $this->put("transformer_id"),
+			"electricity_box_id"=> $this->put("electricity_box_id"),
+			"date_used" 		=> $date_used->format('Y-m-d'),
+			"parent_id" 		=> $this->put("parent_id")
+		);
+
+		$result = $this->meter->update($this->put("id"), $data);
+		$arr = $this->meter->get($this->put("id"));
+		
+		//Add extra fields
+		$extra = array(	  
+		   	'electricity_boxes'	=> $this->electricity_box->get($arr->electricity_box_id)
+		);
+
+		//Cast object to array
+		$original = (array)$arr;
+
+		//Merge arrays
+		$meter = array_merge($original, $extra);
+
+		$this->response(array("updated"=>$result, "results"=>$meter), 200);
 	}
 	
 	//DELETE

@@ -7,8 +7,7 @@ class Companies extends REST_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->model('company_m', 'company');
-		$this->load->model('license_m', 'license');
-		$this->load->model('accounting/currency_model', 'currency');
+		$this->load->model('license_m', 'license');		
 	}
 	
     function index_get() {
@@ -73,90 +72,59 @@ class Companies extends REST_Controller {
 	//By the great mighty Dawine
 	//GET 
 	function company_get() {
-		$filter = $this->get("filter");		
-		if(!empty($filter) && isset($filter)){				
+		$filter = $this->get("filter");
+		$limit = $this->get("pageSize");
+		$offset = $this->get('skip');
+		$sorter = $this->get("sort");
+
+		if(!empty($filter) && isset($filter)){			
+			//Filter
 			$para = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$arr = $this->company->get_many_by($para);
-
-			if(count($arr) >0){
-				foreach($arr as $row) {					
-
-					//Add extra fields
-					$extra = array('based_currencies' 	=> $this->currency->get_by("code",$row->based_currency),
-									'parents'			=> $this->company->get($row->parent_id),
-									'company_types' 	=> $this->get_company_types($row->company_type_id)						   	
-							  );
-
-					//Cast object to array
-					$original = (array) $row;
-
-					//Merge arrays
-					$data[] = array_merge($original, $extra);
+			
+			//Limit
+			if(!empty($limit) && isset($limit)){
+				$this->company->limit($limit, $offset);
+			}			
+			
+			//Sort
+			if(!empty($sorter) && isset($sorter)){			
+				$sort = array();
+				for ($j = 0; $j < count($sorter); ++$j) {				
+					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
 				}
-				$this->response($data, 200);
-			}else{
-				$this->response(Array(), 200);
+				$this->company->order_by($sort);
 			}
+
+			$data["results"] = $this->company->get_many_by($para);
+			$data["total"] = $this->company->count_by($para);
+
+			$this->response($data, 200);			
 		}else{
-			$data = $this->company->get_all();
+			$data["results"] = $this->company->get_all();
+			$data["total"] = $this->company->count_all();
 			$this->response($data, 200);
-		}				
+		}			
 	}
 	
 	//POST
-	function company_post() {
-		$data = array('name' 	=> $this->post('name'),
-			'abbr'		 		=> $this->post('abbr'),			
-			'year_founded'    	=> $this->post('year_founded'),			
-			'operation_license' => $this->post('operation_license'),
-			'mobile' 			=> $this->post('mobile'),
-			'phone' 			=> $this->post('phone'),
-			'email'				=> $this->post('email'),
-			'address' 			=> $this->post('address'),
-			'term_of_condition' => $this->post('term_of_condition'),
-			'representative'  	=> $this->post('representative'),
-			'fiscal_year' 		=> $this->post('fiscal_year'),
-			'vat_no' 			=> $this->post('vat_no'),
-			'based_currency'  	=> $this->post('based_currency'),
-			'use_generator' 	=> $this->post('use_generator'),
-			'image_url' 		=> $this->post('image_url'),
-			'company_type_id' 	=> $this->post('company_type_id'),
-			'parent_id' 		=> $this->post('parent_id')					
-		);	
-		$id = $this->company->insert($data);
-		$this->response($id, 200);		
+	function company_post() {		
+		$id = $this->company->insert($this->post());
+		$data = $this->company->get($id);
+
+		$this->response($data, 201);			
 	}
 	
 	//PUT
 	function company_put() {
-		$data = array('name' 	=> $this->put('name'),
-			'abbr'		 		=> $this->put('abbr'),			
-			'year_founded'    	=> $this->put('year_founded'),			
-			'operation_license' => $this->put('operation_license'),
-			'mobile' 			=> $this->put('mobile'),
-			'phone' 			=> $this->put('phone'),
-			'email'				=> $this->put('email'),
-			'address' 			=> $this->put('address'),
-			'term_of_condition' => $this->put('term_of_condition'),
-			'representative'  	=> $this->put('representative'),
-			'fiscal_year' 		=> $this->put('fiscal_year'),
-			'vat_no' 			=> $this->put('vat_no'),
-			'based_currency'  	=> $this->put('based_currency'),
-			'use_generator' 	=> $this->put('use_generator'),
-			'image_url' 		=> $this->put('image_url'),
-			'company_type_id' 	=> $this->put('company_type_id'),
-			'parent_id' 		=> $this->put('parent_id')					
-		);
- 		$result = $this->company->update($this->put('id'), $data);
- 		$this->response($result, 200);
+		$result = $this->company->update($this->put('id'), $this->put());		
+		$this->response(array("updated"=>$result, "data"=>$this->put()), 200);
 	}
 	
 	//DELETE
-	function company_delete() {
-		//$this->response(array("status"=>$this->delete('id')), 200);
+	function company_delete() {		
 		$result = $this->company->delete($this->delete('id'));
 		$this->response($result, 200);
 	}
