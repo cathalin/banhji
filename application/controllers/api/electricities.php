@@ -120,30 +120,35 @@ class Electricities extends REST_Controller {
 	//Getting the record of tranformer with given id
 	public function transformerRecords_get() {
 		$filter= $this->get('filter');
+		$limit = $this->get("pageSize");
+		$offset = $this->get("skip"); 
 		if(!empty($filter) && isset($filter)){			
 			$criteria = array();				
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$criteria += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			$query = $this->record->limit(12)->get_many_by($criteria);
-		} else {
-			$query = $this->record->get_all();
-		}
-		if(count($query) > 0) {
-			foreach($query as $row){	
-				$arr[] = array(
-					"bill"				=> $this->bill->get($row->bill_id),
-					"id"				=> $row->id,
-					"multiplier"		=> $row->multiplier,
-					"new_reading"		=> $row->new_reading,
-					"prev_reading"		=> $row->prev_reading,
-					"tariff"			=> $row->tariff,
-					"transformer"		=> $this->transformer->get($row->transformer_id),
-					"created_at"		=> $row->created_at,
-					"updated_at"		=> $row->updated_at
-				);						
+			$query = $this->record->limit($limit, $offset)->get_many_by($criteria);
+			$count = $this->record->count_by($criteria);
+
+			if(count($query)>0) {
+				foreach($query as $row){	
+					$arr[] = array(
+						"bill_id"			=> $row->bill_id,
+						"id"				=> $row->id,
+						"multiplier"		=> $row->multiplier,
+						"new_reading"		=> $row->new_reading,
+						"prev_reading"		=> $row->prev_reading,
+						"tariff"			=> $row->tariff,
+						"transformer_id"	=> $row->transformer_id,
+						"amount"			=> $row->amount,
+						"created_at"		=> $row->created_at,
+						"updated_at"		=> $row->updated_at
+					);						
+				}
+				$this->response(array("status"=>"OK", "count"=>$count, "message"=>"data found.", "results"=>$arr), 200);	
+			} else {
+				$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 			}
-			$this->response(array("status"=>"OK", "results"=>$arr), 200);	
 		} else {
 			$this->response(array("status"=>"Error", "count"=>0, "results"=>array()), 200);
 		}
@@ -172,51 +177,81 @@ class Electricities extends REST_Controller {
 	}
 
 	public function transformerRecords_post() {
-		$arrayData = $this->post();
-		foreach($arrayData as $value) {
+		$postedData = json_decode($this->post('models'));
+		foreach($postedData as $k=>$v) {
 			$data[] = array(
-					"bill_id" => $value['bill_id'],
-					"transformer_id" => $value['transformer_id']['id'],
-					"new_reading" => $value['new_reading'],
-					"prev_reading" => $value['prev_reading'],
-					"multiplier" => $value['multiplier'],
-					"tariff" => $value['tariff'],
-					"vendor_id" => $value['vendor_id']
+					"bill_id" => $v->bill_id,
+					"transformer_id" => $v->transformer_id,
+					"new_reading" => $v->new_reading,
+					"prev_reading" => $v->prev_reading,
+					"multiplier" => $v->multiplier,
+					"tariff" => $v->tariff,
+					"amount" => $v->amount,
+					"vendor_id" => $v->vendor_id
 				);			
 		}
 		$ids = $this->record->insert_many($data);
 		// $this->response($data, 200);
 		if(count($ids) > 0) {
-			$this->response(array("status"=>"OK","message"=>"Records created","id"=>$ids), 200);
+			$query = $this->record->get_many($ids);
+			$this->response(array("status"=>"OK","message"=>"Records created","results"=>$query), 200);
 		} else {
 			$this->response(array("status"=>"Failed","message"=>"Records cannot be created"), 200);
 		}
 	}
 
 	public function transformerRecords_put() {
-		$bill = $this->put('bill');
-		$trans = $this->put('transformer');
-		$arrayData = array(
-			'bill_id' => $bill['id'],
-			'transformer_id' => $trans['id'],
-			'new_reading' => $this->put('new_reading'),
-			'prev_reading' => $this->put('prev_reading'),
-			'multiplier' => $this->put('multiplier'),
-			'tariff' => $this->put('tariff')
-
-		);
-		if($this->record->update($this->put('id'), $arrayData)) {
-			$this->response($this->record->get($this->put('id')), 200);
+		$postedData = json_decode($this->put('models'));
+		$ids = array();
+		if($postedData){
+			foreach($postedData as $k=>$v) {
+				$ids[] = $v->id;
+				$data = array(
+						"transformer_id" => $v->transformer_id,
+						"new_reading" => $v->new_reading,
+						"prev_reading" => $v->prev_reading,
+						"multiplier" => $v->multiplier,
+						"tariff" => $v->tariff,
+						"amount" => $v->amount
+					);
+				$this->record->update($v->id, $data);			
+			}
+		
+ 			$query = $this->record->get_many($ids);
+ 			if(count($query) > 0) {
+ 				foreach($query as $q) {
+					$results[] = array(
+						"bill_id" => $q->bill_id,
+						"transformer_id" => $q->transformer_id,
+						"new_reading" => $q->new_reading,
+						"prev_reading" => $q->prev_reading,
+						"multiplier" => $q->multiplier,
+						"tariff" => $q->tariff,
+						"amount" => $q->amount,
+						"vendor_id" => $q->vendor_id
+					);
+				}
+				$this->response(array("status"=>"OK", "message"=>"Purchase Order created.", "results"=>$results), 201);
+ 			} else {
+ 				$this->response(array("status"=>"Error", "message"=>"No results found.", "results"=>array()), 200);
+ 			}
 		} else {
-			$this->response(array("status"=>"error", "message"=>"update failed."), 400);
+			$this->response(array("status"=>"Error", "message"=>"No results found.", "results"=>array()), 200);
 		}
 	}
 
 	public function transformerRecords_delete() {
-		if($this->record->delete($this->delete('id'))) {
-			$this->response(array("status"=>"successful", "message"=>"Deleted."), 200);
+		$ids = json_decode($this->delete('models'));
+		$this->db->trans_start();
+		foreach($ids as $key=>$value) {
+			$this->record->delete($value->id);
+		}	
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() !== FALSE) {
+			$this->response(array("status"=>"OK", "message"=>"Purchase Order deleted.", "results"=>array()), 200);
 		} else {
-			$this->response(array("status"=>"error", "message"=>"update failed."), 400);
+			$this->response(array("status"=>"Failed", "message"=>"Cannot delete Purchase Order.", "results"=>array()), 200);
 		}
 	}
 

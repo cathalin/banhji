@@ -10,6 +10,6 @@ banhji.km = [
 	{menu:"accounting", locale: "គណនេយ្យ", icon: "nameplate"},
 	{menu:"inventories", locale: "សន្និធិ", icon: "shopping_cart"},
 	{menu:"reports", locale: "របាយការណ៍", icon: "history"},
-	{menu:"Electricity", locale: "ភ្លើងអគ្គិសនី", icon: "lightbulb"},
+	{menu:"transformers", locale: "ភ្លើងអគ្គិសនី", icon: "lightbulb"},
 	{menu:"my", locale: "គណនេយ្យខ្ម្ញុំ", icon: "history"}
 ]

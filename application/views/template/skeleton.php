@@ -102,15 +102,6 @@
 	}
 </style>
 
-<!-- FireBug Lite -->
-<!-- <script src="https://getfirebug.com/firebug-lite-debug.js"></script> -->
-
-<!-- LESS.js Library -->
-<script src="<?php echo base_url();?>resources/common/theme/scripts/plugins/system/less.min.js"></script>
-
-<!-- Print JS -->
-<script src="<?php echo base_url();?>resources/js/jquery.print.js"></script>
-<script src="<?php echo base_url();?>resources/js/libs/rsvp-latest.js"></script>
 <!-- Global -->
 <script>
 //<![CDATA[
@@ -134,6 +125,11 @@ var themerPrimaryColor = primaryColor;
 <script src="<?php echo base_url(JS."cultures/kendo.culture.km-KH.min.js");?>"></script>
 <script src="<?php echo base_url(JS."cultures/kendo.culture.th-TH.min.js");?>"></script>
 <script src="<?php echo base_url(JS."cultures/kendo.culture.vi-VN.min.js");?>"></script>
+<!-- LESS.js Library -->
+<script src="<?php echo base_url();?>resources/common/theme/scripts/plugins/system/less.min.js"></script>
+
+<!-- Print JS -->
+<script src="<?php echo base_url();?>resources/js/jquery.print.js"></script>
 
 <!--start kendo localization in Khmer-->
 <script>
