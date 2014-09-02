@@ -751,7 +751,7 @@ class Accounting_api extends REST_Controller {
 						'amount_paid' 		=> $row->amount_paid,
 						'payment_method'	=> $row->payment_method,
 						'date'				=> $row->date,
-						'dueDate'			=> $row->due_date,
+						'due_date'			=> $row->due_date,
 						'address' 			=> $row->address,
 						'ship_to' 			=> $row->ship_to,
 						'class_name'		=> $this->classes->get_by('id', $row->class_id),
@@ -778,11 +778,13 @@ class Accounting_api extends REST_Controller {
 	public function journals_post() {
 		$arr = array(
 					'company_id'		=> $this->post('company_id'),
+					'number'			=> $this->getNumber($this->post('company_id')),
 					'amount_billed'		=> $this->post('amount_billed'),
 					'amount_due'		=> $this->post('amount_due'),
 					'amount_paid'		=> $this->post('amount_paid'),
 					'memo' 				=> $this->post('memo'),
-					'payment_method'	=> $this->post('payment_method'),		 							
+					'payment_method'	=> $this->post('payment_method'),
+					'reference' 		=> $this->post('reference'),		 							
 					'voucher' 	    	=> $this->post('voucher'),			
 					'class_id' 		    => $this->post('class_id'),
 					'budget_id' 		=> $this->post('budget_id'),
@@ -793,9 +795,8 @@ class Accounting_api extends REST_Controller {
 					'employee_id' 		=> $this->post('employee_id'),
 					'check_no'			=> $this->post('check_no') ? $this->post('check_no') : "",
 					'payment_id' 		=> $this->post('payment_id') ? $this->post('payment_id') : 0,
-					'number' 			=> $this->post('number') ? $this->post('number') : "",
 					'date' 				=> date('Y-m-d', strtotime($this->post('date'))),
-					'due_date'			=> date('Y-m-d', strtotime($this->post('dueDate'))),
+					'due_date'			=> date('Y-m-d', strtotime($this->post('due_date'))),
 					'status'			=> $this->post('status'),
 					'vat_id'			=> is_array($this->post('vat_id')) ? $this->post('vat_id')['id'] : $this->post('vat_id'),
 					'inJournal'			=> $this->post('inJournal')									
@@ -827,7 +828,8 @@ class Accounting_api extends REST_Controller {
 					'amount_paid' 		=> $query->amount_paid,
 					'payment_method'	=> $query->payment_method,
 					'date'				=> $query->date,
-					'dueDate'			=> $query->due_date,
+					'due_date'			=> $query->due_date,
+					'reference'			=> $query->reference,
 					'address' 			=> $query->address,
 					'ship_to' 			=> $query->ship_to,
 					'class_name'		=> $this->classes->get_by('id', $query->class_id),
@@ -855,7 +857,8 @@ class Accounting_api extends REST_Controller {
 			'amount_due'		=> $this->put('amount_due'),
 			'amount_paid'		=> $this->put('amount_paid'),
 			'memo' 				=> $this->put('memo'),
-			'payment_method'	=> $this->put('payment_method'),		 							
+			'payment_method'	=> $this->put('payment_method'),
+			'reference'			=> $this->put('reference'),		 							
 			'voucher' 	    	=> $this->put('voucher'),			
 			'class_id' 		    => $this->put('class_id'),
 			'budget_id' 		=> $this->put('budget_id'),
@@ -869,7 +872,7 @@ class Accounting_api extends REST_Controller {
 			'payment_id' 		=> $this->put('payment_id') ? $this->put('payment_id') : 0,
 			'number' 			=> $this->put('number') ? $this->put('number') : "",
 			'date' 				=> date('Y-m-d', strtotime($this->put('date'))),
-			'due_date'			=> date('Y-m-d', strtotime($this->put('dueDate'))),
+			'due_date'			=> date('Y-m-d', strtotime($this->put('due_date'))),
 			'address'			=> $this->put('address') ?	$this->put('address') : "",
 			'ship_to' 			=> $this->put('ship_to') ?	$this->put('ship_to') : "",
 			'vat_id'			=> is_array($this->put('vat_id')) ? $this->put('vat_id')['id'] : $this->put('vat_id'),
@@ -903,8 +906,9 @@ class Accounting_api extends REST_Controller {
 						'amount_paid' 		=> $query->amount_paid,
 						'payment_method'	=> $query->payment_method,
 						'date'				=> $query->date,
-						'dueDate'			=> $query->due_date,
+						'due_date'			=> $query->due_date,
 						'address' 			=> $query->address,
+						'reference'			=> $query->reference,
 						'ship_to' 			=> $query->ship_to,
 						'class_name'		=> $this->classes->get_by('id', $query->class_id),
 						'budget_name'		=> $this->classes->get_by('id', $query->budget_id),
@@ -985,6 +989,7 @@ class Accounting_api extends REST_Controller {
 		$ids = array();		
 		$this->db->trans_start();
 		foreach($postedData as $key=>$value) {
+			$balance = $this->journal->calculate_account_balance($value->account,$value->dr, $value->cr);
 			$data[] = array(
 				"journal_id" 	=> $value->journal_id,
  				"account" 		=> $value->account,
@@ -993,7 +998,7 @@ class Accounting_api extends REST_Controller {
  				"class_id"		=> $value->class_id,
  				"memo"			=> $value->memo,
  				"taxed"			=> $value->taxed === true ? 1 : 0,
- 				// "balance"		=> $balance,
+ 				"balance"		=> $balance,
  				"exchange_rate" => $value->exchange_rate,
  				"main"			=> $value->main
 			);
@@ -1063,7 +1068,7 @@ class Accounting_api extends REST_Controller {
 		if($journal_Entries){
 			foreach($journal_Entries as $k => $v) {
 		 		//Find last balance of this account
-				// $balance = $this->j_entry->calculate_account_balance($v->account_id,$v->dr,$v->cr);
+				$balance = $this->j_entry->calculate_account_balance($v->account,$v->dr,$v->cr);
 				$ids[] = $v->id;
 		 		$entries = array(
 				 				"account" 		=> $v->account,
@@ -1071,7 +1076,7 @@ class Accounting_api extends REST_Controller {
 				 				"cr"			=> $v->cr,
 				 				"class_id"		=> $v->class_id,
 				 				"memo"			=> $v->memo,
-				 				// "balance"		=> $balance,
+				 				"balance"		=> $balance,
 				 				"taxed"			=> $v->taxed === true ? 1 : 0,
 				 				"exchange_rate" => $v->exchange_rate,
 				 				"main"			=> $v->main

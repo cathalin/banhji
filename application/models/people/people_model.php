@@ -149,7 +149,7 @@ class People_model extends MY_Model {
 
 	private function _days_overdue($billId, $date) {
 		$this->db->select("due_date");
-		$this->db->from("bills");
+		$this->db->from("journals");
 		$this->db->where("id", $billId);
 		$this->db->where("due_date <=", Date('Y-m-d', strtotime($date)));
 		$this->db->limit(1);
@@ -192,7 +192,7 @@ class People_model extends MY_Model {
 			);
 		if(isset($vendorID)) {
 
-			$this->db->from("bills");
+			$this->db->from("journals");
 			$this->db->where("status", 0);
 			if($class !== "") {
 				$this->db->where('class_id', $class);
@@ -200,7 +200,7 @@ class People_model extends MY_Model {
 			// else {
 			// 	$this->db->where('class_id', $class);
 			// }
-			$this->db->where("vendor_id", $vendorID);
+			$this->db->where("people_id", $vendorID);
 			$query = $this->db->get();
 
 			if($query->result() > 0) {
