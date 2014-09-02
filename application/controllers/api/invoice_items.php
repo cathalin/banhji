@@ -53,15 +53,24 @@ class Invoice_items extends REST_Controller {
 
 			$this->response($data, 200);			
 		}else{
-			$data["results"] = $this->invoice_item->get_all();
-			$data["total"] = $this->invoice_item->count_all();
+			$data["results"] = array();
+			$data["total"] = 0;
 			$this->response($data, 200);
 		}			
 	}
 	
 	//POST
 	function invoice_item_post() {		
-		$post = json_decode($this->post('models'));						  
+		$post = json_decode($this->post('models'));
+
+		foreach($post as $key => $value) {
+			if($value->vat){
+				$value->vat = 'true';
+			}else{
+				$value->vat = 'false';
+			}			
+		}
+
 		$ids = $this->invoice_item->insert_many($post);
 		$data["results"] = $this->invoice_item->get_many($ids);		
 
@@ -70,23 +79,38 @@ class Invoice_items extends REST_Controller {
 	
 	//PUT
 	function invoice_item_put() {		
-		$put = json_decode($this->post('models'));
+		$put = json_decode($this->put('models'));
 
 		$this->db->trans_start();
 		foreach ($put as $key => $value) {
+			if($value->vat){
+				$value->vat = 'true';
+			}else{
+				$value->vat = 'false';
+			}
+			
 			$this->invoice_item->update($value->id, $value);
 		}
 		$this->db->trans_complete();
 
 		$result = $this->db->trans_status();		
 
-		$this->response(array("updated"=>$result, "data"=>$put()), 200);
+		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	
 	//DELETE
-	function invoice_item_delete() {		
-		$result = $this->invoice_item->delete($this->delete('id'));
-		$this->response($result, 200);
+	function invoice_item_delete() {
+		$del = json_decode($this->delete('models'));
+
+		$this->db->trans_start();
+		foreach ($del as $key => $value) {
+			$this->invoice_item->delete($value->id);
+		}
+		$this->db->trans_complete();
+
+		$result = $this->db->trans_status();
+
+		$this->response(array("deleted"=>$result, "results"=>$del), 200);
 	}	
 
 	//POST BATCH	

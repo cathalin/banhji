@@ -41,9 +41,9 @@ class Invoices extends REST_Controller {
 			for ($i = 0; $i < count($filter['filters']); ++$i) {				
 				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
 			}
-			
+
 			//Limit
-			if(!empty($limit) && isset($limit)){
+			if(!empty($limit) && isset($limit)){				
 				$this->invoice->limit($limit, $offset);
 			}			
 			
@@ -61,8 +61,8 @@ class Invoices extends REST_Controller {
 
 			$this->response($data, 200);			
 		}else{
-			$data["results"] = $this->invoice->get_all();
-			$data["total"] = $this->invoice->count_all();
+			$data["results"] = array();
+			$data["total"] = 0;
 			$this->response($data, 200);
 		}			
 	}
@@ -103,9 +103,9 @@ class Invoices extends REST_Controller {
 			"memo2" 			=> $this->post("memo2"),
 			"company_id" 		=> $this->post("company_id"),					
 		);
-		$id = $this->invoice->insert($post);
+		$id = $this->invoice->insert($post);		
 		$data["results"] = $this->invoice->get($id);
-
+		
 		$this->response($data, 201);			
 	}
 	
@@ -114,6 +114,7 @@ class Invoices extends REST_Controller {
 		$put = array(
 			"number" 			=> $this->put("number"),
 			"type" 				=> $this->put("type"),
+			"amount" 			=> $this->put("amount"),
 			"rate" 				=> $this->put("rate"),
 			"sub_code" 			=> $this->put("sub_code"),
 			"vat" 				=> $this->put("vat"),			

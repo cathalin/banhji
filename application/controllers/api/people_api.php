@@ -228,56 +228,59 @@ class People_api extends REST_Controller {
 	
 	//GET 
 	function people_get() {		
-		$filter = $this->get("filter");
+		$filters = $this->get("filter")["filters"];
+		$logic = $this->get("filter")["logic"];
 		$limit = $this->get("pageSize");
 		$offset = $this->get('skip');
 		$sorter = $this->get("sort");
-
-		if(!empty($filter) && isset($filter)){
-			//Filter
-			$para = array();				
-			for ($i = 0; $i < count($filter['filters']); ++$i) {				
-				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}
-			
-			//Limit
-			if(!empty($limit) && isset($limit)){
-				$this->people->limit($limit, $offset);
+		
+		//Limit
+		if(!empty($limit) && isset($limit)){
+			$this->people->limit($limit, $offset);
+		}			
+		
+		//Sort
+		if(!empty($sorter) && isset($sorter)){			
+			$sort = array();
+			foreach ($sorter as $row) {
+				$sort += array($row["field"] => $row["dir"]);
 			}			
-			
-			//Sort
-			if(!empty($sorter) && isset($sorter)){			
-				$sort = array();
-				for ($j = 0; $j < count($sorter); ++$j) {				
-					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+			$this->people->order_by($sort);
+		}
+
+		//Filter
+		if(!empty($filters) && isset($filters)){			
+			$filter = array();			
+			foreach ($filters as $row) {				
+				if(!empty($row["operator"]) && isset($row["operator"])){
+					$this->people->like("number", $row["value"])
+										->or_like("surname", $row["value"])
+										->or_like("name", $row["value"])
+										->or_like("id", $row["value"]);
+				}else{				
+					$filter += array($row["field"] => $row["value"]);
 				}
-				$this->people->order_by($sort);
-			}
+			}				
 
-			$data["results"] = $this->people->get_many_by($para);
-			$data["total"] = $this->people->count_by($para);
-			
-			//Modify field
-			foreach($data["results"] as $key => $row) {
-				$row->use_electricity = $row->use_electricity === 'true'? true: false;
+			$data["results"] = $this->people->get_many_by($filter);
+			$data["total"] = $this->people->count_by($filter);		
 
-				//Add extra fields
-				$extra = array(	  
-				   "companies"	=> $this->currency->get($row->company_id),
-				   "currencies"	=> $this->currency->get_by("code", $row->currency_code)				   
-				);
-
-				//Cast object to array
-				$original =  (array) $row;
-
-				//Merge arrays
-				$data["results"][$key] = array_merge($original, $extra);			 
-			}
+			//Modify field			
+			foreach($data["results"] as $key => $value) {				
+				$value->use_electricity = $value->use_electricity === 'true'? true: false;
+				$value->use_water = $value->use_water === 'true'? true: false;				 
+			}			
 
 			$this->response($data, 200);
 		}else{
 			$data["results"] = $this->people->get_all();
 			$data["total"] = $this->people->count_all();
+
+			//Modify field			
+			foreach($data["results"] as $key => $value) {				
+				$value->use_electricity = $value->use_electricity === 'true'? true: false;
+				$value->use_water = $value->use_water === 'true'? true: false;				 
+			}
 			
 			$this->response($data, 200);
 		}
@@ -304,6 +307,7 @@ class People_api extends REST_Controller {
 			"job"						=> $this->post("job"),
 			"company"					=> $this->post("company"),
 			"bank_account"				=> $this->post("bank_account"),
+			"balance"					=> $this->post("balance"),
 			"deposit_amount"			=> $this->post("deposit_amount"),
 			"credit_limit"				=> $this->post("credit_limit"),
 			"zip_code"					=> $this->post("zip_code"),
@@ -329,6 +333,7 @@ class People_api extends REST_Controller {
 			"status"					=> $this->post("status"),
 			"registered_date"			=> date("Y-m-d", strtotime($this->post("registered_date"))),
 			"currency_code"				=> $this->post("currency_code"),
+			"sub_code"					=> $this->post("sub_code"),
 			"vat_no"					=> $this->post("vat_no"),
 			"account_receiveable_id"	=> $this->post("account_receiveable_id"),
 			"revenue_account_id"		=> $this->post("revenue_account_id"),
@@ -364,6 +369,7 @@ class People_api extends REST_Controller {
 			"job"						=> $this->put("job"),
 			"company"					=> $this->put("company"),
 			"bank_account"				=> $this->put("bank_account"),
+			"balance"					=> $this->put("balance"),
 			"deposit_amount"			=> $this->put("deposit_amount"),
 			"credit_limit"				=> $this->put("credit_limit"),
 			"zip_code"					=> $this->put("zip_code"),
@@ -389,6 +395,7 @@ class People_api extends REST_Controller {
 			"status"					=> $this->put("status"),
 			"registered_date"			=> date("Y-m-d", strtotime($this->put("registered_date"))),
 			"currency_code"				=> $this->put("currency_code"),
+			"sub_code"					=> $this->put("sub_code"),
 			"vat_no"					=> $this->put("vat_no"),
 			"account_receiveable_id"	=> $this->put("account_receiveable_id"),
 			"revenue_account_id"		=> $this->put("revenue_account_id"),
@@ -488,76 +495,6 @@ class People_api extends REST_Controller {
 	  	
 	}
 	
-	//CUSTOMER SEARCH
-	function customer_search_get() {
-		$filter = $this->get("filter");
-		$limit = $this->get("pageSize");
-		$offset = $this->get('skip');
-		$sorter = $this->get("sort");
-
-		if(!empty($filter) && isset($filter)){
-			//Filter
-			$para = array();				
-			for ($i = 0; $i < count($filter['filters']); ++$i) {				
-				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}
-			
-			//Limit
-			if(!empty($limit) && isset($limit)){
-				$this->people->limit($limit, $offset);
-			}			
-			
-			//Sort
-			if(!empty($sorter) && isset($sorter)){			
-				$sort = array();
-				for ($j = 0; $j < count($sorter); ++$j) {				
-					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
-				}
-				$this->people->order_by($sort);
-			}
-
-			$cusPara = array();
-			if(!empty($para["transformer_id"]) && isset($para["transformer_id"])){
-				$cusPara += array("transformer_id"=>$para["transformer_id"]);
-			}			
-
-		 	if(!empty($para["name"]) && isset($para["name"])){
-		 		$field = $para["name"];
-				$this->people->where("number LIKE", $field)
-							->or_where("surname LIKE", $field)
-							->or_where("name LIKE", $field)
-							->or_where("id LIKE", $field);
-			}
-
-			$data["results"] = $this->people->get_many_by($cusPara);
-			$data["total"] = $this->people->count_by($para);
-			
-			//Modify field
-			foreach($data["results"] as $key => $row) {
-				$row->use_electricity = settype($row->use_electricity,'boolean');
-
-				//Add extra fields
-				$extra = array(	  
-				   "companies"	=> $this->currency->get($row->company_id),
-				   "currencies"	=> $this->currency->get_by("code", $row->currency_code)				   
-				);
-
-				//Cast object to array
-				$original =  (array) $row;
-
-				//Merge arrays
-				$data["results"][$key] = array_merge($original, $extra);			 
-			}
-
-			$this->response($data, 200);
-		}else{
-			$data["results"] = $this->people->get_all();
-			$data["total"] = $this->people->count_all();
-			
-			$this->response($data, 200);
-		}		
-	}
-
 	function customer_listview_get() {		
 		$filter = $this->get("filter");		
 					
