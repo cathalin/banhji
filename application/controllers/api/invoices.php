@@ -30,34 +30,40 @@ class Invoices extends REST_Controller {
 				
 	//GET 
 	function invoice_get() {
-		$filter = $this->get("filter");
+		$filters = $this->get("filter")["filters"];
+		$logic = $this->get("filter")["logic"];
 		$limit = $this->get("pageSize");
 		$offset = $this->get('skip');
 		$sorter = $this->get("sort");
 
-		if(!empty($filter) && isset($filter)){			
-			//Filter
-			$para = array();				
-			for ($i = 0; $i < count($filter['filters']); ++$i) {				
-				$para += array($filter['filters'][$i]['field'] => $filter['filters'][$i]['value']);
-			}
-
-			//Limit
-			if(!empty($limit) && isset($limit)){				
-				$this->invoice->limit($limit, $offset);
+		//Limit
+		if(!empty($limit) && isset($limit)){
+			$this->invoice->limit($limit, $offset);
+		}			
+		
+		//Sort
+		if(!empty($sorter) && isset($sorter)){			
+			$sort = array();
+			foreach ($sorter as $row) {
+				$sort += array($row["field"] => $row["dir"]);
 			}			
-			
-			//Sort
-			if(!empty($sorter) && isset($sorter)){			
-				$sort = array();
-				for ($j = 0; $j < count($sorter); ++$j) {				
-					$sort += array($sorter[$j]['field'] => $sorter[$j]['dir']);
+			$this->invoice->order_by($sort);
+		}
+
+		if(!empty($filters) && isset($filters)){
+			$filter = array();			
+			foreach ($filters as $row) {				
+				if(!empty($row["operator"]) && isset($row["operator"])){
+					if($row["operator"]==="wherein"){
+						$this->invoice->where_in($row["field"], $row["value"]);
+					}					
+				}else{				
+					$filter += array($row["field"] => $row["value"]);
 				}
-				$this->invoice->order_by($sort);
 			}
 
-			$data["results"] = $this->invoice->get_many_by($para);
-			$data["total"] = $this->invoice->count_by($para);
+			$data["results"] = $this->invoice->get_many_by($filter);
+			$data["total"] = $this->invoice->count_by($filter);
 
 			$this->response($data, 200);			
 		}else{
@@ -145,7 +151,7 @@ class Invoices extends REST_Controller {
 			"memo2" 			=> $this->put("memo2"),
 			"company_id" 		=> $this->put("company_id"),					
 		);
-		$result = $this->invoice->update($this->put('id'), $put);		
+		$result = $this->invoice->update($this->put('id'), $put);			
 		$this->response(array("updated"=>$result, "results"=>$put), 200);
 	}
 	

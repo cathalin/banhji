@@ -251,15 +251,19 @@ class People_api extends REST_Controller {
 		//Filter
 		if(!empty($filters) && isset($filters)){			
 			$filter = array();			
-			foreach ($filters as $row) {				
+			foreach ($filters as $row) {
 				if(!empty($row["operator"]) && isset($row["operator"])){
-					$this->people->like("number", $row["value"])
-										->or_like("surname", $row["value"])
-										->or_like("name", $row["value"])
-										->or_like("id", $row["value"]);
+					if($row["operator"]==="wherein"){
+						$this->invoice->where_in($row["field"], $row["value"]);
+					}else if($row["operator"]==="like"){
+						$this->people->like("number", $row["value"])
+											->or_like("surname", $row["value"])
+											->or_like("name", $row["value"])
+											->or_like("id", $row["value"]);
+					}				
 				}else{				
 					$filter += array($row["field"] => $row["value"]);
-				}
+				}				
 			}				
 
 			$data["results"] = $this->people->get_many_by($filter);
