@@ -70,11 +70,8 @@ class Vendors extends REST_Controller {
 
 	function index_post() {
 		$postedData = $this->post();
-
-		$generatedId = $this->_v4();
 		
 		$vendors = array(
-			"id"				=> $generatedId,
 			"company"			=> $postedData['company'],
 			"people_type_id"	=> $postedData['people_type_id']['id'],
 			"class_id"			=> $postedData['class_id']['id'],				
@@ -92,7 +89,7 @@ class Vendors extends REST_Controller {
 
 
 		// $this->response(array("status"=>"OK", "message"=>"Vendor created.", "results"=>$vendors), 200);
-		$this->people->insert($vendors);
+		$generatedId = $this->people->insert($vendors);
 		$justCreated = $this->people->get($generatedId);
 
 		if(count($justCreated) > 0) {
